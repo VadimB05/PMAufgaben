@@ -21,13 +21,13 @@
 
 ## Aufgaben
 
-Die Aufgaben finden Sie [hier](https://nbl.fh-bielefeld.de/elearning/data/FH-Bielefeld/lm_data/lm_1271733/assignments/). 
+Die Aufgaben finden Sie [hier](https://nbl.fh-bielefeld.de/elearning/data/FH-Bielefeld/lm_data/lm_1271733/assignments/).
 
-Die Liste mit den Praktikums-Anforderungen finden Sie [hier](https://nbl.fh-bielefeld.de/elearning/data/FH-Bielefeld/lm_data/lm_1271733/org/grading/). 
+Die Liste mit den Praktikums-Anforderungen finden Sie [hier](https://nbl.fh-bielefeld.de/elearning/data/FH-Bielefeld/lm_data/lm_1271733/org/grading/).
 
-Sie geben Ihre Aufgaben per Pull-Request auf Ihrem Master in Ihrem Repository ab und fordern dann ein Review von `@jposselt` an.  
+Sie geben Ihre Aufgaben per Pull-Request auf Ihrem Master in Ihrem Repository ab und fordern dann ein Review von `@jposselt` an.
 
-In der unten stehenden Tabelle können Sie Ihren aktuellen Stand festhalten. 
+In der unten stehenden Tabelle können Sie Ihren aktuellen Stand festhalten.
 
 
 | Aufgabe                         | Punkte | Tutoren Notiz |
@@ -63,10 +63,15 @@ In der unten stehenden Tabelle können Sie Ihren aktuellen Stand festhalten.
 
 ## Contributing
 
-Pull Requests, Bug Reports und Feature Requests sind erwünscht. Bitte lesen Sie vorher die [contributor guidelines](https://github.com/PM-Dungeon/core/blob/master/CONTRIBUTING.md) bevor Sie ein neues Issue eröffnen. 
+Pull Requests, Bug Reports und Feature Requests sind erwünscht. Bitte lesen Sie vorher die [contributor guidelines](https://github.com/PM-Dungeon/core/blob/master/CONTRIBUTING.md) bevor Sie ein neues Issue eröffnen.
 
 Sie können auch gern hier im Semester-Repo ein neues Issue für eine Frage oder einen Fehler aufmachen. Bitte fügen Sie die passenden Label hinzu ("question" oder "bug", "dungeon" oder "aufgaben") und setzen Sie nach Möglichkeit einen "Assignee" (`amatutat` oder `jposselt`).
 
 Wenn Sie sich untereinander austauschen wollen, können Sie das [Semester-Forum](https://github.com/PM-Dungeon/pm-s22-vorgaben/discussions) dafür nutzen. Bitte posten Sie hier keine Lösungen oder Lösungshinweise für die Aufgaben, sondern helfen Sie sich gegenseitig bei Verständnisproblemen oder diskutieren Sie hier Ideen.
 
-## Lizenz
+
+## License
+
+<!-- https://creativecommons.org/choose/ -->
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This work by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/AMatutat" property="cc:attributionName" rel="cc:attributionURL">André Matutat</a>, <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/cagix" property="cc:attributionName" rel="cc:attributionURL">Carsten Gips</a> and <a href="https://github.com/PM-Dungeon/pm-s22-vorgaben/graphs/contributors">contributors</a> is licensed under <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+The contents of the subfolders [`desktop/`](./desktop/) and [`assignment-stubs/`](./assignment-stubs/) are included as a Git subtree from the repositories [PM-Dungeon/desktop](https://github.com/PM-Dungeon/desktop) and [PM-Dungeon/Assignment-Stubs](https://github.com/PM-Dungeon/Assignment-Stubs) and are licensed under a different license (see `LICENSE.md` in the respective folders).
