@@ -1,0 +1,108 @@
+name: Java CI
+
+on: [ pull_request ]
+
+jobs:
+
+    build:
+        name: Build
+        strategy:
+            matrix:
+                os: [ ubuntu-latest, windows-latest, macos-latest ]
+        runs-on: ${{ matrix.os }}
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v2
+            -   name: Set up JDK 17
+                uses: actions/setup-java@v2
+                with:
+                    java-version: '17'
+                    distribution: 'temurin'
+            -   name: Validate Gradle wrapper
+                uses: gradle/wrapper-validation-action@v1
+            -   name: Build with Gradle
+                run: ./gradlew assemble
+                working-directory: code
+
+    junit:
+        needs: build
+        name: JUnit
+        strategy:
+            matrix:
+                os: [ ubuntu-latest, windows-latest, macos-latest ]
+        runs-on: ${{ matrix.os }}
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v2
+            -   name: Set up JDK 17
+                uses: actions/setup-java@v2
+                with:
+                    java-version: '17'
+                    distribution: 'temurin'
+            -   name: JUnit
+                run: ./gradlew test
+                working-directory: code
+            -   name: JUnit Report
+                uses: mikepenz/action-junit-report@v2
+                if: always() # always run even if the previous step fails
+                with:
+                    report_paths: '**/build/test-results/test/TEST-*.xml'
+
+    spotbugs:
+        needs: build
+        name: SpotBugs
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v2
+            -   name: Set up JDK 17
+                uses: actions/setup-java@v2
+                with:
+                    java-version: '17'
+                    distribution: 'temurin'
+            -   name: SpotBugs
+                run: |
+                    ./gradlew spotbugsMain
+                    ./gradlew spotbugsTest
+                working-directory: code
+            -   name: SpotBugs Report
+                uses: jwgmeligmeyling/spotbugs-github-action@master
+                with:
+                    path: '**/spotbugsXml.xml'
+                    name: 'SpotBugs Report'
+
+    checkstyle:
+        needs: build
+        name: Checkstyle
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v2
+            -   name: Set up JDK 17
+                uses: actions/setup-java@v2
+                with:
+                    java-version: '17'
+                    distribution: 'temurin'
+            -   name: Checkstyle
+                run: ./gradlew check
+                working-directory: code
+            -   name: Checkstyle Report
+                uses: jwgmeligmeyling/checkstyle-github-action@master
+                with:
+                    path: '**/checkstyle/*.xml'
+
+    spotless-java-format:
+        needs: build
+        name: Spotless
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v2
+            -   name: Set up JDK 17
+                uses: actions/setup-java@v2
+                with:
+                    java-version: '17'
+                    distribution: 'temurin'
+            -   name: Spotless
+                run: ./gradlew spotlessJavaCheck
+                working-directory: code

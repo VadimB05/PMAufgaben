@@ -1,0 +1,83 @@
+stages:
+    - build
+    - test
+    - check
+    - package
+
+build:
+    stage: build
+    script:
+        - echo "Build..."
+        - cd code
+        - ./gradlew assemble 2>&1 | tee 01_assemble_log.txt
+        - echo "Build complete."
+    artifacts:
+        when: always
+        paths:
+            - code/01_assemble_log.txt
+
+junit:
+    when: always
+    stage: test
+    script:
+        - echo "JUnit..."
+        - cd code
+        - ./gradlew test 2>&1 | tee 02_junit_log.txt
+        - echo "JUnit complete."
+    artifacts:
+        when: always
+        paths:
+            - code/02_junit_log.txt
+
+spotbugs:
+    when: always
+    stage: check
+    script:
+        - echo "SpotBugs..."
+        - cd code
+        - ./gradlew spotbugsMain 2>&1 | tee 03_spotbugs_log.txt
+        - ./gradlew spotbugsTest 2>&1 | tee 04_spotbugs_log.txt
+        - echo "SpotBugs complete."
+    artifacts:
+        when: always
+        paths:
+            - code/03_spotbugs_log.txt
+            - code/04_spotbugs_log.txt
+
+checkstyle:
+    when: always
+    stage: check
+    script:
+        - echo "Checkstyle..."
+        - cd code
+        - ./gradlew check 2>&1 | tee 05_checkstyle_log.txt
+        - echo "Checkstyle complete."
+    artifacts:
+        when: always
+        paths:
+            - code/05_checkstyle_log.txt
+
+spotless:
+    when: always
+    stage: check
+    script:
+        - echo "Spotless..."
+        - cd code
+        - ./gradlew spotlessJavaCheck 2>&1 | tee 06_spotless_log.txt
+        - echo "Spotless complete."
+    artifacts:
+        when: always
+        paths:
+            - code/06_spotless_log.txt
+
+package:
+    when: always
+    stage: package
+    script:
+        - echo "Summary..."
+        - cd code
+        - cat *_log.txt 2>&1 | tee 07_summary_log.txt
+        - echo "Summary complete."
+    artifacts:
+        paths:
+            - code/07_summary_log.txt
