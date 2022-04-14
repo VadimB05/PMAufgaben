@@ -23,6 +23,7 @@ public class Ringbuffer {
     public Ringbuffer(int size) {
 
         FileHandler loggedData;
+        FileHandler errorData;
         ConsoleHandler handlerRingbuffer = new ConsoleHandler();
         handlerRingbuffer.setLevel(Level.INFO);
         handlerRingbuffer.setFormatter(new SecondFormatter("RingbufferLogger"));
@@ -30,12 +31,16 @@ public class Ringbuffer {
         logger.addHandler(handlerRingbuffer);
         logger.setUseParentHandlers(false);
         try {
+            errorData = new FileHandler("data/errorDataRingbuffer.csv",true);
             loggedData = new FileHandler("data/dataText.txt"); //append can be set true, if you want to keep old saved data
+            errorData.setFormatter(new SecondFormatter("RingbufferLogger"));
             loggedData.setFormatter(new SecondFormatter("RingbufferLogger"));
+            errorData.setLevel(Level.WARNING);
             loggedData.setLevel(Level.INFO);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        logger.addHandler(errorData);
         logger.addHandler(loggedData);
 
 

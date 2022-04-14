@@ -9,12 +9,22 @@ public class Main {
     public static void main(String[] args) {
         Logger logger = Logger.getLogger(Main.class.getName());
         ConsoleHandler handlerMain = new ConsoleHandler();
+        FileHandler errorData;
         handlerMain.setLevel(Level.INFO);
         handlerMain.setFormatter(new FirstFormatter("MainLogger"));
         logger.setLevel(Level.INFO);
         logger.addHandler(handlerMain);
         logger.setUseParentHandlers(false);
 
+        try {
+            errorData = new FileHandler("data/errorDataMain.csv",true);
+            errorData.setFormatter(new SecondFormatter("MainLogger"));
+            errorData.setLevel(Level.WARNING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        logger.addHandler(errorData);
 
         Ringbuffer buffer = new Ringbuffer(5);
         try {
