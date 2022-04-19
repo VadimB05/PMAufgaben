@@ -1,6 +1,8 @@
 package desktop;
 
 import basiselements.Animatable;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import graphic.Animation;
 import graphic.Painter;
@@ -28,6 +30,29 @@ public class MyHero extends Animatable {
     public void setLevel(Level level){
         currentLevel = level;
         position = level.getStartTile().getCoordinate().toPoint();
+    }
+
+    @Override
+    public void update() {
+        Point newPosition = new Point(this.position);
+        float movementSpeed = 0.1f;
+
+        if(Gdx.input.isKeyPressed(Input.Keys.W)){
+            newPosition.y += movementSpeed;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.S)){
+            newPosition.y -= movementSpeed;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.D)){
+            newPosition.x += movementSpeed;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.A)){
+            newPosition.x -= movementSpeed;
+        }
+
+        if(currentLevel.getTileAt(newPosition.toCoordinate()).isAccessible()){
+            this.position = newPosition;
+        }
     }
 
     @Override
