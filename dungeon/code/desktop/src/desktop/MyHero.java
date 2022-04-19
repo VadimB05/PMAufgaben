@@ -1,20 +1,29 @@
 package desktop;
 
-import basiselements.Entity;
+import basiselements.Animatable;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import graphic.Animation;
 import graphic.Painter;
 import level.elements.Level;
 import tools.Point;
 
-public class MyHero extends Entity {
-    private String texturePath;
+import java.util.ArrayList;
+import java.util.List;
+
+public class MyHero extends Animatable {
+    private Animation idleAnimation;
     private Point position;
     private Level currentLevel;
 
     public MyHero(Painter painter, SpriteBatch batch){
         super(painter, batch);
-        texturePath = "character/knight/knight_m_idle_anim_f0.png";
+        List<String> animation = new ArrayList<>();
+        animation.add("character/knight/knight_m_idle_anim_f0.png");
+        animation.add("character/knight/knight_m_idle_anim_f1.png");
+        idleAnimation = new Animation(animation,8);
     }
+
+
 
     public void setLevel(Level level){
         currentLevel = level;
@@ -27,7 +36,7 @@ public class MyHero extends Entity {
     }
 
     @Override
-    public String getTexturePath() {
-        return texturePath;
+    public Animation getActiveAnimation() {
+        return idleAnimation;
     }
 }
