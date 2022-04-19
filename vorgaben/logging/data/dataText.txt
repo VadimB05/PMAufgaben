@@ -1,0 +1,13 @@
+Ringbuffer,INFO,<init>,Ringbuffer,Creating array with size of 5 for storage.
+Ringbuffer,INFO,remove,Ringbuffer,Currently the buffer does contain: 0 elements
+Ringbuffer,WARNING,remove,Ringbuffer,The Current Buffer does not contain any element.
+Ringbuffer,INFO,add,Ringbuffer,Adding First to buffer on position 0
+Ringbuffer,INFO,add,Ringbuffer,Increasing Element count by 1 to 1
+Ringbuffer,INFO,add,Ringbuffer,Adding Second to buffer on position 1
+Ringbuffer,INFO,add,Ringbuffer,Increasing Element count by 1 to 2
+Ringbuffer,INFO,add,Ringbuffer,Adding Third to buffer on position 2
+Ringbuffer,INFO,add,Ringbuffer,Increasing Element count by 1 to 3
+Ringbuffer,INFO,remove,Ringbuffer,Currently the buffer does contain: 3 elements
+Ringbuffer,INFO,remove,Ringbuffer,Moving element from buffer to temporary variable the value: First
+Ringbuffer,INFO,remove,Ringbuffer,Moving the start pointer from 0 to 1
+Ringbuffer,INFO,remove,Ringbuffer,Decreasing Element count by 1 to 2

@@ -1,3 +1,8 @@
+import java.io.IOException;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Simple Ringbuffer for String objects.
@@ -6,6 +11,9 @@ public class Ringbuffer {
     private final String[] buffer;
     private int start, elements;
 
+    private static Logger logger = Logger.getLogger(Ringbuffer.class.getName());
+
+
     /**
      * Constructor for the buffer which creates the String array for the storage.
      *
@@ -13,11 +21,34 @@ public class Ringbuffer {
      * @throws IllegalArgumentException when the size is below or equal to 0
      */
     public Ringbuffer(int size) {
+
+        FileHandler loggedData;
+        FileHandler errorData;
+        ConsoleHandler handlerRingbuffer = new ConsoleHandler();
+        handlerRingbuffer.setLevel(Level.INFO);
+        handlerRingbuffer.setFormatter(new SecondFormatter("RingbufferLogger"));
+        logger.setLevel(Level.INFO);
+        logger.addHandler(handlerRingbuffer);
+        logger.setUseParentHandlers(false);
+        try {
+            errorData = new FileHandler("data/errorDataRingbuffer.csv",true);
+            loggedData = new FileHandler("data/dataText.txt"); //append can be set true, if you want to keep old saved data
+            errorData.setFormatter(new SecondFormatter("RingbufferLogger"));
+            loggedData.setFormatter(new SecondFormatter("RingbufferLogger"));
+            errorData.setLevel(Level.WARNING);
+            loggedData.setLevel(Level.INFO);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        logger.addHandler(errorData);
+        logger.addHandler(loggedData);
+
+
         if (size <= 0) {
-            System.err.println("The Size of the buffer needs to be at least 1.");
+            logger.warning("The Size of the buffer needs to be at least 1.");
             throw new IllegalArgumentException("The Size of the buffer needs to be at least 1.");
         }
-        System.out.println("Creating array with size of " + size + " for storage.");
+        logger.info("Creating array with size of " + size + " for storage.");
         buffer = new String[size];
     }
 
@@ -29,12 +60,12 @@ public class Ringbuffer {
      */
     public void add(String element) {
         if (elements == buffer.length) {
-            System.err.println("The Current Buffer is already full.");
+            logger.warning("The Current Buffer is already full.");
             throw new IllegalStateException("The Current Buffer is already full.");
         }
-        System.out.println("Adding " + element + " to buffer on position " + (start + elements) % buffer.length);
+        logger.info("Adding " + element + " to buffer on position " + (start + elements) % buffer.length);
         buffer[(start + elements) % buffer.length] = element;
-        System.out.println("Increasing Element count by 1 to " + (elements + 1));
+        logger.info("Increasing Element count by 1 to " + (elements + 1));
         ++elements;
     }
 
@@ -45,16 +76,16 @@ public class Ringbuffer {
      * @return the removed Element.
      */
     public String remove() {
-        System.out.println("Currently the buffer does contain: " + elements + " elements");
+        logger.info("Currently the buffer does contain: " + elements + " elements");
         if (elements == 0) {
-            System.err.println("The Current Buffer does not contain any element.");
+            logger.warning("The Current Buffer does not contain any element.");
             throw new IllegalStateException("The Current Buffer does not contain any element.");
         }
         String s = buffer[start];
-        System.out.println("Moving element from buffer to temporary variable the value: " + s);
-        System.out.println("Moving the start pointer from " + start + " to " + (start + 1) % buffer.length);
+        logger.info("Moving element from buffer to temporary variable the value: " + s);
+        logger.info("Moving the start pointer from " + start + " to " + (start + 1) % buffer.length);
         start = (start + 1) % buffer.length;
-        System.out.println("Decreasing Element count by 1 to " + (elements - 1));
+        logger.info("Decreasing Element count by 1 to " + (elements - 1));
         elements--;
         return s;
     }
@@ -65,7 +96,7 @@ public class Ringbuffer {
      * @return the number of empty Spaces
      */
     public int emptySpace() {
-        System.out.println("Method emptySpace current elementCount is " + elements + " elements and the buffer has a size of " + buffer.length + ".");
+        logger.info("Method emptySpace current elementCount is " + elements + " elements and the buffer has a size of " + buffer.length + ".");
         return buffer.length - elements;
     }
 
@@ -75,7 +106,7 @@ public class Ringbuffer {
      * @return the amount of elements currently held in the buffer
      */
     public int elementsCount() {
-        System.out.println("Method elementsCount current count is " + elements + " elements.");
+        logger.info("Method elementsCount current count is " + elements + " elements.");
         return elements;
     }
 }
