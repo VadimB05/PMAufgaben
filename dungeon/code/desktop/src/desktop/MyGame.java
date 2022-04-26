@@ -1,3 +1,4 @@
+package desktop;
 
 import com.badlogic.gdx.Gdx;
 import controller.MainController;
