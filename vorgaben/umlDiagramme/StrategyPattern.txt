@@ -1,0 +1,12 @@
+Relevante Anforderungen:
+
+-Erstmal zwei weitere Klassen: Player, Game. Diese implementieren die IPlayer und IGame Interfaces.
+	
+-Strategy Pattern wird verwendet, um den Spieler Handlungsoptionen zu überreichen.
+-Die Strategie Klassen erben von dem Interface IGameStrategy.
+-Drei weitere Klassen müssen erstellt werden für insgesamt drei Strategien.
+	-1: Tastatureingabe fragt nach den nächsten Zug
+	-2: Zufällige Auswahl zwischen Schere, Stein und Papie
+	-3: Wählt immer Stein
+	
+-Die Cheater.jar Datei soll als Library eingebunden sein, ohne entpackt zu werden.
