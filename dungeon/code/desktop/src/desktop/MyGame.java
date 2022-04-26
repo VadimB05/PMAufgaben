@@ -6,7 +6,10 @@ import level.generator.LevelLoader.LevelLoader;
 import level.generator.dungeong.graphg.NoSolutionException;
 
 public class MyGame extends MainController {
+
     private MyHero hero;
+
+
 
     @Override
     protected void setup() {
