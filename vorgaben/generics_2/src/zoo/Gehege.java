@@ -1,5 +1,6 @@
 package zoo;
 
+import zoo.tiere.Tier;
 import zoo.tiere.fische.Fisch;
 import zoo.tiere.fische.Salzwasserfisch;
 import zoo.tiere.saeuger.katzen.Katze;
@@ -25,6 +26,8 @@ public class Gehege<Tier> {
     }
 
     public static void main(String[] args) {
+        Zoo<Gehege> zoo = new Zoo<>();
+
         Gehege<Fisch> aquarium = new Gehege<>("Aquarium");
         Gehege<Katze> loewenGehege = new Gehege<>("Loewen Gehege");
 
@@ -41,6 +44,9 @@ public class Gehege<Tier> {
 
         loewenGehege.aufnehmen(loeweManfred);
         loewenGehege.aufnehmen(loeweJoachim);
+
+        zoo.errichten(aquarium);
+        zoo.errichten(loewenGehege);
 
     }
 }
