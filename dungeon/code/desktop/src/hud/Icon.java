@@ -16,9 +16,9 @@ public class Icon extends HUDElement {
      * @param painter Painter that draws this object
      * @param batch   Batch to draw on
      */
-    public Icon(HUDPainter painter, SpriteBatch batch, Point position) {
+    public Icon(HUDPainter painter, SpriteBatch batch, Point position, String texturePath) {
         super(painter, batch);
-        texturePath = "hud/ui_heart_full.png";
+        this.texturePath = texturePath;
         this.position = position;
     }
 
