@@ -5,7 +5,7 @@ import graphic.Painter;
 import item.Items;
 import tools.Point;
 
-public class Sword extends Items {
+public class Sword extends Weapons {
 
 
     /**
@@ -17,6 +17,8 @@ public class Sword extends Items {
      */
     public Sword(Painter painter, SpriteBatch batch, String texturePath) {
         super(painter, batch, texturePath);
+
+        setDamage(20);
     }
 
 }

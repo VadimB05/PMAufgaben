@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import graphic.Painter;
 import item.Items;
 
-public class ManaPotion extends Items {
+public class ManaPotion extends Potion{
 
     /**
      * An object in the dungeon that can be drawn
@@ -15,5 +15,7 @@ public class ManaPotion extends Items {
      */
     public ManaPotion(Painter painter, SpriteBatch batch, String texturePath) {
         super(painter, batch, texturePath);
+
+        setMana(20);
     }
 }
