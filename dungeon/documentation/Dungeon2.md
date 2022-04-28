@@ -39,7 +39,18 @@ einbetten (etwa UML-Diagramme), denken Sie daran, diese auch abzugeben!
 Bitte hier die zu lösende Aufgabe kurz in eigenen Worten beschreiben.
 -->
 
-HUD: Das HUD soll mithilfe des Quick-Start Guides implementiert und für Zukünftige Aufgaben auf den aktuellsten Stand gehalten werden.
+HUD:
+Das HUD soll mithilfe des Quick-Start Guides implementiert und für Zukünftige Aufgaben auf den aktuellsten Stand gehalten werden.
+
+Items:
+
+
+Inventar:
+
+
+Monster:
+Es sollen mehrere verschiedenene Monster mit eigenen Animationen und Eigenschaften hinzugefügt werden.
+Diese laufen zufällig durch den Dungeon und sollen mit steigenden Level mehrzähliger und stärker werden.
 
 
 # Ansatz und Modellierung
@@ -52,7 +63,19 @@ Bitte hier den Lösungsansatz kurz beschreiben:
 -   Worauf müssen Sie konkret achten?
 -->
 
-HUD: implementierung des HUDs nach dem Guide
+HUD:
+implementierung des HUDs nach dem Guide
+
+Items:
+
+
+Inventar:
+
+
+Monster:
+Monster teilen viele Eigenschaften mit der Spielerfigur. Sie werden ebenfalls zufällig im Dungeon plaziert und können dort herumlaufen. 
+Dies legte die Vermutung nahe, dass die Monster Klassen auch vom Code her ähnlich zum Helden gestaltet sind. 
+Der bereits vorhandene Code des Helden lässt sich also als inspiration und vergleich nehmen bei dem implementieren. 
 
 
 # Umsetzung
@@ -65,7 +88,35 @@ Bitte hier die Umsetzung der Lösung kurz beschreiben:
 -   was war das Ergebnis?
 -->
 
-HUD: HUD am 28.04.2022 implementiert (60 minuten)
+HUD:
+HUD am 28.04.2022 implementiert (60 minuten)
+
+Items:
+
+
+Inventar:
+
+
+Monster:
+Monster am 28.04.2022 teilimplementiert (8 Stunden)
+Wie erwähnt, wurde der vorhandene Code der MyHero Klasse als Vorlage genommen.
+Eine Monsterklasse wurde angelegt welche von der Animatable Klasse erbt und die nötigen Methoden wurden sehr Grundlegend implementiert.
+Das erst Ergebnis war ein Monster, dass an der gleichen Stelle wie der Spieler Charakter erscheint und dort stehen bleibt. Die Animation wurde ebenfalls richtig abgespielt.
+Der Code war an dieser Stelle noch recht unsauber und uns wurde bewusst, dass wenn wir weitere Monster hinzufügen es zu viel redundanten Code kommen würde.
+Die Struktur des Codes wurde deswegen nochmals ausgearbeitet.
+Es wurde ein neues Package für nicht Spieler Charaktere angelegt, in diesem liegt eine Abstrakte Oberklasse von welcher andere Charaktere erben und eigene Packages für diese Charaktere.
+Ein großteil des Codes für das Monster wurde in die Klasse Charakter verlagert.
+Am Ende musste in die eigentliche Monster Klasse nur die Animationen geladen und später noch die Laufgeschwindigkeit hinzugefügt werden.
+Dies machte das erstellen einer weiteren Monster Klasse viel schneller und leichter.
+So hatten wir nun die Monster Chort und Imp, welche am Anfang des Spiels auf zufälligen Positionen auf der Karte erschienen.
+Diese sich zufällig bewegen zu lassen stellte sich als große Herausforderung dar.
+Wir brauchten ziemlich lange um eine angemessene Lösung zu finden, doch kamen vor allem durch Abdurakhmans Arbeit zu einen funktionierenden Algorithmus.
+In der Methode randomMovement() wird eine zufällige Zahl zwischen 0 und 4 generiert welche bestimmt, ob das Monster sich in eine der 4 Himmelsrichtungen bewegt oder stehen bleibt.
+Wurde eine Entscheidung getroffen, wird diese Aktion für 30 Frames des Spiels ausgeführt und nach dem nächsten Input gewürfelt.
+Dazwischen wird in der update() Methode immer wieder kontrolliert, ob der Weg des Monsters auch begehbar ist.
+So konnten beide Monster sich durch den Dungeon bewegen. Um diese nun noch mehr von dem Spielercharakter zu unterscheiden, laufen die Monster mit einer anderen Laufgeschwindigkeit vom Helden.
+Der Chort bewegt sich etwas langsamer als der Spieler, während der Imp sehr viel schneller ist.
+
 
 
 # Postmortem
@@ -78,4 +129,16 @@ kritisch zurück:
 -   Wie haben Sie die Probleme letztlich gelöst?
 -->
 
-HUD: die Implementation lief reibungslos
+HUD:
+die Implementation lief reibungslos
+
+Items:
+
+
+Inventar:
+
+
+Monster:
+Wir konnten herausfinden, dass das frühe Umlagern und Zusammenfassen von Code enorm im späteren Verlauf hilft und das Implementieren weiterer Features erleichtert.
+Die Monster zufällig laufen zu lassen stellte sich als große Herausforderung dar, die den großteil der Arbeitszeit beansprucht hatte.
+Wir kamen aber Schrittweise an die Lösung dran, mit immer richtiger werdenden Ansätzen was letztenendlich auch Spaß gemacht hatte.
