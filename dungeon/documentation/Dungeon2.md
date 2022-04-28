@@ -43,6 +43,7 @@ HUD:
 Das HUD soll mithilfe des Quick-Start Guides implementiert und für Zukünftige Aufgaben auf den aktuellsten Stand gehalten werden.
 
 Items:
+Wir haben für alle Items eine eigene Klasse erstellt und eine Abstrakte Klasse von der dann geerbt wird.
 
 
 Inventar:
@@ -67,7 +68,10 @@ HUD:
 implementierung des HUDs nach dem Guide
 
 Items:
-
+- Die Klassen sollte mit Generics arbeiten.
+  Es gibt für alle Item Arten einen Ordner, wo dann auch die  Abstrakten Klassen vererben an die Items.
+  Es existiert auch eine Oberklasse Items, die von Entity erbt.
+  Damit Code nicht zu oft doppelte vorkommt, war das sehr hilfreich und hat uns arbeit abgenommen.
 
 Inventar:
 
@@ -89,9 +93,13 @@ Bitte hier die Umsetzung der Lösung kurz beschreiben:
 -->
 
 HUD:
-HUD am 28.04.2022 implementiert (60 minuten)
+HUD am 28.04.2022 implementiert (60 Minuten)
 
 Items:
+28.04.2022 implementiert (6 Stunden)
+Wir haben eine Übersichtliche Ordner Struktur aufgebaut und eine einfache Struktur die man schnell verstehen kann erschaffen.
+Die Items werden Random generiert im dungeon und man kann mit ihnen interagieren. Aufheben und im Inventar anzeigen, wobei man gewisse gegenstände austauscht, wenn der Platz schon belegt ist
+Die Items haben auch eigene Werte, wie Verteidigung, Angriff und Geschwindigkeit z.B.
 
 
 Inventar:
@@ -133,7 +141,7 @@ HUD:
 die Implementation lief reibungslos
 
 Items:
-
+Items war im großen und ganzen nicht all zu Schwer im nachhinein zu implimentieren aber es hat schon viel Zeit gekostet sich Gedanken darüber zu machen, wie man das ganze genau angeht.
 
 Inventar:
 
