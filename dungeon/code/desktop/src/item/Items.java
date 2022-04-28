@@ -45,8 +45,13 @@ public abstract class Items extends Entity {
     }
 
     public void setLevel(Level level){
+
         //position = level.getRandomRoom().getRandomFloorTile().getCoordinate().toPoint();
         position = level.getStartTile().getCoordinate().toPoint();
+
+
+
+
     }
 
     public String getName() {

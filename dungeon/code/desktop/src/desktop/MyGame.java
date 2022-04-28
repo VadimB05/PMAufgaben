@@ -5,8 +5,15 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import controller.MainController;
 import hud.Icon;
+
 import inventory.Inventory;
 import item.Items;
+
+import item.armor.Shield;
+import item.potion.HealthPotion;
+import item.potion.ManaPotion;
+import item.weapon.Staff;
+
 import item.weapon.Sword;
 import level.generator.LevelLoader.LevelLoader;
 import level.generator.dungeong.graphg.NoSolutionException;
@@ -17,6 +24,10 @@ public class MyGame extends MainController {
     private Label levelLabel;
     private MyHero hero;
     private Sword sword;
+    private Staff staff;
+    private Shield shield;
+    private HealthPotion healthPotion;
+    private ManaPotion manaPotion;
     private int levelCounter = 0;
     Inventory inventory = new Inventory();
 
@@ -26,7 +37,16 @@ public class MyGame extends MainController {
     protected void setup() {
         levelAPI.setGenerator(new LevelLoader());
         hero = new MyHero(painter,batch);
+
         sword = new Sword(painter,batch,"item/weapon_knight_sword.png", "Schwert");
+
+
+        staff = new Staff(painter, batch, "item/weapon_green_magic_staff.png", "Zauberstab");
+        shield = new Shield(painter, batch, "item/shield4.png", "Schild");
+        healthPotion = new HealthPotion(painter, batch,"item/flask_big_red.png", "Lebenstrank");
+        manaPotion = new ManaPotion(painter, batch, "item/flask_big_blue.png", "Manatrank");
+
+
         // load the first level
         try {
             levelAPI.loadLevel();
@@ -38,6 +58,10 @@ public class MyGame extends MainController {
         camera.follow(hero);
         entityController.add(hero);
         entityController.add(sword);
+        entityController.add(staff);
+        entityController.add(shield);
+        entityController.add(healthPotion);
+        entityController.add(manaPotion);
         hudController.add(new Icon(hudPainter,hudBatch,new Point(10f,10f),"hud/ui_heart_full.png"));
         hudController.add(new Icon(hudPainter,hudBatch,new Point(170f,400f),"hud/inventar.png"));
     }
@@ -82,6 +106,10 @@ public class MyGame extends MainController {
         }
         hero.setLevel(levelAPI.getCurrentLevel());
         sword.setLevel(levelAPI.getCurrentLevel());
+        staff.setLevel(levelAPI.getCurrentLevel());
+        shield.setLevel(levelAPI.getCurrentLevel());
+        healthPotion.setLevel(levelAPI.getCurrentLevel());
+        manaPotion.setLevel(levelAPI.getCurrentLevel());
     }
 
     public static void main(String[] args) {

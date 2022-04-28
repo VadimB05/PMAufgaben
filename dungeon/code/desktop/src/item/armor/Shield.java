@@ -1,12 +1,10 @@
-package item.weapon;
+package item.armor;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import graphic.Painter;
 import item.Items;
-import tools.Point;
 
-public class Sword extends Weapons {
-
+public class Shield extends Armor {
 
     /**
      * An object in the dungeon that can be drawn
@@ -15,15 +13,9 @@ public class Sword extends Weapons {
      * @param batch       SpriteBatch to draw on
      * @param texturePath
      */
-
-    public Sword(Painter painter, SpriteBatch batch, String texturePath, String name) {
+    public Shield(Painter painter, SpriteBatch batch, String texturePath, String name) {
         super(painter, batch, texturePath, name);
 
-
-
-
-        setDamage(20);
-
+        setDefense(2);
     }
-
 }
