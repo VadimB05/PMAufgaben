@@ -29,7 +29,7 @@ public abstract class Items extends Entity {
     }
 
     public void draw() {
-        getPainter().draw(getTexturePath(), getPosition(), getBatch());
+        getPainter().drawWithScaling(0.5f,1f, getTexturePath(), getPosition(), getBatch());
     }
 
     @Override
@@ -44,7 +44,7 @@ public abstract class Items extends Entity {
 
     public void setLevel(Level level){
         currentLevel = level;
-        position = level.getStartTile().getCoordinate().toPoint();
+        position = level.getRandomRoom().getRandomFloorTile().getCoordinate().toPoint();
     }
 
 
