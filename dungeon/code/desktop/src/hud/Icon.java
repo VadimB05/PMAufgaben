@@ -31,4 +31,5 @@ public class Icon extends HUDElement {
     public String getTexturePath() {
         return texturePath;
     }
+
 }

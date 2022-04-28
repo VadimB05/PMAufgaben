@@ -8,20 +8,22 @@ import tools.Point;
 
 public abstract class Items extends Entity {
     private Painter painter;
-    public String texturePath;
-    public Point position;
+    protected String texturePath;
+    protected Point position;
 
-    private Level currentLevel;
+    protected String name;
+
 
     /**
      * An object in the dungeon that can be drawn
      *
      * @param batch SpriteBatch to draw on
      */
-    public Items(Painter painter, SpriteBatch batch, String texturePath) {
+    public Items(Painter painter, SpriteBatch batch, String texturePath, String name) {
         super(painter, batch);
         this.painter = painter;
         this.texturePath = texturePath;
+        this.name = name;
     }
 
     public Painter getPainter() {
@@ -29,7 +31,7 @@ public abstract class Items extends Entity {
     }
 
     public void draw() {
-        getPainter().draw(getTexturePath(), getPosition(), getBatch());
+        getPainter().drawWithScaling(0.5f,1f, getTexturePath(), getPosition(), getBatch());
     }
 
     @Override
@@ -43,9 +45,11 @@ public abstract class Items extends Entity {
     }
 
     public void setLevel(Level level){
-        currentLevel = level;
+        //position = level.getRandomRoom().getRandomFloorTile().getCoordinate().toPoint();
         position = level.getStartTile().getCoordinate().toPoint();
     }
 
-
+    public String getName() {
+        return name;
+    }
 }
