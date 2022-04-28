@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Color;
 import controller.MainController;
 import hud.Icon;
 import item.potion.HealthPotion;
+import item.potion.ManaPotion;
+import item.weapon.Staff;
 import item.weapon.Sword;
 import level.generator.LevelLoader.LevelLoader;
 import level.generator.dungeong.graphg.NoSolutionException;
@@ -15,7 +17,9 @@ public class MyGame extends MainController {
     private Label levelLabel;
     private MyHero hero;
     private Sword sword;
+    private Staff staff;
     private HealthPotion healthPotion;
+    private ManaPotion manaPotion;
     private int levelCounter = 0;
 
 
@@ -25,7 +29,10 @@ public class MyGame extends MainController {
         levelAPI.setGenerator(new LevelLoader());
         hero = new MyHero(painter,batch);
         sword = new Sword(painter,batch,"item/weapon_knight_sword.png");
+        staff = new Staff(painter, batch, "item/weapon_green_magic_staff.png");
         healthPotion = new HealthPotion(painter, batch,"item/flask_big_red.png");
+        manaPotion = new ManaPotion(painter, batch, "item/flask_big_blue.png");
+
         // load the first level
         try {
             levelAPI.loadLevel();
@@ -37,7 +44,9 @@ public class MyGame extends MainController {
         camera.follow(hero);
         entityController.add(hero);
         entityController.add(sword);
+        entityController.add(staff);
         entityController.add(healthPotion);
+        entityController.add(manaPotion);
         hudController.add(new Icon(hudPainter,hudBatch,new Point(10f,10f),"hud/ui_heart_full.png"));
         hudController.add(new Icon(hudPainter,hudBatch,new Point(225f,430f),"hud/inventar.png"));
     }
@@ -67,7 +76,9 @@ public class MyGame extends MainController {
         }
         hero.setLevel(levelAPI.getCurrentLevel());
         sword.setLevel(levelAPI.getCurrentLevel());
+        staff.setLevel(levelAPI.getCurrentLevel());
         healthPotion.setLevel(levelAPI.getCurrentLevel());
+        manaPotion.setLevel(levelAPI.getCurrentLevel());
     }
 
     public static void main(String[] args) {
