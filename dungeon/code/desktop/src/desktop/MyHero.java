@@ -17,6 +17,7 @@ public class MyHero extends Animatable {
     private Point position;
     private Level currentLevel;
     private boolean isLookingLeft = false;
+    private int mana,health,defense,strength,maxMana,maxHealth;
 
     public MyHero(Painter painter, SpriteBatch batch){
         super(painter, batch);
@@ -45,6 +46,14 @@ public class MyHero extends Animatable {
         runAnimationLeftList.add("character/knight/knight_m_run_anim_mirrored_f3.png");
         runAnimationLeft = new Animation(runAnimationLeftList,8);
         animation = idleAnimationRight;
+
+        maxHealth = 60;
+        maxMana = 20;
+
+        health = 30;
+        mana = 10;
+        defense = 0;
+        strength = 4;
     }
 
 
@@ -54,11 +63,12 @@ public class MyHero extends Animatable {
         position = level.getStartTile().getCoordinate().toPoint();
     }
 
+    /** Update our heroes position on the display when the position gets changed*/
     @Override
     public void update() {
         Point newPosition = new Point(this.position);
-        float movementSpeed = 0.1f;
-        
+        float movementSpeed = 0.2f;
+
         if(Gdx.input.isKeyPressed(Input.Keys.W)){
             newPosition.y += movementSpeed;
             isRunningLeft();
@@ -101,6 +111,7 @@ public class MyHero extends Animatable {
         return animation;
     }
 
+    /** Change our animation */
     public void isRunningLeft(){
         if(isLookingLeft){
             animation = runAnimationLeft;
@@ -108,5 +119,46 @@ public class MyHero extends Animatable {
         else{
             animation = runAnimationRight;
         }
+    }
+
+    public void setDefense(int defense) {
+        this.defense = defense;
+    }
+
+    public void setStrength(int strength) {
+        this.strength = 4;
+        this.strength += strength;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public int getDefense() {
+        return defense;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public int getMana() {
+        return mana;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public int getMaxMana() {
+        return maxMana;
+    }
+
+    public void setHealth(int health) {
+        this.health += health;
+    }
+
+    public void setMana(int mana) {
+        this.mana += mana;
     }
 }

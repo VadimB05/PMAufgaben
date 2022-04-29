@@ -12,7 +12,7 @@ public class SwordTest extends MainController {
 
     @Before
     public void setS(){
-        s = new Sword(painter,batch,"item/weapon_knight_sword.png", "Schwert");
+        s = new Sword(painter,batch,"item/weapon_knight_sword.png", "Schwert",4);
     }
 
     /** Lässt sich ein Sword anlegen und funktioniert die Methode <code>Sword#getName()</code>?*/

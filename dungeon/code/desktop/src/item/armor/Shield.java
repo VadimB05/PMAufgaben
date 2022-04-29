@@ -13,9 +13,7 @@ public class Shield extends Armor {
      * @param batch       SpriteBatch to draw on
      * @param texturePath
      */
-    public Shield(Painter painter, SpriteBatch batch, String texturePath, String name) {
-        super(painter, batch, texturePath, name);
-
-        setDefense(2);
+    public Shield(Painter painter, SpriteBatch batch, String texturePath, String name, int defense) {
+        super(painter, batch, texturePath, name, defense);
     }
 }

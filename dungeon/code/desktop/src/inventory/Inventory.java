@@ -4,6 +4,7 @@ package inventory;
 import controller.MainController;
 import hud.Icon;
 import item.Items;
+import item.potion.Potion;
 import logging.InventoryFormatter;
 import tools.Point;
 
@@ -25,6 +26,10 @@ public class Inventory {
         logger.setUseParentHandlers(false);
     }
 
+    /** add items to our inventory and set our inventory to a maximum size of 4
+     *
+     * @param items, which we are adding to the inventory ArrayList
+     * */
     public boolean addToInventory(Items items){
         if(inventory.size()<4){
             inventory.add(items);
@@ -36,6 +41,7 @@ public class Inventory {
         return false;
     }
 
+    /** Show what is in our inventory and which button we have to hit, to use or drop the item*/
     public void getInventoryItems(){
         StringBuilder inventoryItems = new StringBuilder();
         inventoryItems.append("Das Inventar beinhaltet: ");
@@ -44,7 +50,16 @@ public class Inventory {
                 if(i>=1){
                     inventoryItems.append(",");
                 }
-                inventoryItems.append(" ").append(inventory.get(i).getName());
+                inventoryItems.append(" ").append(inventory.get(i).getName()).append(" (").append(i+1).append(" zum Aktivieren und ");
+                if(i==0){
+                    inventoryItems.append("6 zum fallen lassen)");
+                }else if(i==1){
+                    inventoryItems.append("7 zum fallen lassen)\n");
+                }else if(i==2){
+                    inventoryItems.append("8 zum fallen lassen)");
+                }else{
+                    inventoryItems.append("9 zum fallen lassen)");
+                }
             }
             logger.info(inventoryItems.toString());
         }else {
@@ -52,8 +67,17 @@ public class Inventory {
         }
     }
 
+    /** return the inventory ArrayList */
     public ArrayList<Items> getInventoryArrayList(){
         return inventory;
+    }
+
+    /** remove an item from the inventory ArrayList
+     *
+     * @param position , position to remove the item from the inventory ArrayList
+     * */
+    public void dropItemInventory(int position){
+        inventory.remove(position);
     }
 
 }

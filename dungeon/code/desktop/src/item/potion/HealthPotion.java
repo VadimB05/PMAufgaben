@@ -14,9 +14,8 @@ public class HealthPotion extends Potion {
      * @param texturePath
      */
     public HealthPotion(Painter painter, SpriteBatch batch, String texturePath, String name) {
-        super(painter, batch, texturePath, name);
+        super(painter, batch, texturePath, name,10,0);
 
-        setHeal(20);
     }
 
 

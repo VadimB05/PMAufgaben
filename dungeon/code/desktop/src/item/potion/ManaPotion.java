@@ -14,8 +14,7 @@ public class ManaPotion extends Potion{
      * @param texturePath
      */
     public ManaPotion(Painter painter, SpriteBatch batch, String texturePath, String name) {
-        super(painter, batch, texturePath, name);
+        super(painter, batch, texturePath, name,0,5);
 
-        setMana(20);
     }
 }

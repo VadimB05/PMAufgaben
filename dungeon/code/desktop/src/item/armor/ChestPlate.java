@@ -13,9 +13,7 @@ public class ChestPlate extends Armor{
      * @param texturePath
      * @param name
      */
-    public ChestPlate(Painter painter, SpriteBatch batch, String texturePath, String name) {
-        super(painter, batch, texturePath, name);
-
-        setDefense(10);
+    public ChestPlate(Painter painter, SpriteBatch batch, String texturePath, String name, int defense) {
+        super(painter, batch, texturePath, name, defense);
     }
 }

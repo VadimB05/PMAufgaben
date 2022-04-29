@@ -6,30 +6,33 @@ import item.Items;
 
 
 public abstract class Weapons extends Items {
+    protected Painter painter;
     protected int damage;
-    protected int strength;
-    protected int durability;
 
     /**
      * An object in the dungeon that can be drawn
      *
-     * @param painter
+     * @param painter   Painter that draws this object
      * @param batch       SpriteBatch to draw on
-     * @param texturePath
+     * @param texturePath   Path of the texture
+     * @param name  Name of the Object
      */
-    public Weapons(Painter painter, SpriteBatch batch, String texturePath, String name) {
-        super(painter, batch, texturePath, name);
-    }
-
-    public void setDamage(int damage) {
+    public Weapons(Painter painter, SpriteBatch batch, String texturePath, String name, int damage) {
+        super(painter, batch, texturePath, name,0,0);
+        this.painter = painter;
         this.damage = damage;
     }
 
-    public void setStrength(int strength) {
-        this.strength = strength;
+    public int getDamage() {
+        return damage;
     }
 
-    public void setDurability(int durability) {
-        this.durability = durability;
+
+    public Painter getPainter() {
+        return painter;
+    }
+
+    public void draw() {
+        getPainter().drawWithScaling(0.5f,1f, getTexturePath(), getPosition(), getBatch());
     }
 }

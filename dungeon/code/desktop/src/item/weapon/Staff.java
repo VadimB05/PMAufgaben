@@ -13,10 +13,8 @@ public class Staff extends Weapons {
      * @param batch       SpriteBatch to draw on
      * @param texturePath
      */
-    public Staff(Painter painter, SpriteBatch batch, String texturePath, String name) {
-        super(painter, batch, texturePath, name);
-
-        setDamage(5);
+    public Staff(Painter painter, SpriteBatch batch, String texturePath, String name, int damage) {
+        super(painter, batch, texturePath, name, damage);
     }
 
 }

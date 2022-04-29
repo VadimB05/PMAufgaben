@@ -5,35 +5,34 @@ import graphic.Painter;
 import item.Items;
 
 public abstract class Armor extends Items {
+    protected Painter painter;
     protected int defense;
-    protected int speed;
-    protected int health;
-    protected int mana;
 
     /**
      * An object in the dungeon that can be drawn
      *
-     * @param painter
+     * @param painter   Painter that draws this object
      * @param batch       SpriteBatch to draw on
-     * @param texturePath
+     * @param texturePath   Path of the texture
+     * @param name  Name of the Object
      */
-    public Armor(Painter painter, SpriteBatch batch, String texturePath, String name) {
-        super(painter, batch, texturePath, name);
-    }
-
-    public void setDefense(int defense) {
+    public Armor(Painter painter, SpriteBatch batch, String texturePath, String name,int defense) {
+        super(painter, batch, texturePath, name,0,0);
+        this.painter = painter;
         this.defense = defense;
     }
 
-    public void setSpeed(int speed) {
-        this.speed = speed;
+    public int getDefense() {
+        return defense;
     }
 
-    public void setHealth(int health) {
-        this.health = health;
+
+    public Painter getPainter() {
+        return painter;
     }
 
-    public void setMana(int mana) {
-        this.mana = mana;
+    @Override
+    public void draw() {
+        getPainter().drawWithScaling(1f,1f, getTexturePath(), getPosition(), getBatch());
     }
 }
