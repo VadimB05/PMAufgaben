@@ -292,7 +292,11 @@ public class MyGame extends MainController {
         }
     }
 
-    /** Dropped item set to picked up false, dropped at heroes position and removed from HUD*/
+    /** Dropped item set to picked up false, dropped at heroes position and removed from HUD
+     *
+     * Method to not pick up weapons, shields and chestplates into inventory
+     *
+     * */
 //    private void changeItem(Items items, Icon equipIcon, Icon removeIcon){
 //        hudController.add(equipIcon);
 //        if(items!=null){

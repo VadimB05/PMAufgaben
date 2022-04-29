@@ -43,10 +43,9 @@ HUD:
 Das HUD soll mithilfe des Quick-Start Guides implementiert und für Zukünftige Aufgaben auf den aktuellsten Stand gehalten werden.
 
 Items:
-Wir haben für alle Items eine eigene Klasse erstellt und eine Abstrakte Klasse von der dann geerbt wird.
+Es sollen Items mit der Veerbungshirarchie erstellt werden. Über Generiks werden diese dann ins Inventar gepackt.
 
-
-Inventar:
+Inventar: Es soll ein Inventar erstellt werden, welches mit dem HUD zusammen arbeitet und die Items aus dem Inventar beim HUD ausgibt.
 
 
 Monster:
@@ -74,6 +73,8 @@ Items:
   Damit Code nicht zu oft doppelte vorkommt, war das sehr hilfreich und hat uns arbeit abgenommen.
 
 Inventar:
+Inventar ist eine Liste von Items
+die Liste soll mit Generiks arbeiten
 
 
 Monster:
@@ -103,6 +104,12 @@ Die Items haben auch eigene Werte, wie Verteidigung, Angriff und Geschwindigkeit
 
 
 Inventar:
+28.04.2022 - 29.04.2022 (11 Stunden) 
+Wir haben eine Liste erstellt die nur Objekte vom Typ Items aufbewahren kann.
+Anschließend haben wir die Liste so bearbeitet, dass Items hinzugefügt und herausgenommen werden können.
+Die herausgenommenen Items mussten wieder auf dem Boden angezeigt werden.
+Alle Items sollten per Tastendruck in der Konsole angezeigt werden.
+
 
 
 Monster:
@@ -144,6 +151,9 @@ Items:
 Items war im großen und ganzen nicht all zu Schwer im nachhinein zu implimentieren aber es hat schon viel Zeit gekostet sich Gedanken darüber zu machen, wie man das ganze genau angeht.
 
 Inventar:
+Für das Inventar hat alles funktioniert, nur hat es eine längere Zeit in Anspruch genommen als gewünscht und erwartet.
+Kleine Probleme die beim Kopieren enstanden sind und ettlich Minuten gekostet haben.
+Manche Probleme durch Zufall bemerkt, andere durch die Fehlerausgabe. Debugger und Testfälle haben uns auch gut geholfen.
 
 
 Monster:
