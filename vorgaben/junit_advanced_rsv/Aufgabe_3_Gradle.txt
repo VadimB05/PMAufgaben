@@ -1,0 +1,63 @@
+Buildscripte: Gradle
+
+Gradle Skripts sind in der Groovy Sprache geschrieben. Sie heißen immer "build.gradle"
+Sie bestehen aus mehreren Abschnitten, welche durch ihren Namen eingeleitet werden, gefolgt von geschweiften Klammern und Eigenschaften des Abschnittes innerhalb dieser Klammern.
+
+Beispiel {
+	eigenschaft0
+	eigenschaft1
+}
+
+
+Erklärung der Abschnitte in der gegebenen Datei:
+
+plugins:
+Hier werden grundsätzliche Bausteine für das Build Skript und ihre dazugehörigen Tasks aktiviert, damit sie im restlichen Skript aufgerufen werden können.
+
+ext:
+Kurz für "project.ext". Definiert weitere Eigenschaften für das Projekt.
+
+repositieries:
+Repos, von denen externe Bibliotheken heruntergeladen werden sollen.
+
+dependencies:
+Spezifische externe Bibliotheken werden hier eingebunden. Es muss der richtige String für die Bibliothek eingegeben werden.
+
+test:
+Testen des Codes. Falls nötig, werden die Testklassen auch hier kompiliert
+
+checkstyle:
+Unterstützt bei der Einhaltung eines konsistenten Coding Styles.
+
+spotbugs:
+Führt quality checks aus und berichtet diese dem Programmierer.
+
+spotless:
+Mächtiges plug in, dass bei der allgemeinen Formatierung hilft.
+
+java:
+	withJavadocJar(): integriert und initialisiert Javadoc für das Projekt.
+	withSourcesJar(): Verpackt den Source Code in ein eigenes seperates Package.
+	
+signing:
+Erlaubt das digitale "unterschreiben" von Dateien und Artefakten. Nützlich für die Feststellung des Authors.
+
+javadoc:
+Optionen zur Konfuguration von Javadoc.
+
+task buildJavadocZip:
+Erstellt eine komprimierte Javadoc für das Projekt.
+
+application:
+Hier wird die Hauptklasse des Programmes angegeben.
+
+
+
+Erklärung von Tasks aus der Vorlesung:
+
+gradle init: Projekt wird initialisiert
+gradle tasks: überblick über alle Tasks
+gradle compileJava / gradle classes: Kompilieren von Code / einzelnen Klassen
+gradle test: testen des Codes. Falls nötig, werden die Testklassen auch hier kompiliert
+gradle run: ausführen der nötigen Tasks und des Codes
+gradle clean: Speicher wird gesäubert und wieder freigeräumt
