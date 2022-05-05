@@ -10,9 +10,10 @@ import java.util.ArrayList;
 public abstract class Window {
     protected Texture window;
     protected final Texture background;
-    protected int xOffset;
-    protected int yOffset;
 
+    /**
+     * Creates a window and background window that is see through
+     * */
     public Window(int width, int height, Color color) {
         Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
         pixmap.setColor(color);
