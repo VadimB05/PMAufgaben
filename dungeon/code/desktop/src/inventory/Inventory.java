@@ -1,24 +1,30 @@
 package inventory;
 
 
-import controller.MainController;
-import hud.Icon;
 import item.Items;
-import item.potion.Potion;
 import logging.InventoryFormatter;
-import tools.Point;
 
 import java.util.ArrayList;
 import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Inventory {
-    Logger logger = Logger.getLogger(Inventory.class.getName());
-    ConsoleHandler handlerInventory = new ConsoleHandler();
-    ArrayList<Items> inventory = new ArrayList<>();
+    Logger logger;
+    ConsoleHandler handlerInventory;
+    ArrayList<Items> inventory;
 
     public Inventory() {
+        logger = Logger.getLogger(this.getClass().getName());
+        handlerInventory = new ConsoleHandler();
+
+        for(Handler handler : logger.getHandlers()){
+            logger.removeHandler(handler);
+        }
+
+        inventory = new ArrayList<>();
+
         handlerInventory.setLevel(Level.INFO);
         handlerInventory.setFormatter(new InventoryFormatter("Inventory Logger"));
         logger.setLevel(Level.INFO);

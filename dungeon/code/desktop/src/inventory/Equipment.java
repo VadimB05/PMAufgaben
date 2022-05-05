@@ -7,18 +7,27 @@ import item.armor.Shield;
 import item.weapon.Weapons;
 import logging.EquipmentFormatter;
 import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Equipment {
-    Logger logger = Logger.getLogger(Equipment.class.getName());
-    ConsoleHandler handlerEquipment = new ConsoleHandler();
+    Logger logger;
+    ConsoleHandler handlerEquipment;
     ChestPlate chestPlate = null;
     Shield shield = null;
     Weapons weapons = null;
     private int defense, strength ;
 
     public Equipment() {
+        logger = Logger.getLogger(Equipment.class.getName());
+
+        handlerEquipment = new ConsoleHandler();
+
+        for(Handler handler : logger.getHandlers()){
+            logger.removeHandler(handler);
+        }
+
         handlerEquipment.setLevel(Level.INFO);
         handlerEquipment.setFormatter(new EquipmentFormatter("Inventory Logger"));
         logger.setLevel(Level.INFO);

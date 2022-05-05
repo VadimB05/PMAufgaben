@@ -32,6 +32,7 @@ import trap.Trap;
 
 import java.util.ArrayList;
 import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,17 +61,17 @@ public class MyGame extends MainController {
 
     private Texture gameOverTexture;
 
-    boolean paused = false;
+    boolean paused;
 
     private SpriteBatch myBatch;
 
     Window window;
 
     Inventory inventory;
-    Equipment equipment = new Equipment();
+    Equipment equipment;
 
-    Logger logger = Logger.getLogger(MyGame.class.getName());
-    ConsoleHandler handlerMain = new ConsoleHandler();
+    Logger logger;
+    ConsoleHandler handlerMain;
 
 
 
@@ -82,6 +83,17 @@ public class MyGame extends MainController {
 
         window = new GameOverWindow();
         gameOverTexture = new Texture("hud/gameOver.png");
+
+        equipment = new Equipment();
+
+        logger = Logger.getLogger(this.getClass().getName());
+
+        for(Handler handler : logger.getHandlers()){
+            logger.removeHandler(handler);
+        }
+
+        logger.setUseParentHandlers(false);
+        handlerMain = new ConsoleHandler();
 
         handlerMain.setLevel(Level.INFO);
         handlerMain.setFormatter(new StandardFormatter("Main Logger"));
@@ -155,6 +167,8 @@ public class MyGame extends MainController {
 
         //hudController.add(new Icon(hudPainter,hudBatch,new Point(170f,400f),"hud/inventar.png"));
         hudController.add(new Icon(hudPainter,hudBatch,new Point(490f,330f),"hud/equipment.png"));
+
+        paused = false;
     }
 
     @Override
@@ -168,6 +182,8 @@ public class MyGame extends MainController {
         dropItemFromInventory();
 
         switchHUDHeart();
+
+        removeHealth();
 
     }
 
@@ -185,10 +201,10 @@ public class MyGame extends MainController {
         }
 
         if(spikes.collide(hero)){
-            hero.setHealth(spikes.getDamage());
+            hero.addHealth(spikes.getDamage());
         }
         if(hole.collide(hero)){
-            hero.setHealth(hole.getDamage());
+            hero.addHealth(hole.getDamage());
         }
 
         switchWeapons();
@@ -201,13 +217,7 @@ public class MyGame extends MainController {
 
         getInventoryItems();
 
-
-
-
-
-
-
-
+        gameOver();
     }
 
     /**
@@ -511,9 +521,6 @@ public class MyGame extends MainController {
         if(inventory.getInventoryArrayList().get(position).getClass().equals(manaPotion.getClass())){
             if(hero.getMaxMana()- hero.getMana()!=0) {
                 logger.info(inventory.getInventoryArrayList().get(position).getName()+" verwendet.");
-
-
-
                 hero.setMana(inventory.getInventoryArrayList().get(position).useItem(hero));
                 hudController.remove(manaPotionIcon);
 
@@ -524,13 +531,9 @@ public class MyGame extends MainController {
         }else if(inventory.getInventoryArrayList().get(position).getClass().equals(healthPotion.getClass())){
             if(hero.getMaxHealth()- hero.getHealth()!=0) {
                 logger.info(inventory.getInventoryArrayList().get(position).getName()+" verwendet.");
-
-                
                 //hudController.remove(healthPotionIcon);
-
-                hero.setHealth(inventory.getInventoryArrayList().get(position).useItem(hero));
+                hero.addHealth(inventory.getInventoryArrayList().get(position).useItem(hero));
                 hudController.remove(healthPotionIcon);
-
                 inventory.dropItemInventory(position);
             }else{
                 logger.info(inventory.getInventoryArrayList().get(position).getName()+" konnte nicht verwendet werden. Leben voll!");

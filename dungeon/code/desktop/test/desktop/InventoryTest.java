@@ -37,8 +37,8 @@ public class InventoryTest extends MainController {
     /** Laesst sich ein Manatrank aus dem Inventar benutzen?*/
     @Test
     public void testManaPotion(){
-        myMana += inventory1.getInventoryArrayList().get(0).setMana(myHero);
-        myHealth += inventory1.getInventoryArrayList().get(0).setHeal(myHero);
+        myMana += inventory1.getInventoryArrayList().get(0).useItem(myHero);
+        myHealth += inventory1.getInventoryArrayList().get(0).useItem(myHero);
         assertEquals(myMana,15);
         assertEquals(myHealth,30);
     }
@@ -46,8 +46,8 @@ public class InventoryTest extends MainController {
     /** Laesst sich ein Lebenstrank aus dem Inventar benutzen?*/
     @Test
     public void testHealthPotion(){
-        myMana += inventory1.getInventoryArrayList().get(1).setMana(myHero);
-        myHealth += inventory1.getInventoryArrayList().get(1).setHeal(myHero);
+        myMana += inventory1.getInventoryArrayList().get(1).useItem(myHero);
+        myHealth += inventory1.getInventoryArrayList().get(1).useItem(myHero);
         assertEquals(myMana,10);
         assertEquals(myHealth,40);
     }
