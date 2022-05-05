@@ -46,6 +46,7 @@ GameOver:
 
 
 Monster:
+Die Monster müssen in zufälliger Zahl generiert werden und mit jedem level vielzähliger.
 
 
 # Ansatz und Modellierung
@@ -68,7 +69,9 @@ GameOver:
 
 
 Monster:
-
+Ich guckte über alle stellen in der myGame Klasse an welcher Monster erzeugt und in das Level gesetzt werden.
+Ich hatte eine ungefäre Ahnung, dass die zufällige Generierung an diesen Stellen stattfinden muss.
+Durch zusammenfassen dieser Codestellen in eigenständige logische Abschnitte, wurde mir das finden der eigentlichen Lösung vereinfacht.
 
 # Umsetzung
 
@@ -88,6 +91,13 @@ Wenn der Held auf die Falle tritt, kommt es zur kollision und er erleidet Schade
 GameOver:
 
 Monster:
+05.05.2022 weiter implementiert(3 Stunden)
+Die meiste Arbeit wurde bereits im vorherigen Tagebucheintrag erwähnt.
+Das generieren einer zufälligen Anzahl von Objekten erzeugte einige Probleme.
+Größtenteils fiel es mir schwer nachzuvollziehen, wie genau man auf spezifische instanzen von zufällig generierten Objekten zugreifen konnte.
+Die Lösung fand sich auf StackOverflow, man läd die Objekte bereits beim erzeugen in eine Liste und kann so auf einzelne Elemente der Liste zugreifen.
+Um die Monster in späteren Level vielzähliger zu machen, addierte ich die zufällige Zahl zu der Zahl des aktuellen Levels.
+
 
 
 # Postmortem
@@ -108,3 +118,5 @@ GameOver:
 
 
 Monster:
+Die Die Aufgabe hatte mir zwar schwierigkeiten bereitet, durch ihr lösen konnte ich jedoch einiges für die Zukunft lernen.
+Erst relevante Codeabschnitte zusammenzufassen stellte sich ebenfalls als gute Technik heraus.
