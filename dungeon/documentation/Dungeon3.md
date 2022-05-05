@@ -1,5 +1,5 @@
 ---
-title: "Lerntagebuch zur Bearbeitung der Dungeon-Aufgaben HUD"
+title: "Lerntagebuch zur Bearbeitung der Dungeon-Aufgaben Fallen, Monster und GameOver"
 author:
 -   "Oskar Schaubert (oskar.schaubert@fh-bielefeld.de)"
 -   "Vadim Balysev (vadim.balysev@fh-bielefeld.de)"
@@ -42,8 +42,7 @@ Bitte hier die zu lösende Aufgabe kurz in eigenen Worten beschreiben.
 Fallen: 
 2 Fallen Implementiert. Zum einen Stacheln die eine Animation haben und ein Loch.
 
-GameOver:
-
+GameOver: Eine Nachricht "Game Over", die angezeigt wir sobald unser Held stirbt und die Funktion das Spiel neustarten zu können.
 
 Monster:
 Die Monster müssen in zufälliger Zahl generiert werden und mit jedem level vielzähliger.
@@ -65,7 +64,9 @@ Es soll eine Abstrakte Klasse geben für die Traps, damit die Funktionen nicht m
 Man muss drauf achten das man den Damage Wert z.B. nicht in der Trap Klasse bestimmt, sondern
 in den eigenen individuellen Trap Klassen, damit nicht alle den selben Wert besitzen.
 
-GameOver:
+GameOver: Es sollen Fenster mit SpriteBatch.draw() gemalt werden. Außerdem soll eine Funktion erstellt werden, welches das Spiel pausiert wenn der Spieler stirb
+und das Fenster Game Over soll angezeigt werden. Mit einem Knopfdruck soll dann das Spiel neugestartet werden. Es muss darauf geachtet werden, dass beim Neustart alles
+auf 0 gesetzt wird.
 
 
 Monster:
@@ -89,6 +90,12 @@ Fallen:
 Wenn der Held auf die Falle tritt, kommt es zur kollision und er erleidet Schaden.
 
 GameOver:
+05.05.2022 implementiert (7 Stunden)
+Abstrakte Klasse Window erstellt, GameOverWindow Klasse erstellt die von Window erbt
+GameOverWindow wird mit Spritebatch.draw() gezeichnet. Eine vorgefertigte Texture mit Game Over wird auch gezeichnet.
+Wenn das Leben unter 0 fällt, sollen die Fenster und Texturen gezeichnet und ein pause boolean auf true gesetzt werden.
+Mit dem pause boolean gehen wir sicher, dass alles pausiert ist, keine Angriffe oder Bewegung ausgeführt werden kann.
+
 
 Monster:
 05.05.2022 weiter implementiert(3 Stunden)
@@ -114,7 +121,9 @@ Fallen:
 Anfang hat es Probleme bei der Animation gegeben aber dies wurde schnell gelöst. Der Held wurde unter der Falle animiert, was nicht richtig war.
 Wir haben den Helden ganz nach unten bei den entityController.add(hero); gepackt, so der er immer an erster stelle steht über allem.
 
-GameOver:
+GameOver:SpriteBatch.draw() hat zuerst nicht funktioniert, da diese falsch benutzt. Die Texturen wurden zu groß auf einer anderen Stelle als gewollt gezeichnet
+somit sah es aus als ob nihcts gezeichnet wir. Da musste man ein neues SpriteBatch erstellen und die methoden als letztes zeichnen lassen, damit diese
+nicht hinter den anderen Grafiken versteckt sind.
 
 
 Monster:
