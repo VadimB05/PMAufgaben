@@ -68,21 +68,7 @@ public abstract class Items extends Entity {
         this.pickedUp = pickedUp;
     }
 
-    public int setHeal(MyHero myHero) {
-        if(myHero.getMaxHealth()-myHero.getHealth()>health){
-            return health;
-        }
-        else {
-            return myHero.getMaxHealth()-myHero.getHealth();
-        }
-    }
 
-    public int setMana(MyHero myHero) {
-        if(myHero.getMaxMana()-myHero.getMana()>mana){
-            return mana;
-        }
-        else {
-            return myHero.getMaxMana()-myHero.getMana();
-        }
-    }
+    public abstract int useItem(MyHero myHero);
+
 }
