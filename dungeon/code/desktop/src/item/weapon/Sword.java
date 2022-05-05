@@ -1,6 +1,7 @@
 package item.weapon;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import desktop.MyHero;
 import graphic.Painter;
 import item.Items;
 import tools.Point;
@@ -19,5 +20,8 @@ public class Sword extends Weapons {
     public Sword(Painter painter, SpriteBatch batch, String texturePath, String name, int damage) {
         super(painter, batch, texturePath, name, damage);
     }
-
+    @Override
+    public int useItem(MyHero myHero) {
+        return 0;
+    }
 }

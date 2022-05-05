@@ -34,4 +34,5 @@ public abstract class Potion extends Items {
     public void draw() {
         getPainter().drawWithScaling(1f,1f, getTexturePath(), getPosition(), getBatch());
     }
+
 }

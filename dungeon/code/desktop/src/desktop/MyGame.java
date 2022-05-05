@@ -26,6 +26,9 @@ import level.generator.dungeong.graphg.NoSolutionException;
 import logging.StandardFormatter;
 import tools.Point;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import trap.Hole;
+import trap.Spikes;
+import trap.Trap;
 
 import java.util.ArrayList;
 import java.util.logging.ConsoleHandler;
@@ -50,6 +53,8 @@ public class MyGame extends MainController {
         healthPotionIcon,manaPotionIcon, fullHeart, halfHeart, emptyHeart;
     private HealthPotion healthPotion;
     private ManaPotion manaPotion;
+    private Spikes spikes;
+    private Hole hole;
     private int levelCounter = 0;
     private int counterHUDInventory=1;
 
@@ -89,6 +94,9 @@ public class MyGame extends MainController {
 
         levelAPI.setGenerator(new LevelLoader());
         hero = new MyHero(painter,batch);
+        spikes = new Spikes(painter,batch);
+        hole = new Hole(painter,batch);
+
 
         sword = new Sword(painter,batch,"item/weapon_knight_sword.png", "Schwert",4);
         swordIcon = new Icon(hudPainter,hudBatch,new Point(515f,405f),sword.getTexturePath());
@@ -126,6 +134,9 @@ public class MyGame extends MainController {
             Gdx.app.exit();
         }
         camera.follow(hero);
+
+        entityController.add(spikes);
+        entityController.add(hole);
 
         entityController.add(shieldBlack);
         entityController.add(shieldMetall);
@@ -173,6 +184,13 @@ public class MyGame extends MainController {
             }
         }
 
+        if(spikes.collide(hero)){
+            hero.setHealth(spikes.getDamage());
+        }
+        if(hole.collide(hero)){
+            hero.setHealth(hole.getDamage());
+        }
+
         switchWeapons();
 
         switchShields();
@@ -183,9 +201,12 @@ public class MyGame extends MainController {
 
         getInventoryItems();
 
-        removeHealth();
 
-        gameOver();
+
+
+
+
+
 
     }
 
@@ -490,8 +511,12 @@ public class MyGame extends MainController {
         if(inventory.getInventoryArrayList().get(position).getClass().equals(manaPotion.getClass())){
             if(hero.getMaxMana()- hero.getMana()!=0) {
                 logger.info(inventory.getInventoryArrayList().get(position).getName()+" verwendet.");
-                hero.setMana(inventory.getInventoryArrayList().get(position).setMana(hero));
-                //hudController.remove(manaPotionIcon);
+
+
+
+                hero.setMana(inventory.getInventoryArrayList().get(position).useItem(hero));
+                hudController.remove(manaPotionIcon);
+
                 inventory.dropItemInventory(position);
             }else{
                 logger.info(inventory.getInventoryArrayList().get(position).getName()+" konnte nicht verwendet werden. Mana voll!");
@@ -499,8 +524,13 @@ public class MyGame extends MainController {
         }else if(inventory.getInventoryArrayList().get(position).getClass().equals(healthPotion.getClass())){
             if(hero.getMaxHealth()- hero.getHealth()!=0) {
                 logger.info(inventory.getInventoryArrayList().get(position).getName()+" verwendet.");
-                hero.addHealth(inventory.getInventoryArrayList().get(position).setHeal(hero));
+
+                
                 //hudController.remove(healthPotionIcon);
+
+                hero.setHealth(inventory.getInventoryArrayList().get(position).useItem(hero));
+                hudController.remove(healthPotionIcon);
+
                 inventory.dropItemInventory(position);
             }else{
                 logger.info(inventory.getInventoryArrayList().get(position).getName()+" konnte nicht verwendet werden. Leben voll!");
@@ -571,7 +601,12 @@ public class MyGame extends MainController {
 
         healthPotion.setLevel(levelAPI.getCurrentLevel());
         manaPotion.setLevel(levelAPI.getCurrentLevel());
+
+        spikes.setLevel(levelAPI.getCurrentLevel());
+        hole.setLevel(levelAPI.getCurrentLevel());
+
     }
+
 
     public static void main(String[] args) {
         // start the game

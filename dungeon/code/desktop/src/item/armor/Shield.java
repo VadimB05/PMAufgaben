@@ -1,6 +1,7 @@
 package item.armor;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import desktop.MyHero;
 import graphic.Painter;
 import item.Items;
 
@@ -15,5 +16,9 @@ public class Shield extends Armor {
      */
     public Shield(Painter painter, SpriteBatch batch, String texturePath, String name, int defense) {
         super(painter, batch, texturePath, name, defense);
+    }
+    @Override
+    public int useItem(MyHero myHero) {
+        return 0;
     }
 }

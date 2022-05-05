@@ -4,6 +4,7 @@ import basiselements.Animatable;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import graphic.Animation;
 import graphic.Painter;
 import level.elements.Level;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyHero extends Animatable {
+    private final Rectangle hitBox;
     private Animation animation, runAnimationRight,runAnimationLeft,idleAnimationRight, idleAnimationLeft;
     private Point position;
     private Level currentLevel;
@@ -56,6 +58,7 @@ public class MyHero extends Animatable {
         mana = 10;
         defense = 0;
         strength = 4;
+        hitBox = new Rectangle();
     }
 
 
@@ -63,6 +66,7 @@ public class MyHero extends Animatable {
     public void setLevel(Level level){
         currentLevel = level;
         position = level.getStartTile().getCoordinate().toPoint();
+        hitBox.set(position.x,position.y,1f,1f);
     }
 
     /** Update our heroes position on the display when the position gets changed*/
@@ -101,6 +105,8 @@ public class MyHero extends Animatable {
         }
         if(currentLevel.getTileAt(newPosition.toCoordinate()).isAccessible()){
             this.position = newPosition;
+            this.hitBox.x = this.position.x;
+            this.hitBox.y = this.position.y;
         }
     }
 
@@ -169,7 +175,14 @@ public class MyHero extends Animatable {
         this.mana += mana;
     }
 
+
     public void setPaused(boolean paused) {
         this.paused = paused;
     }
+
+    public Rectangle getHitBox() {
+        return hitBox;
+    }
+
+
 }

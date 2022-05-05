@@ -1,6 +1,7 @@
 package item.potion;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import desktop.MyHero;
 import graphic.Painter;
 import item.Items;
 
@@ -18,5 +19,12 @@ public class HealthPotion extends Potion {
 
     }
 
-
+    @Override
+    public int useItem(MyHero myHero) {
+        if (myHero.getMaxHealth() - myHero.getHealth() > health) {
+            return health;
+        } else {
+            return myHero.getMaxHealth() - myHero.getHealth();
+        }
+    }
 }
