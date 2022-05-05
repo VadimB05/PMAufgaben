@@ -1,11 +1,11 @@
 package character.monster;
 
-import character.Character;
+import character.Monster;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import graphic.Animation;
 import graphic.Painter;
 
-public class Imp extends Character {
+public class Imp extends Monster {
     /**
      * Constructor for Imp. Loads animations and sets movement speed.
      *

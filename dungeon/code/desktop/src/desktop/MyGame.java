@@ -1,10 +1,12 @@
 package desktop;
 
+import character.Monster;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Interpolation;
 import controller.EntityController;
 import controller.HUDController;
 import controller.MainController;
@@ -28,11 +30,12 @@ import tools.Point;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import trap.Hole;
 import trap.Spikes;
-import trap.Trap;
 import character.monster.Chort;
 import character.monster.Imp;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -58,8 +61,10 @@ public class MyGame extends MainController {
     private ManaPotion manaPotion;
     private Spikes spikes;
     private Hole hole;
-    private Chort chort;
-    private Imp imp;
+    private List<Monster> monsterList = new ArrayList<Monster>();
+    Random monsterCountGenerator = new Random();;
+    private int levelMonsterCount;
+    private int maxMonsterCount = 5;
     private int levelCounter = 0;
     private int counterHUDInventory=1;
 
@@ -138,9 +143,6 @@ public class MyGame extends MainController {
         halfHeart = new Icon(hudPainter,hudBatch,new Point(10f,10f),"hud/ui_heart_half.png");
         emptyHeart = new Icon(hudPainter,hudBatch,new Point(10f,10f),"hud/ui_heart_empty.png");
 
-        chort = new Chort(painter, batch);
-        imp = new Imp(painter, batch);
-
         inventoryItemsArrayList.add(healthPotion);
         inventoryItemsArrayList.add(manaPotion);
 
@@ -167,9 +169,6 @@ public class MyGame extends MainController {
 
         entityController.add(healthPotion);
         entityController.add(manaPotion);
-
-        entityController.add(chort);
-        entityController.add(imp);
 
         entityController.add(hero);
 
@@ -617,9 +616,23 @@ public class MyGame extends MainController {
         spikes.setLevel(levelAPI.getCurrentLevel());
         hole.setLevel(levelAPI.getCurrentLevel());
 
-        chort.setLevel(levelAPI.getCurrentLevel());
-        imp.setLevel(levelAPI.getCurrentLevel());
+        // random number of monsters gets generated based on current level (max 5)
+        levelMonsterCount = monsterCountGenerator.nextInt(3) + levelCounter;
+        if(levelMonsterCount > 5) { levelMonsterCount = 5; }
+        for(int i = 0; i < levelMonsterCount; i++) {
+            monsterList.add(new Chort(painter, batch));
+            monsterList.add(new Imp(painter, batch));
+        }
 
+        // added to the entityController
+        for(int i = 0; i < levelMonsterCount * 2; i++) {
+            entityController.add(monsterList.get(i));
+        }
+
+        // and then loaded into the level
+        for(int i = 0; i < levelMonsterCount * 2; i++) {
+            monsterList.get(i).setLevel(levelAPI.getCurrentLevel());
+        }
     }
 
 

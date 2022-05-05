@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public abstract class Character extends Animatable {
+public abstract class Monster extends Animatable {
     protected Animation animation, runAnimationRight,runAnimationLeft,idleAnimationRight, idleAnimationLeft;
     protected List<String> idleAnimationRightList = new ArrayList<>();
     protected List<String> idleAnimationLeftList = new ArrayList<>();
@@ -33,7 +33,7 @@ public abstract class Character extends Animatable {
      * @param painter   Painter that draws this object
      * @param batch     SpriteBatch to draw on
      */
-    public Character(Painter painter, SpriteBatch batch) {
+    public Monster(Painter painter, SpriteBatch batch) {
         super(painter, batch);
     }
 
