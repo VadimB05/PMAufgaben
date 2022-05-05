@@ -6,6 +6,12 @@ import graphic.Animation;
 import graphic.Painter;
 
 public class Imp extends Character {
+    /**
+     * Constructor for Imp. Loads animations and sets movement speed.
+     *
+     * @param painter   Painter that draws this object
+     * @param batch     SpriteBatch to draw on
+     */
     public Imp(Painter painter, SpriteBatch batch) {
         super(painter, batch);
         idleAnimationRightList.add("character/monster/imp_idle_anim_f0.png");

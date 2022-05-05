@@ -6,6 +6,12 @@ import graphic.Animation;
 import graphic.Painter;
 
 public class Chort extends Character {
+    /**
+     * Constructor for Chort. Loads animations and sets movement speed.
+     *
+     * @param painter   Painter that draws this object
+     * @param batch     SpriteBatch to draw on
+     */
     public Chort(Painter painter, SpriteBatch batch) {
         super(painter, batch);
         idleAnimationRightList.add("character/monster/chort_idle_anim_f0.png");

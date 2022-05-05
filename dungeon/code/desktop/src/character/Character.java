@@ -27,15 +27,31 @@ public abstract class Character extends Animatable {
     private int randomIntMovement = moving.nextInt(upperboundMovement);
     int movementCounter = 0;
 
+    /**
+     * Non-playable character that gets drawn in the dungeon
+     *
+     * @param painter   Painter that draws this object
+     * @param batch     SpriteBatch to draw on
+     */
     public Character(Painter painter, SpriteBatch batch) {
         super(painter, batch);
     }
 
+    /**
+     * Sets character on random position
+     *
+     * @param level     Current level
+     */
     public void setLevel(Level level){
         currentLevel = level;
         position = level.getRandomRoom().getRandomFloorTile().getCoordinate().toPoint();
     }
 
+    /**
+     * Creates random movement for character, either going in one of the four directions or standing still for a moment.
+     *
+     * @return new position of character
+     */
     public Point randomMovement() {
         Point newPosition = new Point(this.position);
 
@@ -79,6 +95,9 @@ public abstract class Character extends Animatable {
         return newPosition;
     }
 
+    /**
+     * Executes every frame to update monster movement
+     */
     @Override
     public void update() {
         animation = getActiveAnimation();
@@ -92,6 +111,9 @@ public abstract class Character extends Animatable {
         }
     }
 
+    /**
+     * Checks the direction the monster is facing for proper animation
+     */
     public void isRunningLeft(){
         if(isLookingLeft){
             animation = runAnimationLeft;
