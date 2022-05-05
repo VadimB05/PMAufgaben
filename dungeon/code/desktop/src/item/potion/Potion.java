@@ -20,7 +20,7 @@ public abstract class Potion extends Items {
      * @param name  Name of the Object
      */
     public Potion(Painter painter, SpriteBatch batch, String texturePath, String name, int health, int mana) {
-        super(painter, batch, texturePath, name,health,mana);
+        super(painter, batch, texturePath, name);
         this.painter = painter;
         this.health = health;
         this.mana = mana;

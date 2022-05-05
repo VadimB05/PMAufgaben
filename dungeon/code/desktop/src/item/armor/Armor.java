@@ -17,7 +17,7 @@ public abstract class Armor extends Items {
      * @param name  Name of the Object
      */
     public Armor(Painter painter, SpriteBatch batch, String texturePath, String name,int defense) {
-        super(painter, batch, texturePath, name,0,0);
+        super(painter, batch, texturePath, name);
         this.painter = painter;
         this.defense = defense;
     }

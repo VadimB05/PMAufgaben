@@ -134,6 +134,10 @@ public class MyHero extends Animatable {
         this.defense = defense;
     }
 
+    public void addDefense(int defense){
+        this.defense += defense;
+    }
+
     public void setStrength(int strength) {
         this.strength = 4;
         this.strength += strength;
@@ -171,7 +175,7 @@ public class MyHero extends Animatable {
         this.health = health;
     }
 
-    public void setMana(int mana) {
+    public void addMana(int mana) {
         this.mana += mana;
     }
 

@@ -1,8 +1,10 @@
 package item.potion;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import controller.EntityController;
 import desktop.MyHero;
 import graphic.Painter;
+import inventory.Equipment;
 import item.Items;
 
 public class ManaPotion extends Potion{
@@ -14,18 +16,20 @@ public class ManaPotion extends Potion{
      * @param batch       SpriteBatch to draw on
      * @param texturePath
      */
-    public ManaPotion(Painter painter, SpriteBatch batch, String texturePath, String name) {
-        super(painter, batch, texturePath, name,0,5);
+    public ManaPotion(Painter painter, SpriteBatch batch, String texturePath, String name, int health, int mana) {
+        super(painter, batch, texturePath, name,health,mana);
 
     }
 
     @Override
-    public int useItem(MyHero myHero) {
+    public void useItem(MyHero myHero) {
         if(myHero.getMaxMana()-myHero.getMana()>mana){
-            return mana;
+            myHero.addMana(mana);
         }
         else {
-            return myHero.getMaxMana()-myHero.getMana();
+            myHero.addMana(myHero.getMaxMana()-myHero.getMana());
         }
     }
+
+
 }

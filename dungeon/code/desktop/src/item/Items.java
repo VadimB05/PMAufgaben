@@ -2,8 +2,10 @@ package item;
 
 import basiselements.Entity;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import controller.EntityController;
 import desktop.MyHero;
 import graphic.Painter;
+import inventory.Equipment;
 import level.elements.Level;
 import tools.Point;
 
@@ -14,8 +16,6 @@ public abstract class Items extends Entity {
     protected Point position;
     protected String name;
     protected boolean pickedUp = false;
-    protected int health;
-    protected int mana;
 
 
     /**
@@ -26,12 +26,10 @@ public abstract class Items extends Entity {
      * @param texturePath   Path of the texture
      * @param name  Name of the Object
      */
-    public Items(Painter painter, SpriteBatch batch, String texturePath, String name, int health, int mana) {
+    public Items(Painter painter, SpriteBatch batch, String texturePath, String name) {
         super(painter, batch);
         this.texturePath = texturePath;
         this.name = name;
-        this.health = health;
-        this.mana = mana;
     }
 
 
@@ -69,6 +67,7 @@ public abstract class Items extends Entity {
     }
 
 
-    public abstract int useItem(MyHero myHero);
+    public abstract void useItem(MyHero myHero);
+
 
 }

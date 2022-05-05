@@ -18,7 +18,7 @@ public abstract class Weapons extends Items {
      * @param name  Name of the Object
      */
     public Weapons(Painter painter, SpriteBatch batch, String texturePath, String name, int damage) {
-        super(painter, batch, texturePath, name,0,0);
+        super(painter, batch, texturePath, name);
         this.painter = painter;
         this.damage = damage;
     }

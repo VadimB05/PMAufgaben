@@ -16,8 +16,8 @@ public class InventoryTest extends MainController {
     int myMana=0;
     int myHealth=0;
 
-    ManaPotion manaPotion = new ManaPotion(painter, batch, "item/flask_big_blue.png", "Manatrank");
-    HealthPotion healthPotion = new HealthPotion(painter,batch,"item/flask_big_red.png", "Lebenstrank");
+    ManaPotion manaPotion = new ManaPotion(painter, batch, "item/flask_big_blue.png", "Manatrank",0,5);
+    HealthPotion healthPotion = new HealthPotion(painter,batch,"item/flask_big_red.png", "Lebenstrank",10,0);
 
     @Before
     public void setInventory(){
@@ -37,8 +37,8 @@ public class InventoryTest extends MainController {
     /** Laesst sich ein Manatrank aus dem Inventar benutzen?*/
     @Test
     public void testManaPotion(){
-        myMana += inventory1.getInventoryArrayList().get(0).useItem(myHero);
-        myHealth += inventory1.getInventoryArrayList().get(0).useItem(myHero);
+        //myMana += inventory1.getInventoryArrayList().get(0).useItem(myHero);
+        //myHealth += inventory1.getInventoryArrayList().get(0).useItem(myHero);
         assertEquals(myMana,15);
         assertEquals(myHealth,30);
     }
@@ -46,8 +46,8 @@ public class InventoryTest extends MainController {
     /** Laesst sich ein Lebenstrank aus dem Inventar benutzen?*/
     @Test
     public void testHealthPotion(){
-        myMana += inventory1.getInventoryArrayList().get(1).useItem(myHero);
-        myHealth += inventory1.getInventoryArrayList().get(1).useItem(myHero);
+        //myMana += inventory1.getInventoryArrayList().get(1).useItem(myHero);
+        //myHealth += inventory1.getInventoryArrayList().get(1).useItem(myHero);
         assertEquals(myMana,10);
         assertEquals(myHealth,40);
     }
