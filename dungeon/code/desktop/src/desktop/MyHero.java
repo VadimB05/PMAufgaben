@@ -19,6 +19,8 @@ public class MyHero extends Animatable {
     private boolean isLookingLeft = false;
     private int mana,health,defense,strength,maxMana,maxHealth;
 
+    private boolean paused = false;
+
     public MyHero(Painter painter, SpriteBatch batch){
         super(painter, batch);
         List<String> idleAnimationRightList = new ArrayList<>();
@@ -47,7 +49,7 @@ public class MyHero extends Animatable {
         runAnimationLeft = new Animation(runAnimationLeftList,8);
         animation = idleAnimationRight;
 
-        maxHealth = 60;
+        maxHealth = 70;
         maxMana = 20;
 
         health = 30;
@@ -69,33 +71,34 @@ public class MyHero extends Animatable {
         Point newPosition = new Point(this.position);
         float movementSpeed = 0.2f;
 
-        if(Gdx.input.isKeyPressed(Input.Keys.W)){
-            newPosition.y += movementSpeed;
-            isRunningLeft();
-        }
-        else if(Gdx.input.isKeyPressed(Input.Keys.S)){
-            newPosition.y -= movementSpeed;
-            isRunningLeft();
-        }
-        else if(Gdx.input.isKeyPressed(Input.Keys.D)){
-            isLookingLeft = false;
-            newPosition.x += movementSpeed;
-            animation = runAnimationRight;
-        }
-        else if(Gdx.input.isKeyPressed(Input.Keys.A)){
-            isLookingLeft = true;
-            newPosition.x -= movementSpeed;
-            animation = runAnimationLeft;
-        }
-        else {
-            if(isLookingLeft){
-                animation = idleAnimationLeft;
+        if(!paused){
+            if(Gdx.input.isKeyPressed(Input.Keys.W)){
+                newPosition.y += movementSpeed;
+                isRunningLeft();
+            }
+            else if(Gdx.input.isKeyPressed(Input.Keys.S)){
+                newPosition.y -= movementSpeed;
+                isRunningLeft();
+            }
+            else if(Gdx.input.isKeyPressed(Input.Keys.D)){
+                isLookingLeft = false;
+                newPosition.x += movementSpeed;
+                animation = runAnimationRight;
+            }
+            else if(Gdx.input.isKeyPressed(Input.Keys.A)){
+                isLookingLeft = true;
+                newPosition.x -= movementSpeed;
+                animation = runAnimationLeft;
             }
             else {
-                animation = idleAnimationRight;
+                if(isLookingLeft){
+                    animation = idleAnimationLeft;
+                }
+                else {
+                    animation = idleAnimationRight;
+                }
             }
         }
-
         if(currentLevel.getTileAt(newPosition.toCoordinate()).isAccessible()){
             this.position = newPosition;
         }
@@ -154,11 +157,19 @@ public class MyHero extends Animatable {
         return maxMana;
     }
 
-    public void setHealth(int health) {
+    public void addHealth(int health) {
         this.health += health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
     }
 
     public void setMana(int mana) {
         this.mana += mana;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
     }
 }

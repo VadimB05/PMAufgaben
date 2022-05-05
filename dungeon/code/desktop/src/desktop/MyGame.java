@@ -3,8 +3,14 @@ package desktop;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import controller.EntityController;
+import controller.HUDController;
 import controller.MainController;
+import hud.GameOverWindow;
 import hud.Icon;
+import hud.Window;
 import inventory.Equipment;
 import inventory.Inventory;
 import item.Items;
@@ -26,8 +32,11 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 public class MyGame extends MainController {
-    private ArrayList<Potion> inventoryItemsArrayList = new ArrayList<>();
+    private ArrayList<Potion> inventoryItemsArrayList;
+
+    private ArrayList<Icon> inventoryIcons = new ArrayList<>();
     private Label levelLabel;
     private Label defenseLabel, healthLabel, damageLabel, manaLabel;
     private MyHero hero;
@@ -37,12 +46,22 @@ public class MyGame extends MainController {
     private Shield shieldMetall;
     private ChestPlate chestPlate;
     private ChestPlate chestPlateBlack;
-    private Icon swordIcon, staffIcon, shieldBlackIcon, shieldMetallIcon, chestPlateIcon, chestPlateBlackIcon, healthPotionIcon,manaPotionIcon;
+    private Icon swordIcon, staffIcon, shieldBlackIcon, shieldMetallIcon, chestPlateIcon, chestPlateBlackIcon,
+        healthPotionIcon,manaPotionIcon, fullHeart, halfHeart, emptyHeart;
     private HealthPotion healthPotion;
     private ManaPotion manaPotion;
     private int levelCounter = 0;
     private int counterHUDInventory=1;
-    Inventory inventory = new Inventory();
+
+    private Texture gameOverTexture;
+
+    boolean paused = false;
+
+    private SpriteBatch myBatch;
+
+    Window window;
+
+    Inventory inventory;
     Equipment equipment = new Equipment();
 
     Logger logger = Logger.getLogger(MyGame.class.getName());
@@ -50,13 +69,23 @@ public class MyGame extends MainController {
 
 
 
+
+
     @Override
     protected void setup() {
+        myBatch = new SpriteBatch();
+
+        window = new GameOverWindow();
+        gameOverTexture = new Texture("hud/gameOver.png");
+
         handlerMain.setLevel(Level.INFO);
         handlerMain.setFormatter(new StandardFormatter("Main Logger"));
         logger.setLevel(Level.INFO);
         logger.addHandler(handlerMain);
         logger.setUseParentHandlers(false);
+
+        inventoryItemsArrayList = new ArrayList<>();
+        inventory = new Inventory();
 
         levelAPI.setGenerator(new LevelLoader());
         hero = new MyHero(painter,batch);
@@ -80,6 +109,10 @@ public class MyGame extends MainController {
         healthPotion = new HealthPotion(painter, batch,"item/flask_big_red.png", "Lebenstrank");
 
         manaPotion = new ManaPotion(painter, batch, "item/flask_big_blue.png", "Manatrank");
+
+        fullHeart = new Icon(hudPainter,hudBatch,new Point(10f,10f),"hud/ui_heart_full.png");
+        halfHeart = new Icon(hudPainter,hudBatch,new Point(10f,10f),"hud/ui_heart_half.png");
+        emptyHeart = new Icon(hudPainter,hudBatch,new Point(10f,10f),"hud/ui_heart_empty.png");
 
 
         inventoryItemsArrayList.add(healthPotion);
@@ -108,18 +141,23 @@ public class MyGame extends MainController {
 
         entityController.add(hero);
 
-        hudController.add(new Icon(hudPainter,hudBatch,new Point(10f,10f),"hud/ui_heart_full.png"));
-        hudController.add(new Icon(hudPainter,hudBatch,new Point(170f,400f),"hud/inventar.png"));
+
+        //hudController.add(new Icon(hudPainter,hudBatch,new Point(170f,400f),"hud/inventar.png"));
         hudController.add(new Icon(hudPainter,hudBatch,new Point(490f,330f),"hud/equipment.png"));
     }
 
     @Override
     protected void beginFrame() {
+        isPausedRestart();
+
         loadStats();
 
         useItem();
 
         dropItemFromInventory();
+
+        switchHUDHeart();
+
     }
 
     @Override
@@ -145,8 +183,65 @@ public class MyGame extends MainController {
 
         getInventoryItems();
 
+        removeHealth();
+
+        gameOver();
 
     }
+
+    /**
+     * checks if the game is paused and if the player is trying to restart the game
+     * */
+    private void isPausedRestart(){
+        if(paused && Gdx.input.isKeyJustPressed(Input.Keys.ENTER)){
+            this.entityController = new EntityController();
+            this.hudController = new HUDController(batch);
+            this.setup();
+            this.onLevelLoad();
+        }
+    }
+
+    /**
+     * checks if our Hero is dead, and if so, open a Game Over screen and let the player restart
+     * */
+    private void gameOver(){
+        if(hero.getHealth()<= 0){
+            myBatch.begin();
+            myBatch.draw(window.getBackground(),0,0,1000,1000);
+            myBatch.draw(window.getWindow(),50,50,540,380);
+            myBatch.draw(gameOverTexture,50,50,540,380);
+            myBatch.end();
+            paused = true;
+            hero.setPaused(true);
+        }
+    }
+
+    //TODO: delete method, just for testing
+    private void removeHealth(){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.K)){
+            hero.setHealth(hero.getHealth()/2);
+        }
+    }
+
+    /** Switches the Heart Icons in the HUD depending on the heroes health*/
+    private void switchHUDHeart(){
+        if((float) hero.getHealth()/hero.getMaxHealth()>=0.5f){
+            hudController.remove(halfHeart);
+            hudController.remove(emptyHeart);
+            hudController.add(fullHeart);
+        }else if(hero.getHealth()<= 0){
+            hudController.remove(fullHeart);
+            hudController.remove(halfHeart);
+            hudController.add(emptyHeart);
+
+
+        } else{
+            hudController.remove(fullHeart);
+            hudController.remove(emptyHeart);
+            hudController.add(halfHeart);
+        }
+    }
+
 
     /**
      * Switch chestplates
@@ -227,7 +322,7 @@ public class MyGame extends MainController {
                 if(inventory.addToInventory(potion)){
                     entityController.remove(potion);
                     potion.setPickedUp(true);
-                    addInventoryHUD(potion);
+                    //addInventoryHUD(potion);
                     counterHUDInventory++;
                 }
             }
@@ -240,49 +335,42 @@ public class MyGame extends MainController {
      * and add the picked up item to the end of the ArrayList and HUD inventory
      *
      * */
-    private void addInventoryHUD(Potion potion){
-        if(potion.getClass().equals(manaPotion.getClass())){
-            if(inventory.getInventoryArrayList().size()==1){
-                counterHUDInventory=1;
-                addMPToHUD();
-            }else if(inventory.getInventoryArrayList().size()==2){
-                counterHUDInventory=2;
-                addMPToHUD();
-            }else if(inventory.getInventoryArrayList().size()==3){
-                counterHUDInventory=3;
-                addMPToHUD();
-            }else if(inventory.getInventoryArrayList().size()==4){
-                counterHUDInventory=4;
-                addMPToHUD();
-            }
-        }else {
-            if(inventory.getInventoryArrayList().size()==1){
-                counterHUDInventory=1;
-                addHPToHUD();
-            }else if(inventory.getInventoryArrayList().size()==2){
-                counterHUDInventory=2;
-                addHPToHUD();
-            }else if(inventory.getInventoryArrayList().size()==3){
-                counterHUDInventory=3;
-                addHPToHUD();
-            }else if(inventory.getInventoryArrayList().size()==4){
-                counterHUDInventory=4;
-                addHPToHUD();
-            }
-        }
-        //hudController.add();
-    }
+//    private void addInventoryHUD(Potion potion){
+//        if(potion.getClass().equals(manaPotion.getClass())){
+//            if(inventory.getInventoryArrayList().size()==1){
+//                addMPToHUD();
+//            }else if(inventory.getInventoryArrayList().size()==2){
+//                addMPToHUD();
+//            }else if(inventory.getInventoryArrayList().size()==3){
+//                addMPToHUD();
+//            }else if(inventory.getInventoryArrayList().size()==4){
+//                addMPToHUD();
+//            }
+//        }else {
+//            if(inventory.getInventoryArrayList().size()==1){
+//                addHPToHUD();
+//            }else if(inventory.getInventoryArrayList().size()==2){
+//                addHPToHUD();
+//            }else if(inventory.getInventoryArrayList().size()==3){
+//                addHPToHUD();
+//            }else if(inventory.getInventoryArrayList().size()==4){
+//                addHPToHUD();
+//            }
+//        }
+//    }
 
     /** Add the health potion texture to the HUD */
     private void addHPToHUD(){
-        healthPotionIcon = new Icon(hudPainter,hudBatch,new Point(121+(counterHUDInventory*69),415f),healthPotion.getTexturePath());
-        hudController.add(healthPotionIcon);
+        //healthPotionIcon = new Icon(hudPainter,hudBatch,new Point(121+(counterHUDInventory*69),415f),healthPotion.getTexturePath());
+        //inventoryIcons.add(healthPotionIcon);
+        //hudController.add(healthPotionIcon);
     }
 
     /** Add the mana potion texture to the HUD */
     private void addMPToHUD(){
-        manaPotionIcon = new Icon(hudPainter,hudBatch,new Point(121+(counterHUDInventory*69),415f),manaPotion.getTexturePath());
-        hudController.add(manaPotionIcon);
+        //manaPotionIcon = new Icon(hudPainter,hudBatch,new Point(121+(counterHUDInventory*69),415f),manaPotion.getTexturePath());
+        //inventoryIcons.add(manaPotionIcon);
+        //hudController.add(manaPotionIcon);
     }
 
     /** Log all items in inventory*/
@@ -297,21 +385,14 @@ public class MyGame extends MainController {
      * Method to not pick up weapons, shields and chestplates into inventory
      *
      * */
-//    private void changeItem(Items items, Icon equipIcon, Icon removeIcon){
-//        hudController.add(equipIcon);
-//        if(items!=null){
-//            items.setLevel(levelAPI.getCurrentLevel());
-//            entityController.add(items);
-//            items.setPickedUp(false);
-//            items.setPosition(hero.getPosition());
-//            hudController.remove(removeIcon);
-//        }//delete changeItem()
-//    }
-    /** Dropped item set to picked up false, dropped at heroes position and removed from HUD */
     private void changeItem(Items items, Icon equipIcon, Icon removeIcon){
         hudController.add(equipIcon);
         if(items!=null){
-            inventory.addToInventory(items);
+            items.setLevel(levelAPI.getCurrentLevel());
+            entityController.add(items);
+            items.setPickedUp(false);
+            items.setPosition(hero.getPosition());
+            hudController.remove(removeIcon);
         }
     }
 
@@ -353,7 +434,7 @@ public class MyGame extends MainController {
         if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_8) && inventory.getInventoryArrayList().size()>2) {
             droppedItemManaOrHealth(2);
         }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_8) && inventory.getInventoryArrayList().size()>3) {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_9) && inventory.getInventoryArrayList().size()>3) {
             droppedItemManaOrHealth(3);
         }
     }
@@ -368,11 +449,14 @@ public class MyGame extends MainController {
      * */
     private void droppedItemManaOrHealth(int i){
         if(inventory.getInventoryArrayList().get(i).getClass().equals(manaPotion.getClass())){
-            hudController.remove(manaPotionIcon);
-            dropItem(i,inventory.getInventoryArrayList().get(i));
+            //hudController.remove(manaPotionIcon);
+            ManaPotion newManaPotion = new ManaPotion(painter, batch, "item/flask_big_blue.png", "Manatrank");
+            dropItem(i,inventory.getInventoryArrayList().get(i),newManaPotion);
         }else{
-            hudController.remove(healthPotionIcon);
-            dropItem(i,inventory.getInventoryArrayList().get(i));
+            //hudController.remove(healthPotionIcon);
+            HealthPotion newHealthPotion = new HealthPotion(painter, batch,"item/flask_big_red.png", "Lebenstrank");
+            dropItem(i,inventory.getInventoryArrayList().get(i),newHealthPotion);
+
         }
     }
 
@@ -385,11 +469,12 @@ public class MyGame extends MainController {
      * @param position , position in the ArrayList
      * @param potion , the item that gets dropped
      * */
-    private void dropItem(int position, Items potion){
-        potion.setLevel(levelAPI.getCurrentLevel());
-        entityController.add(inventory.getInventoryArrayList().get(position));
-        potion.setPickedUp(false);
-        potion.setPosition(hero.getPosition());
+    private void dropItem(int position, Items potion, Potion newPotion){
+        newPotion.setLevel(levelAPI.getCurrentLevel());
+        entityController.add(newPotion);
+        newPotion.setPickedUp(false);
+        newPotion.setPosition(hero.getPosition());
+        inventoryItemsArrayList.add(newPotion);
         inventory.dropItemInventory(position);
     }
 
@@ -406,7 +491,7 @@ public class MyGame extends MainController {
             if(hero.getMaxMana()- hero.getMana()!=0) {
                 logger.info(inventory.getInventoryArrayList().get(position).getName()+" verwendet.");
                 hero.setMana(inventory.getInventoryArrayList().get(position).setMana(hero));
-                hudController.remove(manaPotionIcon);
+                //hudController.remove(manaPotionIcon);
                 inventory.dropItemInventory(position);
             }else{
                 logger.info(inventory.getInventoryArrayList().get(position).getName()+" konnte nicht verwendet werden. Mana voll!");
@@ -414,8 +499,8 @@ public class MyGame extends MainController {
         }else if(inventory.getInventoryArrayList().get(position).getClass().equals(healthPotion.getClass())){
             if(hero.getMaxHealth()- hero.getHealth()!=0) {
                 logger.info(inventory.getInventoryArrayList().get(position).getName()+" verwendet.");
-                hero.setHealth(inventory.getInventoryArrayList().get(position).setHeal(hero));
-                hudController.remove(healthPotionIcon);
+                hero.addHealth(inventory.getInventoryArrayList().get(position).setHeal(hero));
+                //hudController.remove(healthPotionIcon);
                 inventory.dropItemInventory(position);
             }else{
                 logger.info(inventory.getInventoryArrayList().get(position).getName()+" konnte nicht verwendet werden. Leben voll!");
@@ -444,7 +529,7 @@ public class MyGame extends MainController {
     private void loadStats(){
         defenseLabel = hudController.drawText("Verteidigung: "+hero.getDefense(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,100);
         damageLabel = hudController.drawText("Schaden: "+hero.getStrength(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,120);
-        healthLabel = hudController.drawText("Lebenspunkte: "+hero.getHealth(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,140);
+        healthLabel = hudController.drawText("Lebenspunkte: "+(int)((float) hero.getHealth()/hero.getMaxHealth()*100)+"%","font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,140);
         manaLabel = hudController.drawText("Mana: "+hero.getMana(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,80);
     }
 
@@ -465,6 +550,9 @@ public class MyGame extends MainController {
         else{
             levelLabel.setText("Level "+levelCounter);
         }
+
+
+
         hero.setLevel(levelAPI.getCurrentLevel());
 
         sword.setLevel(levelAPI.getCurrentLevel());
