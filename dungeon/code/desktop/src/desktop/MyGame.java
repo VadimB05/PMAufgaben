@@ -29,6 +29,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import trap.Hole;
 import trap.Spikes;
 import trap.Trap;
+import character.monster.Chort;
+import character.monster.Imp;
 
 import java.util.ArrayList;
 import java.util.logging.ConsoleHandler;
@@ -56,6 +58,8 @@ public class MyGame extends MainController {
     private ManaPotion manaPotion;
     private Spikes spikes;
     private Hole hole;
+    private Chort chort;
+    private Imp imp;
     private int levelCounter = 0;
     private int counterHUDInventory=1;
 
@@ -134,6 +138,8 @@ public class MyGame extends MainController {
         halfHeart = new Icon(hudPainter,hudBatch,new Point(10f,10f),"hud/ui_heart_half.png");
         emptyHeart = new Icon(hudPainter,hudBatch,new Point(10f,10f),"hud/ui_heart_empty.png");
 
+        chort = new Chort(painter, batch);
+        imp = new Imp(painter, batch);
 
         inventoryItemsArrayList.add(healthPotion);
         inventoryItemsArrayList.add(manaPotion);
@@ -161,6 +167,9 @@ public class MyGame extends MainController {
 
         entityController.add(healthPotion);
         entityController.add(manaPotion);
+
+        entityController.add(chort);
+        entityController.add(imp);
 
         entityController.add(hero);
 
@@ -607,6 +616,9 @@ public class MyGame extends MainController {
 
         spikes.setLevel(levelAPI.getCurrentLevel());
         hole.setLevel(levelAPI.getCurrentLevel());
+
+        chort.setLevel(levelAPI.getCurrentLevel());
+        imp.setLevel(levelAPI.getCurrentLevel());
 
     }
 
