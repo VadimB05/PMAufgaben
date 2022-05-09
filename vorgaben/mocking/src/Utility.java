@@ -7,7 +7,7 @@ public class Utility {
     }
 
     public void evilMethod() {
-        throw new RuntimeException("bam!");
+        int i = 2 / 0;
     }
 
     public int nonEvilAdd(int a, int b) {

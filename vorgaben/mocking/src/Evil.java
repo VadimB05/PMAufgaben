@@ -1,5 +1,5 @@
 public class Evil {
     public void evilMethod() {
-        throw new RuntimeException("bam! bam!");
+        int i = 3 / 0;
     }
 }
