@@ -1,15 +1,16 @@
 
-public class Bike {
-
-    public String productName;
-    public double price;
-    public Integer batteryCapacity;
-
-    public Integer getBatteryCapacity() {
-        return batteryCapacity;
-    }
+public abstract class Bike {
+    protected String productName;
+    protected double price;
+    protected int maxSpeed;
+    protected int rearGearsCount;
+    protected int frontGearsCount;
 
     public int getGearsCount() {
-        throw new UnsupportedOperationException("Not Implemented");
+        return rearGearsCount * frontGearsCount;
+    }
+
+    public int getMaxSpeed() {
+        return maxSpeed;
     }
 }
