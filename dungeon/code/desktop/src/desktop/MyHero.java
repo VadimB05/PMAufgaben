@@ -4,6 +4,7 @@ import basiselements.Animatable;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import graphic.Animation;
 import graphic.Painter;
 import level.elements.Level;
@@ -13,10 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyHero extends Animatable {
+    private final Rectangle hitBox;
     private Animation animation, runAnimationRight,runAnimationLeft,idleAnimationRight, idleAnimationLeft;
     private Point position;
     private Level currentLevel;
     private boolean isLookingLeft = false;
+    private int mana,health,defense,strength,maxMana,maxHealth;
+
+    private boolean paused = false;
 
     public MyHero(Painter painter, SpriteBatch batch){
         super(painter, batch);
@@ -45,6 +50,15 @@ public class MyHero extends Animatable {
         runAnimationLeftList.add("character/knight/knight_m_run_anim_mirrored_f3.png");
         runAnimationLeft = new Animation(runAnimationLeftList,8);
         animation = idleAnimationRight;
+
+        maxHealth = 70;
+        maxMana = 20;
+
+        health = 30;
+        mana = 10;
+        defense = 0;
+        strength = 4;
+        hitBox = new Rectangle();
     }
 
 
@@ -52,42 +66,47 @@ public class MyHero extends Animatable {
     public void setLevel(Level level){
         currentLevel = level;
         position = level.getStartTile().getCoordinate().toPoint();
+        hitBox.set(position.x,position.y,1f,1f);
     }
 
+    /** Update our heroes position on the display when the position gets changed*/
     @Override
     public void update() {
         Point newPosition = new Point(this.position);
-        float movementSpeed = 0.1f;
-        
-        if(Gdx.input.isKeyPressed(Input.Keys.W)){
-            newPosition.y += movementSpeed;
-            isRunningLeft();
-        }
-        else if(Gdx.input.isKeyPressed(Input.Keys.S)){
-            newPosition.y -= movementSpeed;
-            isRunningLeft();
-        }
-        else if(Gdx.input.isKeyPressed(Input.Keys.D)){
-            isLookingLeft = false;
-            newPosition.x += movementSpeed;
-            animation = runAnimationRight;
-        }
-        else if(Gdx.input.isKeyPressed(Input.Keys.A)){
-            isLookingLeft = true;
-            newPosition.x -= movementSpeed;
-            animation = runAnimationLeft;
-        }
-        else {
-            if(isLookingLeft){
-                animation = idleAnimationLeft;
+        float movementSpeed = 0.2f;
+
+        if(!paused){
+            if(Gdx.input.isKeyPressed(Input.Keys.W)){
+                newPosition.y += movementSpeed;
+                isRunningLeft();
+            }
+            else if(Gdx.input.isKeyPressed(Input.Keys.S)){
+                newPosition.y -= movementSpeed;
+                isRunningLeft();
+            }
+            else if(Gdx.input.isKeyPressed(Input.Keys.D)){
+                isLookingLeft = false;
+                newPosition.x += movementSpeed;
+                animation = runAnimationRight;
+            }
+            else if(Gdx.input.isKeyPressed(Input.Keys.A)){
+                isLookingLeft = true;
+                newPosition.x -= movementSpeed;
+                animation = runAnimationLeft;
             }
             else {
-                animation = idleAnimationRight;
+                if(isLookingLeft){
+                    animation = idleAnimationLeft;
+                }
+                else {
+                    animation = idleAnimationRight;
+                }
             }
         }
-
         if(currentLevel.getTileAt(newPosition.toCoordinate()).isAccessible()){
             this.position = newPosition;
+            this.hitBox.x = this.position.x;
+            this.hitBox.y = this.position.y;
         }
     }
 
@@ -101,6 +120,7 @@ public class MyHero extends Animatable {
         return animation;
     }
 
+    /** Change our animation */
     public void isRunningLeft(){
         if(isLookingLeft){
             animation = runAnimationLeft;
@@ -109,4 +129,64 @@ public class MyHero extends Animatable {
             animation = runAnimationRight;
         }
     }
+
+    public void setDefense(int defense) {
+        this.defense = defense;
+    }
+
+    public void addDefense(int defense){
+        this.defense += defense;
+    }
+
+    public void setStrength(int strength) {
+        this.strength = 4;
+        this.strength += strength;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public int getDefense() {
+        return defense;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public int getMana() {
+        return mana;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public int getMaxMana() {
+        return maxMana;
+    }
+
+    public void addHealth(int health) {
+        this.health += health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public void addMana(int mana) {
+        this.mana += mana;
+    }
+
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    public Rectangle getHitBox() {
+        return hitBox;
+    }
+
+
 }
