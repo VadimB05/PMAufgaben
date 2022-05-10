@@ -573,7 +573,11 @@ public class MyGame extends MainController {
         }
     }
 
-
+    /**
+     * The program entry point to start the dungeon.
+     *
+     * @param args command line arguments, but not needed.
+     */
     public static void main(String[] args) {
         // start the game
         DesktopLauncher.run(new MyGame());
