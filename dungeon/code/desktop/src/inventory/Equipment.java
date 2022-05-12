@@ -1,11 +1,11 @@
 package inventory;
 
 import item.Items;
-import item.armor.Armor;
 import item.armor.ChestPlate;
 import item.armor.Shield;
 import item.weapon.Weapons;
-import logging.EquipmentFormatter;
+import logging.InventoryFormatter;
+
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -29,7 +29,7 @@ public class Equipment {
         }
 
         handlerEquipment.setLevel(Level.INFO);
-        handlerEquipment.setFormatter(new EquipmentFormatter("Inventory Logger"));
+        handlerEquipment.setFormatter(new InventoryFormatter("Inventory Logger"));
         logger.setLevel(Level.INFO);
         logger.addHandler(handlerEquipment);
         logger.setUseParentHandlers(false);
