@@ -12,8 +12,8 @@ public class Imp extends Monster {
      * @param painter   Painter that draws this object
      * @param batch     SpriteBatch to draw on
      */
-    public Imp(Painter painter, SpriteBatch batch) {
-        super(painter, batch);
+    public Imp(Painter painter, SpriteBatch batch, int health, int strength) {
+        super(painter, batch, health, strength);
         idleAnimationRightList.add("character/monster/imp_idle_anim_f0.png");
         idleAnimationRightList.add("character/monster/imp_idle_anim_f1.png");
         idleAnimationRightList.add("character/monster/imp_idle_anim_f2.png");

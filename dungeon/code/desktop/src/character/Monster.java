@@ -2,6 +2,8 @@ package character;
 
 import basiselements.Animatable;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
+import desktop.MyHero;
 import graphic.Animation;
 import graphic.Painter;
 import level.elements.Level;
@@ -19,6 +21,8 @@ public abstract class Monster extends Animatable {
     protected List<String> runAnimationLeftList = new ArrayList<>();
     private boolean isLookingLeft = false;
     protected float movementSpeed;
+    private int health,strength,frameCounter;
+    private Rectangle hitBox;
     private Level currentLevel;
     private Point position;
     private Point newPosition;
@@ -33,8 +37,11 @@ public abstract class Monster extends Animatable {
      * @param painter   Painter that draws this object
      * @param batch     SpriteBatch to draw on
      */
-    public Monster(Painter painter, SpriteBatch batch) {
+    public Monster(Painter painter, SpriteBatch batch, int health, int strength) {
         super(painter, batch);
+        this.health = health;
+        this.strength = strength;
+        hitBox = new Rectangle();
     }
 
     /**
@@ -101,13 +108,10 @@ public abstract class Monster extends Animatable {
     @Override
     public void update() {
         animation = getActiveAnimation();
-        try {
-            newPosition = randomMovement();
-            if(currentLevel.getTileAt(newPosition.toCoordinate()).isAccessible()) {
-                this.position = newPosition;
-            }
-        } catch (Exception e) {
-
+        newPosition = randomMovement();
+        hitBox.set(newPosition.x,newPosition.y,1f,1f);
+        if(currentLevel.getTileAt(newPosition.toCoordinate()).isAccessible()) {
+            this.position = newPosition;
         }
     }
 
@@ -135,6 +139,38 @@ public abstract class Monster extends Animatable {
 
     public void setMovementSpeed(float movementSpeed) {
         this.movementSpeed = movementSpeed;
+    }
+
+    public boolean collide(MyHero myHero) {
+        return myHero.getHitBox().overlaps(this.hitBox);
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public int getFrameCounter() {
+        return frameCounter;
+    }
+
+    public void addFrameCounter() {
+        frameCounter++;
+    }
+
+    public void resetFrameCounter() {
+        this.frameCounter = 0;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public boolean checkMonsterAlive(){
+        return health<=0;
     }
 }
 
