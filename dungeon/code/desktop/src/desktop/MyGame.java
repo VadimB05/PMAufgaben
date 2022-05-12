@@ -32,13 +32,13 @@ import trap.Spikes;
 import character.monster.Chort;
 import character.monster.Imp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 public class MyGame extends MainController {
     private ArrayList<Potion> inventoryItemsArrayList;
