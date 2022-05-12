@@ -1,6 +1,7 @@
 package desktop;
 
 import basiselements.Animatable;
+import character.Monster;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -8,10 +9,16 @@ import com.badlogic.gdx.math.Rectangle;
 import graphic.Animation;
 import graphic.Painter;
 import level.elements.Level;
+import level.tools.Coordinate;
+import logging.InventoryFormatter;
 import tools.Point;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
 
 public class MyHero extends Animatable {
     private final Rectangle hitBox;
@@ -19,9 +26,11 @@ public class MyHero extends Animatable {
     private Point position;
     private Level currentLevel;
     private boolean isLookingLeft = false;
-    private int mana,health,defense,strength,maxMana,maxHealth;
-
+    private int mana,health,defense,strength,maxMana,maxHealth,frameCounter;
     private boolean paused = false;
+    Random attackChance;
+    private int randomIntAttackChance;
+    Logger logger;
 
     public MyHero(Painter painter, SpriteBatch batch){
         super(painter, batch);
@@ -51,14 +60,27 @@ public class MyHero extends Animatable {
         runAnimationLeft = new Animation(runAnimationLeftList,8);
         animation = idleAnimationRight;
 
+        logger = Logger.getLogger(this.getClass().getName());
+        logger.setUseParentHandlers(false);
+        ConsoleHandler handlerMain = new ConsoleHandler();
+
+        handlerMain.setLevel(java.util.logging.Level.INFO);
+        handlerMain.setFormatter(new InventoryFormatter("Hero Logger"));
+        logger.setLevel(java.util.logging.Level.INFO);
+        fixHandler();
+        logger.addHandler(handlerMain);
+        logger.setUseParentHandlers(false);
+
         maxHealth = 70;
         maxMana = 20;
-
+        frameCounter=0;
         health = 30;
         mana = 10;
         defense = 0;
         strength = 4;
+
         hitBox = new Rectangle();
+        attackChance = new Random();
     }
 
 
@@ -72,7 +94,7 @@ public class MyHero extends Animatable {
     /** Update our heroes position on the display when the position gets changed*/
     @Override
     public void update() {
-        Point newPosition = new Point(this.position);
+        Point newPosition = new Point(position);
         float movementSpeed = 0.2f;
 
         if(!paused){
@@ -179,7 +201,6 @@ public class MyHero extends Animatable {
         this.mana += mana;
     }
 
-
     public void setPaused(boolean paused) {
         this.paused = paused;
     }
@@ -188,6 +209,93 @@ public class MyHero extends Animatable {
         return hitBox;
     }
 
+    public void attack(Monster monster){
+        randomIntAttackChance = attackChance.nextInt(10);
+        if(randomIntAttackChance>=2) {
+            logger.info("Monster Leben vorher: "+ monster.getHealth());
+            monster.setHealth(monster.getHealth() - getStrength());
+            monster.throwback(this);
+            logger.info("Monster Leben nachher: "+ monster.getHealth());
+        }else{
+            logger.info("Angriff fehlgeschlagen");
+        }
+    }
 
+    public void addFrameCounter(){
+        frameCounter++;
+    }
 
+    public int getFrameCounter() {
+        return frameCounter;
+    }
+
+    public void resetFrameCounter(){
+        this.frameCounter=0;
+    }
+
+    /**
+     * Checks if the attack was successful with a random int generator, calls method throwback()
+     * and adjusts the life
+     * */
+    public void getAttacked(Monster monster){
+        randomIntAttackChance = attackChance.nextInt(10);
+        if( randomIntAttackChance>=4 && defense<monster.getStrength()){
+            setHealth(getHealth()-(monster.getStrength()-defense));
+            throwback(monster);
+        }else{
+            logger.info("Angriff vom Monster fehlgeschlagen");
+        }
+    }
+
+    public void fixHandler(){
+        for(Handler handler : logger.getHandlers()){
+            logger.removeHandler(handler);
+        }
+    }
+
+    /**
+     * Checks from which direction the monster is attacking and trys to throw the hero in the opposite direction,
+     * depending if the tiles are accessible
+     * */
+    public void throwback(Monster monster){
+        Point throwbackPosition = position;
+        if(position.x-monster.getPosition().x >=0){
+            throwbackPosition.x += 1;
+            for(int i=0;i<10;i++){
+                if (currentLevel.getTileAt(throwbackPosition.toCoordinate()).isAccessible()) {
+                    this.position = throwbackPosition;
+                }else {
+                    throwbackPosition.x -= 0.1;
+                }
+            }
+        }else{
+            throwbackPosition.x -= 1;
+            for(int i=0;i<10;i++){
+                if (currentLevel.getTileAt(throwbackPosition.toCoordinate()).isAccessible()) {
+                    this.position = throwbackPosition;
+                }else {
+                    throwbackPosition.x += 0.1;
+                }
+            }
+        }
+        if(position.y-monster.getPosition().y >=0){
+            throwbackPosition.y += 1;
+            for(int i=0;i<10;i++){
+                if (currentLevel.getTileAt(throwbackPosition.toCoordinate()).isAccessible()) {
+                    this.position = throwbackPosition;
+                }else {
+                    throwbackPosition.y -= 0.1;
+                }
+            }
+        }else {
+            throwbackPosition.y -= 1;
+            for(int i=0;i<10;i++){
+                if (currentLevel.getTileAt(throwbackPosition.toCoordinate()).isAccessible()) {
+                    this.position = throwbackPosition;
+                }else {
+                    throwbackPosition.y += 0.1;
+                }
+            }
+        }
+    }
 }

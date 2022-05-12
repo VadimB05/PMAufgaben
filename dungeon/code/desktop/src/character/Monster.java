@@ -30,6 +30,7 @@ public abstract class Monster extends Animatable {
     Random moving = new Random();
     private int randomIntMovement = moving.nextInt(upperboundMovement);
     int movementCounter = 0;
+    private boolean inCombat;
 
     /**
      * Non-playable character that gets drawn in the dungeon
@@ -42,6 +43,7 @@ public abstract class Monster extends Animatable {
         this.health = health;
         this.strength = strength;
         hitBox = new Rectangle();
+        inCombat = false;
     }
 
     /**
@@ -108,10 +110,19 @@ public abstract class Monster extends Animatable {
     @Override
     public void update() {
         animation = getActiveAnimation();
-        newPosition = randomMovement();
-        hitBox.set(newPosition.x,newPosition.y,1f,1f);
+        if(!inCombat){
+            newPosition = randomMovement();
+        }else{
+            if(isLookingLeft) {
+                animation = idleAnimationLeft;
+            }
+            else {
+                animation = idleAnimationRight;
+            }
+        }
         if(currentLevel.getTileAt(newPosition.toCoordinate()).isAccessible()) {
             this.position = newPosition;
+            hitBox.set(newPosition.x,newPosition.y,1f,1f);
         }
     }
 
@@ -171,6 +182,52 @@ public abstract class Monster extends Animatable {
 
     public boolean checkMonsterAlive(){
         return health<=0;
+    }
+
+    public void setInCombat(boolean inCombat) {
+        this.inCombat = inCombat;
+    }
+
+    public void throwback(MyHero hero){
+        Point throwbackPosition = position;
+        if(position.x-hero.getPosition().x >=0){
+            throwbackPosition.x += 1;
+            for(int i=0;i<10;i++){
+                if (currentLevel.getTileAt(throwbackPosition.toCoordinate()).isAccessible()) {
+                    this.position = throwbackPosition;
+                }else {
+                    throwbackPosition.x -= 0.1;
+                }
+            }
+        }else{
+            throwbackPosition.x -= 1;
+            for(int i=0;i<10;i++){
+                if (currentLevel.getTileAt(throwbackPosition.toCoordinate()).isAccessible()) {
+                    this.position = throwbackPosition;
+                }else {
+                    throwbackPosition.x += 0.1;
+                }
+            }
+        }
+        if(position.y-hero.getPosition().y >=0){
+            throwbackPosition.y += 1;
+            for(int i=0;i<10;i++){
+                if (currentLevel.getTileAt(throwbackPosition.toCoordinate()).isAccessible()) {
+                    this.position = throwbackPosition;
+                }else {
+                    throwbackPosition.y -= 0.1;
+                }
+            }
+        }else {
+            throwbackPosition.y -= 1;
+            for(int i=0;i<10;i++){
+                if (currentLevel.getTileAt(throwbackPosition.toCoordinate()).isAccessible()) {
+                    this.position = throwbackPosition;
+                }else {
+                    throwbackPosition.y += 0.1;
+                }
+            }
+        }
     }
 }
 

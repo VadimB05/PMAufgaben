@@ -24,7 +24,7 @@ import item.weapon.Staff;
 import item.weapon.Sword;
 import level.generator.LevelLoader.LevelLoader;
 import level.generator.dungeong.graphg.NoSolutionException;
-import logging.StandardFormatter;
+import logging.InventoryFormatter;
 import tools.Point;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import trap.Hole;
@@ -56,8 +56,9 @@ public class MyGame extends MainController {
     private ManaPotion manaPotion;
     private Spikes spikes;
     private Hole hole;
-    private List<Monster> monsterList = new ArrayList<Monster>();
-    Random monsterCountGenerator = new Random();;
+    private List<Monster> monsterList;
+    private List<Monster> deadMonsterList;
+    Random monsterCountGenerator = new Random();
     private int levelMonsterCount;
     private int maxMonsterCount = 5;
     private int levelCounter = 0;
@@ -74,6 +75,9 @@ public class MyGame extends MainController {
     protected void setup() {
         myBatch = new SpriteBatch();
 
+        monsterList = new ArrayList<Monster>();
+        deadMonsterList = new ArrayList<Monster>();
+
         window = new GameOverWindow();
         gameOverTexture = new Texture("hud/gameOver.png");
 
@@ -89,7 +93,7 @@ public class MyGame extends MainController {
         handlerMain = new ConsoleHandler();
 
         handlerMain.setLevel(Level.INFO);
-        handlerMain.setFormatter(new StandardFormatter("Main Logger"));
+        handlerMain.setFormatter(new InventoryFormatter("Main Logger"));
         logger.setLevel(Level.INFO);
         logger.addHandler(handlerMain);
         logger.setUseParentHandlers(false);
@@ -174,9 +178,6 @@ public class MyGame extends MainController {
         dropItemFromInventory();
 
         switchHUDHeart();
-
-        removeHealth();
-
     }
 
     @Override
@@ -204,9 +205,61 @@ public class MyGame extends MainController {
             canItemBePickedUp();
         }
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && hero.getFrameCounter()>=50) {
+            checkMonsterAttackable();
+        }
+
+        monsterAttackPlayer();
+
         getInventoryItems();
 
         gameOver();
+
+        countWaitBetweenAttacks();
+    }
+
+    private void monsterAttackPlayer() {
+        for(Monster monster: monsterList){
+            if(monster.collide(hero)){
+                if(monster.getFrameCounter()>= 50){
+                    hero.getAttacked(monster);
+                    monster.resetFrameCounter();
+                }
+                monster.setInCombat(true);
+            }else {
+                monster.setInCombat(false);
+            }
+        }
+    }
+
+    /**
+     * Iterates through the monsters and checks collision, if true call method attackMonster().
+     * If the monster loses all health, then remove the object from the map and arraylist
+     * */
+    private void checkMonsterAttackable() {
+        for(int i=0; i<monsterList.size();i++){
+            if(monsterList.get(i).collide(hero)){
+                attackMonster(monsterList.get(i));
+                if(monsterList.get(i).checkMonsterAlive()){
+                    logger.info("Monster wurde eliminiert!");
+                    entityController.remove(monsterList.get(i));
+                    monsterList.remove(i);
+                    i--;
+                }
+            }
+        }
+    }
+
+    private void countWaitBetweenAttacks() {
+        hero.addFrameCounter();
+        for(Monster monster : monsterList){
+            monster.addFrameCounter();
+        }
+    }
+
+    private void attackMonster(Monster monster) {
+        hero.attack(monster);
+        hero.resetFrameCounter();
     }
 
     /**
@@ -233,13 +286,6 @@ public class MyGame extends MainController {
             myBatch.end();
             paused = true;
             hero.setPaused(true);
-        }
-    }
-
-    //TODO: delete method, just for testing
-    private void removeHealth(){
-        if(Gdx.input.isKeyJustPressed(Input.Keys.K)){
-            hero.setHealth(hero.getHealth()/2);
         }
     }
 
@@ -470,8 +516,8 @@ public class MyGame extends MainController {
         levelMonsterCount = monsterCountGenerator.nextInt(3) + levelCounter;
         if(levelMonsterCount > 5) { levelMonsterCount = 5; }
         for(int i = 0; i < levelMonsterCount; i++) {
-            monsterList.add(new Chort(painter, batch));
-            monsterList.add(new Imp(painter, batch));
+            monsterList.add(new Chort(painter, batch,(2*levelCounter)+10,levelCounter));
+            monsterList.add(new Imp(painter, batch,(2*levelCounter)+10,levelCounter));
         }
 
         // added to the entityController
