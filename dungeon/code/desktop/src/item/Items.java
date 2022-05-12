@@ -81,11 +81,6 @@ public abstract class Items extends Entity {
     }
 
     public boolean collide(MyHero myHero) {
-        if (myHero.getHitBox().overlaps(this.hitBox)) {
-            return true;
-        }
-        return false;
+        return myHero.getHitBox().overlaps(this.hitBox);
     }
-
-
 }
