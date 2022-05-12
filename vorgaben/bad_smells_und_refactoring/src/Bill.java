@@ -2,26 +2,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Bill {
+    private ArrayList<Article> articles;
 
-    public String customerName;
-    public String nickname;
-    public Date birthday;
-    public String email;
-    public String street;
-    public String streetNumber;
-    public int postalCode;
-    public String city;
-    public ArrayList<Article> articles;
-
-    public Bill(String cn, String n, String s, String sn, int pc, Date b, String e, String c) {
-        customerName = cn;
-        nickname = n;
-        street = s;
-        streetNumber = sn;
-        postalCode = pc;
-        birthday = b;
-        email = e;
-        city = c;
+    public Bill() {
         articles = new ArrayList<Article>();
     }
 
@@ -32,12 +15,7 @@ public class Bill {
     public String getDetails() {
         double total = 0;
 
-        String result = "Details for \"" + customerName + "\"\n";
-        result += street + " " + streetNumber + "\n";
-        result += postalCode + " " + city + "\n";
-        result += "Geburtstag: " + birthday + "\n";
-        result += "Email: " + email + "\n\n";
-        result += "Article: \n";
+        String result = "Article: \n";
         for (Article article : articles) {
             double price = 0;
             if (article.bike instanceof Brompton) {

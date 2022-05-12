@@ -31,8 +31,9 @@ import trap.Hole;
 import trap.Spikes;
 import character.monster.Chort;
 import character.monster.Imp;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -57,7 +58,6 @@ public class MyGame extends MainController {
     private Spikes spikes;
     private Hole hole;
     private List<Monster> monsterList;
-    private List<Monster> deadMonsterList;
     Random monsterCountGenerator = new Random();
     private int levelMonsterCount;
     private int maxMonsterCount = 5;
@@ -76,7 +76,6 @@ public class MyGame extends MainController {
         myBatch = new SpriteBatch();
 
         monsterList = new ArrayList<Monster>();
-        deadMonsterList = new ArrayList<Monster>();
 
         window = new GameOverWindow();
         gameOverTexture = new Texture("hud/gameOver.png");
@@ -233,7 +232,7 @@ public class MyGame extends MainController {
     }
 
     /**
-     * Iterates through the monsters and checks collision, if true call method attackMonster().
+     * Iterates through the monsters and checks collision, if true call method attackMonster()
      * If the monster loses all health, then remove the object from the map and arraylist
      * */
     private void checkMonsterAttackable() {
@@ -531,6 +530,11 @@ public class MyGame extends MainController {
         }
     }
 
+    /**
+     * The program entry point to start the dungeon.
+     *
+     * @param args command line arguments, but not needed.
+     */
     public static void main(String[] args) {
         // start the game
         DesktopLauncher.run(new MyGame());
