@@ -51,7 +51,7 @@ public class MyGame extends MainController {
     private Shield shieldMetall;
     private ChestPlate chestPlate;
     private ChestPlate chestPlateBlack;
-    private Icon swordIcon, staffIcon, shieldBlackIcon, shieldMetallIcon, chestPlateIcon, chestPlateBlackIcon, fullHeart, halfHeart, emptyHeart;
+    private Icon fullHeart, halfHeart, emptyHeart;
     private HealthPotion healthPotion;
     private ManaPotion manaPotion;
     private Spikes spikes;
@@ -318,7 +318,6 @@ public class MyGame extends MainController {
             entityController.add(items);
             items.setPickedUp(false);
             items.setPosition(hero.getPosition());
-            items.setHitBox();
             hudController.remove(items.getIcon());
         }
     }
@@ -387,7 +386,6 @@ public class MyGame extends MainController {
         entityController.add(newPotion);
         newPotion.setPickedUp(false);
         newPotion.setPosition(hero.getPosition());
-        newPotion.setHitBox();
         inventoryItemsArrayList.add(newPotion);
         inventory.dropItemInventory(position);
     }
