@@ -43,8 +43,7 @@ import java.util.logging.Logger;
 public class MyGame extends MainController {
     private ArrayList<Potion> inventoryItemsArrayList;
     private List<Items> itemsList = new ArrayList<>();
-    private Label levelLabel;
-    private Label defenseLabel, healthLabel, damageLabel, manaLabel;
+    private Label defenseLabel, healthLabel, damageLabel, manaLabel, levelLabel, expLabel, stageLabel;
     private MyHero hero;
     private Sword sword;
     private Staff staff;
@@ -60,8 +59,8 @@ public class MyGame extends MainController {
     private List<Monster> monsterList;
     Random monsterCountGenerator = new Random();
     private int levelMonsterCount;
-    private int maxMonsterCount = 5;
-    private int levelCounter = 0;
+    private int maxMonsterCount;
+    private int stageCounter;
     private Texture gameOverTexture;
     boolean paused;
     private SpriteBatch myBatch;
@@ -76,6 +75,9 @@ public class MyGame extends MainController {
         myBatch = new SpriteBatch();
 
         monsterList = new ArrayList<Monster>();
+        maxMonsterCount = 5;
+
+        stageCounter = 0;
 
         window = new GameOverWindow();
         gameOverTexture = new Texture("hud/gameOver.png");
@@ -239,9 +241,10 @@ public class MyGame extends MainController {
         for(int i=0; i<monsterList.size();i++){
             if(monsterList.get(i).collide(hero)){
                 attackMonster(monsterList.get(i));
-                if(monsterList.get(i).checkMonsterAlive()){
+                if(monsterList.get(i).checkMonsterDead()){
                     logger.info("Monster wurde eliminiert!");
                     entityController.remove(monsterList.get(i));
+                    hero.gainExp(monsterList.get(i).getExp());
                     monsterList.remove(i);
                     i--;
                 }
@@ -269,7 +272,6 @@ public class MyGame extends MainController {
             this.entityController = new EntityController();
             this.hudController = new HUDController(batch);
             this.setup();
-            this.onLevelLoad();
         }
     }
 
@@ -467,27 +469,27 @@ public class MyGame extends MainController {
     private void loadStats(){
         defenseLabel = hudController.drawText("Verteidigung: "+hero.getDefense(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,100);
         damageLabel = hudController.drawText("Schaden: "+hero.getStrength(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,120);
-        healthLabel = hudController.drawText("Lebenspunkte: "+(int)((float) hero.getHealth()/hero.getMaxHealth()*100)+"%","font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,140);
-        manaLabel = hudController.drawText("Mana: "+hero.getMana(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,80);
+        healthLabel = hudController.drawText("Lebenspunkte: "+hero.getHealth()+"/"+hero.getMaxHealth(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,140);
+        manaLabel = hudController.drawText("Mana: "+hero.getMana()+"/"+hero.getMaxMana(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,80);
+        levelLabel = hudController.drawText("Level: "+hero.getLevel(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,14,50,50,20,5);
+        expLabel = hudController.drawText("Erfahrungspunkte: "+(int)((float)hero.getExp()/hero.getReqExp()*100)+"%","font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,30);
+        stageLabel = hudController.drawText("Ebene "+ stageCounter,"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,14,50,50,500,440);
     }
 
-    /** Delete labels for the stats to reload them*/
+    /** Remove labels for the stats to reload them, so they won't be overwritten again and again*/
     private void delStats(){
         defenseLabel.remove();
         damageLabel.remove();
         healthLabel.remove();
         manaLabel.remove();
+        levelLabel.remove();
+        expLabel.remove();
+        stageLabel.remove();
     }
 
     @Override
     public void onLevelLoad() {
-        levelCounter++;
-        if(levelCounter==1){
-            levelLabel = hudController.drawText("Level "+levelCounter,"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,14,50,50,20,5);
-        }
-        else{
-            levelLabel.setText("Level "+levelCounter);
-        }
+        stageCounter++;
 
         hero.setLevel(levelAPI.getCurrentLevel());
 
@@ -512,11 +514,11 @@ public class MyGame extends MainController {
         hole.setLevel(levelAPI.getCurrentLevel());
 
         // random number of monsters gets generated based on current level (max 5)
-        levelMonsterCount = monsterCountGenerator.nextInt(3) + levelCounter;
+        levelMonsterCount = monsterCountGenerator.nextInt(3) + stageCounter;
         if(levelMonsterCount > 5) { levelMonsterCount = 5; }
         for(int i = 0; i < levelMonsterCount; i++) {
-            monsterList.add(new Chort(painter, batch,(2*levelCounter)+10,levelCounter));
-            monsterList.add(new Imp(painter, batch,(2*levelCounter)+10,levelCounter));
+            monsterList.add(new Chort(painter, batch,(2* stageCounter)+10, stageCounter, (30+ stageCounter * stageCounter -(20+ stageCounter))+20));
+            monsterList.add(new Imp(painter, batch,(2* stageCounter)+10, stageCounter,(30+ stageCounter * stageCounter -(20+ stageCounter))+30));
         }
 
         // added to the entityController
