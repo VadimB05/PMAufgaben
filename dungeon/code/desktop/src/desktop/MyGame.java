@@ -24,7 +24,7 @@ import item.weapon.Staff;
 import item.weapon.Sword;
 import level.generator.LevelLoader.LevelLoader;
 import level.generator.dungeong.graphg.NoSolutionException;
-import logging.StandardFormatter;
+import logging.InventoryFormatter;
 import tools.Point;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import trap.Hole;
@@ -32,6 +32,7 @@ import trap.Spikes;
 import character.monster.Chort;
 import character.monster.Imp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.ConsoleHandler;
@@ -39,11 +40,10 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 public class MyGame extends MainController {
     private ArrayList<Potion> inventoryItemsArrayList;
-    private Label levelLabel;
-    private Label defenseLabel, healthLabel, damageLabel, manaLabel;
+    private List<Items> itemsList = new ArrayList<>();
+    private Label defenseLabel, healthLabel, damageLabel, manaLabel, levelLabel, expLabel, stageLabel;
     private MyHero hero;
     private Sword sword;
     private Staff staff;
@@ -51,38 +51,33 @@ public class MyGame extends MainController {
     private Shield shieldMetall;
     private ChestPlate chestPlate;
     private ChestPlate chestPlateBlack;
-    private Icon swordIcon, staffIcon, shieldBlackIcon, shieldMetallIcon, chestPlateIcon, chestPlateBlackIcon, fullHeart, halfHeart, emptyHeart;
+    private Icon fullHeart, halfHeart, emptyHeart;
     private HealthPotion healthPotion;
     private ManaPotion manaPotion;
     private Spikes spikes;
     private Hole hole;
-    private List<Monster> monsterList = new ArrayList<Monster>();
-    Random monsterCountGenerator = new Random();;
+    private List<Monster> monsterList;
+    Random monsterCountGenerator = new Random();
     private int levelMonsterCount;
-    private int maxMonsterCount = 5;
-    private int levelCounter = 0;
-
+    private int maxMonsterCount;
+    private int stageCounter;
     private Texture gameOverTexture;
-
     boolean paused;
-
     private SpriteBatch myBatch;
-
     Window window;
-
     Inventory inventory;
     Equipment equipment;
-
     Logger logger;
     ConsoleHandler handlerMain;
-
-
-
-
 
     @Override
     protected void setup() {
         myBatch = new SpriteBatch();
+
+        monsterList = new ArrayList<Monster>();
+        maxMonsterCount = 5;
+
+        stageCounter = 0;
 
         window = new GameOverWindow();
         gameOverTexture = new Texture("hud/gameOver.png");
@@ -99,7 +94,7 @@ public class MyGame extends MainController {
         handlerMain = new ConsoleHandler();
 
         handlerMain.setLevel(Level.INFO);
-        handlerMain.setFormatter(new StandardFormatter("Main Logger"));
+        handlerMain.setFormatter(new InventoryFormatter("Main Logger"));
         logger.setLevel(Level.INFO);
         logger.addHandler(handlerMain);
         logger.setUseParentHandlers(false);
@@ -114,20 +109,20 @@ public class MyGame extends MainController {
 
 
         sword = new Sword(painter,batch,"item/weapon_knight_sword.png", "Schwert",4);
-        swordIcon = new Icon(hudPainter,hudBatch,new Point(515f,405f),sword.getTexturePath());
+        sword.setIcon(new Icon(hudPainter,hudBatch,new Point(515f,405f),sword.getTexturePath()));
 
         staff = new Staff(painter, batch, "item/weapon_green_magic_staff.png", "Zauberstab",2);
-        staffIcon = new Icon(hudPainter,hudBatch,new Point(515f,405f),staff.getTexturePath());
+        staff.setIcon(new Icon(hudPainter,hudBatch,new Point(515f,405f),staff.getTexturePath()));
 
         shieldBlack = new Shield(painter, batch, "item/shieldBlack.png", "schwarzes Schild",2);
-        shieldBlackIcon = new Icon(hudPainter,hudBatch,new Point(565f,335f),shieldBlack.getTexturePath());
+        shieldBlack.setIcon(new Icon(hudPainter,hudBatch,new Point(565f,335f),shieldBlack.getTexturePath()));
         shieldMetall = new Shield(painter, batch, "item/shieldMetall.png", "metall Schild",5);
-        shieldMetallIcon = new Icon(hudPainter,hudBatch,new Point(565f,335f),shieldMetall.getTexturePath());
+        shieldMetall.setIcon(new Icon(hudPainter,hudBatch,new Point(565f,335f),shieldMetall.getTexturePath()));
 
         chestPlate = new ChestPlate(painter, batch, "item/chestPlate.png", "normale Ruestung",5);
-        chestPlateIcon = new Icon(hudPainter,hudBatch,new Point(565f,405f),chestPlate.getTexturePath());
+        chestPlate.setIcon(new Icon(hudPainter,hudBatch,new Point(565f,405f),chestPlate.getTexturePath()));
         chestPlateBlack = new ChestPlate(painter, batch, "item/chestPlateBlack.png", "schwarze Ruestung",15);
-        chestPlateBlackIcon = new Icon(hudPainter,hudBatch,new Point(565f,405f),chestPlateBlack.getTexturePath());
+        chestPlateBlack.setIcon(new Icon(hudPainter,hudBatch,new Point(565f,405f),chestPlateBlack.getTexturePath()));
 
         healthPotion = new HealthPotion(painter, batch,"item/flask_big_red.png", "Lebenstrank",10,0);
 
@@ -139,6 +134,8 @@ public class MyGame extends MainController {
 
         inventoryItemsArrayList.add(healthPotion);
         inventoryItemsArrayList.add(manaPotion);
+
+        Collections.addAll(itemsList,sword, staff, shieldBlack, shieldMetall, chestPlateBlack, chestPlate);
 
         // load the first level
         try {
@@ -182,9 +179,6 @@ public class MyGame extends MainController {
         dropItemFromInventory();
 
         switchHUDHeart();
-
-        removeHealth();
-
     }
 
     @Override
@@ -207,17 +201,67 @@ public class MyGame extends MainController {
             hero.addHealth(hole.getDamage());
         }
 
-        switchWeapons();
+        if(Gdx.input.isKeyJustPressed(Input.Keys.E)){
+            switchEquipment();
+            canItemBePickedUp();
+        }
 
-        switchShields();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && hero.getFrameCounter()>=50) {
+            checkMonsterAttackable();
+        }
 
-        switchChestPlates();
-
-        canItemBePickedUp();
+        monsterAttackPlayer();
 
         getInventoryItems();
 
         gameOver();
+
+        countWaitBetweenAttacks();
+    }
+
+    private void monsterAttackPlayer() {
+        for(Monster monster: monsterList){
+            if(monster.collide(hero)){
+                if(monster.getFrameCounter()>= 50){
+                    hero.getAttacked(monster);
+                    monster.resetFrameCounter();
+                }
+                monster.setInCombat(true);
+            }else {
+                monster.setInCombat(false);
+            }
+        }
+    }
+
+    /**
+     * Iterates through the monsters and checks collision, if true call method attackMonster()
+     * If the monster loses all health, then remove the object from the map and arraylist
+     * */
+    private void checkMonsterAttackable() {
+        for(int i=0; i<monsterList.size();i++){
+            if(monsterList.get(i).collide(hero)){
+                attackMonster(monsterList.get(i));
+                if(monsterList.get(i).checkMonsterDead()){
+                    logger.info("Monster wurde eliminiert!");
+                    entityController.remove(monsterList.get(i));
+                    hero.gainExp(monsterList.get(i).getExp());
+                    monsterList.remove(i);
+                    i--;
+                }
+            }
+        }
+    }
+
+    private void countWaitBetweenAttacks() {
+        hero.addFrameCounter();
+        for(Monster monster : monsterList){
+            monster.addFrameCounter();
+        }
+    }
+
+    private void attackMonster(Monster monster) {
+        hero.attack(monster);
+        hero.resetFrameCounter();
     }
 
     /**
@@ -228,7 +272,6 @@ public class MyGame extends MainController {
             this.entityController = new EntityController();
             this.hudController = new HUDController(batch);
             this.setup();
-            this.onLevelLoad();
         }
     }
 
@@ -247,13 +290,6 @@ public class MyGame extends MainController {
         }
     }
 
-    //TODO: delete method, just for testing
-    private void removeHealth(){
-        if(Gdx.input.isKeyJustPressed(Input.Keys.K)){
-            hero.setHealth(hero.getHealth()/2);
-        }
-    }
-
     /** Switches the Heart Icons in the HUD depending on the heroes health*/
     private void switchHUDHeart(){
         if((float) hero.getHealth()/hero.getMaxHealth()>=0.5f){
@@ -264,77 +300,32 @@ public class MyGame extends MainController {
             hudController.remove(fullHeart);
             hudController.remove(halfHeart);
             hudController.add(emptyHeart);
-        } else{
+        }else{
             hudController.remove(fullHeart);
             hudController.remove(emptyHeart);
             hudController.add(halfHeart);
         }
     }
 
-
     /**
-     * Switch chestplates
+     * Switch equipment
      *
-     * <p> It checks if we have a chestplate equipped, switches them, saves the old one as a temporary item
-     * removes the newly equipped chesplate from the map, reloads our players defense points and calls the method
-     * changeItem(Items items, Icon equipIcon, Icon removeIcon)
+     * <p> It checks if we have an equipment of that type is already equipped, switches them, saves the old one as a temporary item
+     * removes the newly equipped item from the map, reloads our players defense/strength points and calls the method
+     * changeItem(Items items)
      *
      * */
-    private void switchChestPlates() {
-        if(checkAbleToPickUp(chestPlate,hero)){
-            Items items = equipment.equipChestPlate(chestPlate);
-            entityController.remove(chestPlate);
-            hero.setDefense(equipment.getDefense());
-            changeItem(items,chestPlateIcon,chestPlateBlackIcon);
-        } else if (checkAbleToPickUp(chestPlateBlack,hero)) {
-            Items items = equipment.equipChestPlate(chestPlateBlack);
-            entityController.remove(chestPlateBlack);
-            hero.setDefense(equipment.getDefense());
-            changeItem(items,chestPlateBlackIcon,chestPlateIcon);
-        }
-    }
-
-    /**
-     * Switch shields
-     *
-     * <p> It checks if we have a shield equipped, switches them, saves the old one as a temporary item
-     * removes the newly equipped shield from the map, reloads our players defense points and calls the method
-     * changeItem(Items items, Icon equipIcon, Icon removeIcon)
-     *
-     * */
-    private void switchShields() {
-        if(checkAbleToPickUp(shieldBlack,hero)){
-            Items items = equipment.equipShield(shieldBlack);
-            entityController.remove(shieldBlack);
-            hero.setDefense(equipment.getDefense());
-            changeItem(items,shieldBlackIcon,shieldMetallIcon);
-        } else if (checkAbleToPickUp(shieldMetall,hero)) {
-            Items items = equipment.equipShield(shieldMetall);
-            entityController.remove(shieldMetall);
-            hero.setDefense(equipment.getDefense());
-            changeItem(items,shieldMetallIcon,shieldBlackIcon);
-        }
-    }
-
-    /**
-     * Switch weapons
-     *
-     * <p> It checks if we have a weapons equipped, switches them, saves the old one as a temporary item
-     * removes the newly equipped weapons from the map, reloads our players attack points and calls the method
-     * changeItem(Items items, Icon equipIcon, Icon removeIcon)
-     *
-     * */
-    private void switchWeapons() {
-        if(checkAbleToPickUp(sword,hero)){
-            Items items = equipment.equipWeapon(sword);
-            entityController.remove(sword);
-            hero.setStrength(sword.getDamage());
-            changeItem(items,swordIcon,staffIcon);
-        } else if (checkAbleToPickUp(staff,hero)) {
-            Items items = equipment.equipWeapon(staff);
-            entityController.remove(staff);
-            hero.setStrength(staff.getDamage());
-            changeItem(items,staffIcon,swordIcon);
+    private void switchEquipment() {
+        for(Items items: itemsList){
+            if(items.collide(hero) && !items.isPickedUp()){
+                Items dropItem = equipment.equipmentChange(items);
+                entityController.remove(items);
+                items.useItem(hero);
+                hero.setDefense(equipment.getDefense());
+                hudController.add(items.getIcon());
+                changeItem(dropItem);
+                return;
+            }
         }
     }
 
@@ -347,7 +338,7 @@ public class MyGame extends MainController {
      * */
     private void canItemBePickedUp() {
         for(Potion potion : inventoryItemsArrayList){
-            if (checkAbleToPickUp(potion,hero)){
+            if (potion.collide(hero) && !potion.isPickedUp()){
                 if(inventory.addToInventory(potion)){
                     entityController.remove(potion);
                     potion.setPickedUp(true);
@@ -355,7 +346,6 @@ public class MyGame extends MainController {
             }
         }
     }
-
 
     /** Log all items in inventory*/
     private void getInventoryItems() {
@@ -369,25 +359,13 @@ public class MyGame extends MainController {
      * Method to not pick up weapons, shields and chestplates into inventory
      *
      * */
-    private void changeItem(Items items, Icon equipIcon, Icon removeIcon){
-        hudController.add(equipIcon);
-        if(items!=null){
+    private void changeItem(Items items){
+        if(items!=null) {
             items.setLevel(levelAPI.getCurrentLevel());
             entityController.add(items);
             items.setPickedUp(false);
             items.setPosition(hero.getPosition());
-            hudController.remove(removeIcon);
-        }
-    }
-
-    /** Check if hero is in range with item, if the pick item key has been pressed and item isn`t already picked up*/
-    private boolean checkAbleToPickUp(Items items, MyHero myHero){
-        if(myHero.getPosition().x-items.getPosition().x < 1 && myHero.getPosition().y-items.getPosition().y < 1
-            && myHero.getPosition().x-items.getPosition().x > -1 && myHero.getPosition().y-items.getPosition().y > -1 && !items.isPickedUp()
-            && Gdx.input.isKeyJustPressed(Input.Keys.E)){
-            return true;
-        }else{
-            return false;
+            hudController.remove(items.getIcon());
         }
     }
 
@@ -484,53 +462,34 @@ public class MyGame extends MainController {
             }else{
                 logger.info(inventory.getInventoryArrayList().get(position).getName()+" konnte nicht verwendet werden. Leben voll!");
             }
-        }else {
-            if(inventory.getInventoryArrayList().get(position).getClass().equals(sword.getClass())) {
-                logger.info(inventory.getInventoryArrayList().get(position).getName()+" ausgeruestet.");
-                Items items = equipment.equipWeapon(sword);
-                hero.setStrength(sword.getDamage());
-                changeItem(items, swordIcon, staffIcon);
-                inventory.dropItemInventory(position);
-            }
-            else{
-                logger.info(inventory.getInventoryArrayList().get(position).getName()+" ausgeruestet.");
-                Items items = equipment.equipWeapon(staff);
-                entityController.remove(staff);
-                hero.setStrength(staff.getDamage());
-                changeItem(items, staffIcon, swordIcon);
-                inventory.dropItemInventory(position);
-            }
         }
     }
-
 
     /** Load the stats as labels in the HUD*/
     private void loadStats(){
         defenseLabel = hudController.drawText("Verteidigung: "+hero.getDefense(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,100);
         damageLabel = hudController.drawText("Schaden: "+hero.getStrength(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,120);
-        healthLabel = hudController.drawText("Lebenspunkte: "+(int)((float) hero.getHealth()/hero.getMaxHealth()*100)+"%","font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,140);
-        manaLabel = hudController.drawText("Mana: "+hero.getMana(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,80);
+        healthLabel = hudController.drawText("Lebenspunkte: "+hero.getHealth()+"/"+hero.getMaxHealth(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,140);
+        manaLabel = hudController.drawText("Mana: "+hero.getMana()+"/"+hero.getMaxMana(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,80);
+        levelLabel = hudController.drawText("Level: "+hero.getLevel(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,14,50,50,20,5);
+        expLabel = hudController.drawText("Erfahrungspunkte: "+(int)((float)hero.getExp()/hero.getReqExp()*100)+"%","font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,30);
+        stageLabel = hudController.drawText("Ebene "+ stageCounter,"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,14,50,50,500,440);
     }
 
-    /** Delete labels for the stats to reload them*/
+    /** Remove labels for the stats to reload them, so they won't be overwritten again and again*/
     private void delStats(){
         defenseLabel.remove();
         damageLabel.remove();
         healthLabel.remove();
         manaLabel.remove();
+        levelLabel.remove();
+        expLabel.remove();
+        stageLabel.remove();
     }
 
     @Override
     public void onLevelLoad() {
-        levelCounter++;
-        if(levelCounter==1){
-            levelLabel = hudController.drawText("Level "+levelCounter,"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,14,50,50,20,5);
-        }
-        else{
-            levelLabel.setText("Level "+levelCounter);
-        }
-
-
+        stageCounter++;
 
         hero.setLevel(levelAPI.getCurrentLevel());
 
@@ -555,11 +514,11 @@ public class MyGame extends MainController {
         hole.setLevel(levelAPI.getCurrentLevel());
 
         // random number of monsters gets generated based on current level (max 5)
-        levelMonsterCount = monsterCountGenerator.nextInt(3) + levelCounter;
+        levelMonsterCount = monsterCountGenerator.nextInt(3) + stageCounter;
         if(levelMonsterCount > 5) { levelMonsterCount = 5; }
         for(int i = 0; i < levelMonsterCount; i++) {
-            monsterList.add(new Chort(painter, batch));
-            monsterList.add(new Imp(painter, batch));
+            monsterList.add(new Chort(painter, batch,(2* stageCounter)+10, stageCounter, (30+ stageCounter * stageCounter -(20+ stageCounter))+20));
+            monsterList.add(new Imp(painter, batch,(2* stageCounter)+10, stageCounter,(30+ stageCounter * stageCounter -(20+ stageCounter))+30));
         }
 
         // added to the entityController

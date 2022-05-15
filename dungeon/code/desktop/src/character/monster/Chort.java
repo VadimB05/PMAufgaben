@@ -12,8 +12,8 @@ public class Chort extends Monster {
      * @param painter   Painter that draws this object
      * @param batch     SpriteBatch to draw on
      */
-    public Chort(Painter painter, SpriteBatch batch) {
-        super(painter, batch);
+    public Chort(Painter painter, SpriteBatch batch,int health, int strength, int exp) {
+        super(painter, batch, health, strength, exp);
         idleAnimationRightList.add("character/monster/chort_idle_anim_f0.png");
         idleAnimationRightList.add("character/monster/chort_idle_anim_f1.png");
         idleAnimationRightList.add("character/monster/chort_idle_anim_f2.png");

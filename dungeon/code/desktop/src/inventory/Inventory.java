@@ -3,6 +3,7 @@ package inventory;
 
 import item.Items;
 import logging.InventoryFormatter;
+import logging.StandardFormatter;
 
 import java.util.ArrayList;
 import java.util.logging.ConsoleHandler;
@@ -58,13 +59,13 @@ public class Inventory {
                 }
                 inventoryItems.append(" ").append(inventory.get(i).getName()).append(" (").append(i+1).append(" zum Aktivieren und ");
                 if(i==0){
-                    inventoryItems.append("6 zum fallen lassen)");
+                    inventoryItems.append("6 zum fallen lassen)\n");
                 }else if(i==1){
                     inventoryItems.append("7 zum fallen lassen)\n");
                 }else if(i==2){
-                    inventoryItems.append("8 zum fallen lassen)");
+                    inventoryItems.append("8 zum fallen lassen)\n");
                 }else{
-                    inventoryItems.append("9 zum fallen lassen)");
+                    inventoryItems.append("9 zum fallen lassen)\n");
                 }
             }
             logger.info(inventoryItems.toString());

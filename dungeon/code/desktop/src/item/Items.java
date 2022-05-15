@@ -2,16 +2,19 @@ package item;
 
 import basiselements.Entity;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import controller.EntityController;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.TimeUtils;
 import desktop.MyHero;
 import graphic.Painter;
-import inventory.Equipment;
+import hud.Icon;
 import level.elements.Level;
 import tools.Point;
 
 
-public abstract class Items extends Entity {
 
+public abstract class Items extends Entity {
+    private final Rectangle hitBox;
+    protected Icon icon;
     protected String texturePath;
     protected Point position;
     protected String name;
@@ -30,14 +33,14 @@ public abstract class Items extends Entity {
         super(painter, batch);
         this.texturePath = texturePath;
         this.name = name;
-    }
+        hitBox = new Rectangle();
 
+    }
 
     @Override
     public Point getPosition() {
         return position;
     }
-
 
     @Override
     public String getTexturePath() {
@@ -45,13 +48,14 @@ public abstract class Items extends Entity {
     }
 
     public void setLevel(Level level){
-
         position = level.getRandomRoom().getRandomFloorTile().getCoordinate().toPoint();
+        hitBox.set(position.x,position.y,1f,1f);
         //position = level.getStartTile().getCoordinate().toPoint();
     }
 
     public void setPosition(Point position) {
         this.position = position;
+        hitBox.set(position.x,position.y,1f,1f);
     }
 
     public String getName() {
@@ -66,8 +70,17 @@ public abstract class Items extends Entity {
         this.pickedUp = pickedUp;
     }
 
-
     public abstract void useItem(MyHero myHero);
 
+    public Icon getIcon() {
+        return icon;
+    }
 
+    public void setIcon(Icon icon) {
+        this.icon = icon;
+    }
+
+    public boolean collide(MyHero myHero) {
+        return myHero.getHitBox().overlaps(this.hitBox);
+    }
 }

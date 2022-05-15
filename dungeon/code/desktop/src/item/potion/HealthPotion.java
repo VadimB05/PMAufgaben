@@ -23,11 +23,7 @@ public class HealthPotion extends Potion {
 
     @Override
     public void useItem(MyHero myHero) {
-        if (myHero.getMaxHealth() - myHero.getHealth() > health) {
-            myHero.addHealth(health);
-        } else {
-            myHero.addHealth(myHero.getMaxHealth() - myHero.getHealth());
-        }
+        myHero.addHealth(health);
     }
 
 }

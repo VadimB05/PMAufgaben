@@ -1,11 +1,11 @@
 package inventory;
 
 import item.Items;
-import item.armor.Armor;
 import item.armor.ChestPlate;
 import item.armor.Shield;
 import item.weapon.Weapons;
-import logging.EquipmentFormatter;
+import logging.InventoryFormatter;
+
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -29,69 +29,55 @@ public class Equipment {
         }
 
         handlerEquipment.setLevel(Level.INFO);
-        handlerEquipment.setFormatter(new EquipmentFormatter("Inventory Logger"));
+        handlerEquipment.setFormatter(new InventoryFormatter("Inventory Logger"));
         logger.setLevel(Level.INFO);
         logger.addHandler(handlerEquipment);
         logger.setUseParentHandlers(false);
     }
 
-    /** Picks up weapon and sets picked up to true
+    /** Picks up an equipment and sets picked up to true
      *
-     * @param weapons , which we are putting in our weapon slot
-     * @return tmpweapons/null , the weapon we had equipped
+     * @param items , which we are putting in our equipment slot
+     * @return tmpitems/null , the equipment we had equipped
      * */
-    public Items equipWeapon(Weapons weapons){
-        logger.info(weapons.getName()+" ausgeruestet.");
-        weapons.setPickedUp(true);
-        if(this.weapons!=null){
-            Weapons tmpWeapon = this.weapons;
-            this.weapons = weapons;
-            addStrength(this.weapons);
-            return tmpWeapon;
-        }else {
-            this.weapons = weapons;
-            addStrength(this.weapons);
-            return null;
+    public Items equipmentChange(Items items){
+        logger.info(items.getName()+" ausgeruestet.");
+        items.setPickedUp(true);
+        if(items.getClass().equals(ChestPlate.class)){
+            if(this.chestPlate!=null){
+                ChestPlate tmpChestPlate = this.chestPlate;
+                this.chestPlate = (ChestPlate) items;
+                addDefenseChestPlate(this.chestPlate);
+                return tmpChestPlate;
+            }else {
+                this.chestPlate = (ChestPlate) items;
+                addDefenseChestPlate(this.chestPlate);
+                return null;
+            }
         }
-    }
-
-    /** Picks up chestplate and sets picked up to true
-     *
-     * @param chestPlate , which we are putting in our chestplate slot
-     * @return tmpChestPlate/null , the chestPlate we had equipped
-     * */
-    public Items equipChestPlate(ChestPlate chestPlate){
-        logger.info(chestPlate.getName()+" ausgeruestet.");
-        chestPlate.setPickedUp(true);
-        if(this.chestPlate!=null){
-            ChestPlate tmpChestPlate = this.chestPlate;
-            this.chestPlate = chestPlate;
-            addDefenseChestPlate(this.chestPlate);
-            return tmpChestPlate;
-        }else {
-            this.chestPlate = chestPlate;
-            addDefenseChestPlate(this.chestPlate);
-            return null;
+        else if(items.getClass().equals(Shield.class)){
+            if(this.shield!=null){
+                Shield tmpShield = this.shield;
+                this.shield = (Shield) items;
+                addDefenseShield(this.shield);
+                return tmpShield;
+            }else {
+                this.shield = (Shield) items;
+                addDefenseShield(this.shield);
+                return null;
+            }
         }
-    }
-
-    /** Picks up shield and sets picked up to true
-     *
-     * @param shield , which we are putting in our shield slot
-     * @return tmpshield/null , the shield we had equipped
-     * */
-    public Items equipShield(Shield shield){
-        logger.info(shield.getName()+" ausgeruestet.");
-        shield.setPickedUp(true);
-        if(this.shield!=null){
-            Shield tmpShield = this.shield;
-            this.shield = shield;
-            addDefenseShield(this.shield);
-            return tmpShield;
-        }else {
-            this.shield = shield;
-            addDefenseShield(this.shield);
-            return null;
+        else {
+            if(this.weapons!=null){
+                Weapons tmpWeapon = this.weapons;
+                this.weapons = (Weapons) items;
+                addStrength(this.weapons);
+                return tmpWeapon;
+            }else {
+                this.weapons = (Weapons) items;
+                addStrength(this.weapons);
+                return null;
+            }
         }
     }
 

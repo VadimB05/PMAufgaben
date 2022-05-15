@@ -23,12 +23,7 @@ public class ManaPotion extends Potion{
 
     @Override
     public void useItem(MyHero myHero) {
-        if(myHero.getMaxMana()-myHero.getMana()>mana){
-            myHero.addMana(mana);
-        }
-        else {
-            myHero.addMana(myHero.getMaxMana()-myHero.getMana());
-        }
+        myHero.addMana(mana);
     }
 
 
