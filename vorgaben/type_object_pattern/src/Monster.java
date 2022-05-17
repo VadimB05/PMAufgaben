@@ -13,4 +13,8 @@ public final class Monster {
     public void makeNoise(){
         System.out.println("Ich bin ein " + variety + " und bringe euch " + xp + " Erfahrungspunkte.");
     }
+
+    public void setXp(int xp) {
+        this.xp = xp;
+    }
 }

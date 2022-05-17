@@ -20,5 +20,8 @@ public class Main {
         magnus.makeNoise();
         jochen.makeNoise();
         albert.makeNoise();
+
+        harald.setXp(40);
+        harald.makeNoise();
     }
 }
