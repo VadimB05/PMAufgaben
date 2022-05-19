@@ -24,26 +24,28 @@ import item.weapon.Staff;
 import item.weapon.Sword;
 import level.generator.LevelLoader.LevelLoader;
 import level.generator.dungeong.graphg.NoSolutionException;
-import logging.InventoryFormatter;
+import logging.StandardFormatter;
+import magic.Spellbook;
+import magic.Spells;
 import tools.Point;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import trap.Hole;
 import trap.Spikes;
 import character.monster.Chort;
 import character.monster.Imp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+
+import java.util.*;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 public class MyGame extends MainController {
     private ArrayList<Potion> inventoryItemsArrayList;
     private List<Items> itemsList = new ArrayList<>();
-    private Label defenseLabel, healthLabel, damageLabel, manaLabel, levelLabel, expLabel, stageLabel;
+    private Label levelLabel;
+    private Label defenseLabel, healthLabel, damageLabel, manaLabel;
     private MyHero hero;
     private Sword sword;
     private Staff staff;
@@ -56,14 +58,16 @@ public class MyGame extends MainController {
     private ManaPotion manaPotion;
     private Spikes spikes;
     private Hole hole;
-    private List<Monster> monsterList;
-    Random monsterCountGenerator = new Random();
+    private List<Monster> monsterList = new ArrayList<Monster>();
+    Random monsterCountGenerator = new Random();;
     private int levelMonsterCount;
-    private int maxMonsterCount;
-    private int stageCounter;
+    private int maxMonsterCount = 5;
+    private int levelCounter = 0;
     private Texture gameOverTexture;
     boolean paused;
     private SpriteBatch myBatch;
+    private ArrayList<Spells> spellsArrayList;
+    Spellbook spellbook;
     Window window;
     Inventory inventory;
     Equipment equipment;
@@ -74,15 +78,11 @@ public class MyGame extends MainController {
     protected void setup() {
         myBatch = new SpriteBatch();
 
-        monsterList = new ArrayList<Monster>();
-        maxMonsterCount = 5;
-
-        stageCounter = 0;
-
         window = new GameOverWindow();
         gameOverTexture = new Texture("hud/gameOver.png");
 
         equipment = new Equipment();
+
 
         logger = Logger.getLogger(this.getClass().getName());
 
@@ -94,13 +94,15 @@ public class MyGame extends MainController {
         handlerMain = new ConsoleHandler();
 
         handlerMain.setLevel(Level.INFO);
-        handlerMain.setFormatter(new InventoryFormatter("Main Logger"));
+        handlerMain.setFormatter(new StandardFormatter("Main Logger"));
         logger.setLevel(Level.INFO);
         logger.addHandler(handlerMain);
         logger.setUseParentHandlers(false);
 
         inventoryItemsArrayList = new ArrayList<>();
         inventory = new Inventory();
+
+        spellbook = new Spellbook();
 
         levelAPI.setGenerator(new LevelLoader());
         hero = new MyHero(painter,batch);
@@ -134,6 +136,7 @@ public class MyGame extends MainController {
 
         inventoryItemsArrayList.add(healthPotion);
         inventoryItemsArrayList.add(manaPotion);
+
 
         Collections.addAll(itemsList,sword, staff, shieldBlack, shieldMetall, chestPlateBlack, chestPlate);
 
@@ -179,6 +182,9 @@ public class MyGame extends MainController {
         dropItemFromInventory();
 
         switchHUDHeart();
+
+        removeHealth();
+
     }
 
     @Override
@@ -206,62 +212,10 @@ public class MyGame extends MainController {
             canItemBePickedUp();
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && hero.getFrameCounter()>=50) {
-            checkMonsterAttackable();
-        }
-
-        monsterAttackPlayer();
-
         getInventoryItems();
+        showSpellbook();
 
         gameOver();
-
-        countWaitBetweenAttacks();
-    }
-
-    private void monsterAttackPlayer() {
-        for(Monster monster: monsterList){
-            if(monster.collide(hero)){
-                if(monster.getFrameCounter()>= 50){
-                    hero.getAttacked(monster);
-                    monster.resetFrameCounter();
-                }
-                monster.setInCombat(true);
-            }else {
-                monster.setInCombat(false);
-            }
-        }
-    }
-
-    /**
-     * Iterates through the monsters and checks collision, if true call method attackMonster()
-     * If the monster loses all health, then remove the object from the map and arraylist
-     * */
-    private void checkMonsterAttackable() {
-        for(int i=0; i<monsterList.size();i++){
-            if(monsterList.get(i).collide(hero)){
-                attackMonster(monsterList.get(i));
-                if(monsterList.get(i).checkMonsterDead()){
-                    logger.info("Monster wurde eliminiert!");
-                    entityController.remove(monsterList.get(i));
-                    hero.gainExp(monsterList.get(i).getExp());
-                    monsterList.remove(i);
-                    i--;
-                }
-            }
-        }
-    }
-
-    private void countWaitBetweenAttacks() {
-        hero.addFrameCounter();
-        for(Monster monster : monsterList){
-            monster.addFrameCounter();
-        }
-    }
-
-    private void attackMonster(Monster monster) {
-        hero.attack(monster);
-        hero.resetFrameCounter();
     }
 
     /**
@@ -272,6 +226,7 @@ public class MyGame extends MainController {
             this.entityController = new EntityController();
             this.hudController = new HUDController(batch);
             this.setup();
+            this.onLevelLoad();
         }
     }
 
@@ -287,6 +242,13 @@ public class MyGame extends MainController {
             myBatch.end();
             paused = true;
             hero.setPaused(true);
+        }
+    }
+
+    //TODO: delete method, just for testing
+    private void removeHealth(){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.K)){
+            hero.setHealth(hero.getHealth()/2);
         }
     }
 
@@ -465,31 +427,42 @@ public class MyGame extends MainController {
         }
     }
 
+    private void castSpell() {
+        
+    }
+
+    /** Log all Spells in Spellbook*/
+    private void showSpellbook() {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.M)){
+            spellbook.showSpellbook();
+        }
+    }
+
     /** Load the stats as labels in the HUD*/
     private void loadStats(){
         defenseLabel = hudController.drawText("Verteidigung: "+hero.getDefense(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,100);
         damageLabel = hudController.drawText("Schaden: "+hero.getStrength(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,120);
-        healthLabel = hudController.drawText("Lebenspunkte: "+hero.getHealth()+"/"+hero.getMaxHealth(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,140);
-        manaLabel = hudController.drawText("Mana: "+hero.getMana()+"/"+hero.getMaxMana(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,80);
-        levelLabel = hudController.drawText("Level: "+hero.getLevel(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,14,50,50,20,5);
-        expLabel = hudController.drawText("Erfahrungspunkte: "+(int)((float)hero.getExp()/hero.getReqExp()*100)+"%","font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,30);
-        stageLabel = hudController.drawText("Ebene "+ stageCounter,"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,14,50,50,500,440);
+        healthLabel = hudController.drawText("Lebenspunkte: "+(int)((float) hero.getHealth()/hero.getMaxHealth()*100)+"%","font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,140);
+        manaLabel = hudController.drawText("Mana: "+hero.getMana(),"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,10,50,50,20,80);
     }
 
-    /** Remove labels for the stats to reload them, so they won't be overwritten again and again*/
+    /** Delete labels for the stats to reload them*/
     private void delStats(){
         defenseLabel.remove();
         damageLabel.remove();
         healthLabel.remove();
         manaLabel.remove();
-        levelLabel.remove();
-        expLabel.remove();
-        stageLabel.remove();
     }
 
     @Override
     public void onLevelLoad() {
-        stageCounter++;
+        levelCounter++;
+        if(levelCounter==1){
+            levelLabel = hudController.drawText("Level "+levelCounter,"font/PublicPixel-0W5Kv.ttf", Color.YELLOW,14,50,50,20,5);
+        }
+        else{
+            levelLabel.setText("Level "+levelCounter);
+        }
 
         hero.setLevel(levelAPI.getCurrentLevel());
 
@@ -502,8 +475,9 @@ public class MyGame extends MainController {
         chestPlate.setLevel(levelAPI.getCurrentLevel());
         chestPlateBlack.setLevel(levelAPI.getCurrentLevel());
 
-        entityController.addAll(inventoryItemsArrayList);
+        //entityController.addAll(inventoryItemsArrayList);
         for(Items items : inventoryItemsArrayList){
+            entityController.add(items);
             items.setPickedUp(false);
         }
 
@@ -514,11 +488,11 @@ public class MyGame extends MainController {
         hole.setLevel(levelAPI.getCurrentLevel());
 
         // random number of monsters gets generated based on current level (max 5)
-        levelMonsterCount = monsterCountGenerator.nextInt(3) + stageCounter;
+        levelMonsterCount = monsterCountGenerator.nextInt(3) + levelCounter;
         if(levelMonsterCount > 5) { levelMonsterCount = 5; }
         for(int i = 0; i < levelMonsterCount; i++) {
-            monsterList.add(new Chort(painter, batch,(2* stageCounter)+10, stageCounter, (30+ stageCounter * stageCounter -(20+ stageCounter))+20));
-            monsterList.add(new Imp(painter, batch,(2* stageCounter)+10, stageCounter,(30+ stageCounter * stageCounter -(20+ stageCounter))+30));
+            monsterList.add(new Chort(painter, batch, 1, 1, 1));
+            monsterList.add(new Imp(painter, batch, 1, 1, 1));
         }
 
         // added to the entityController
@@ -532,14 +506,8 @@ public class MyGame extends MainController {
         }
     }
 
-    /**
-     * The program entry point to start the dungeon.
-     *
-     * @param args command line arguments, but not needed.
-     */
     public static void main(String[] args) {
         // start the game
         DesktopLauncher.run(new MyGame());
-
     }
 }
