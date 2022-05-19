@@ -16,6 +16,7 @@ public class Inventory {
     ConsoleHandler handlerInventory;
     ArrayList<Items> inventory;
 
+    /** Constructor. Creates loggers for outputting information */
     public Inventory() {
         logger = Logger.getLogger(this.getClass().getName());
         handlerInventory = new ConsoleHandler();

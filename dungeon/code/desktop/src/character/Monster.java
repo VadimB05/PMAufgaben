@@ -14,14 +14,21 @@ import java.util.List;
 import java.util.Random;
 
 public abstract class Monster extends Animatable {
-    protected Animation animation, runAnimationRight,runAnimationLeft,idleAnimationRight, idleAnimationLeft;
+    protected Animation animation;
+    protected Animation runAnimationRight;
+    protected Animation runAnimationLeft;
+    protected Animation idleAnimationRight;
+    protected Animation idleAnimationLeft;
     protected List<String> idleAnimationRightList = new ArrayList<>();
     protected List<String> idleAnimationLeftList = new ArrayList<>();
     protected List<String> runAnimationRightList = new ArrayList<>();
     protected List<String> runAnimationLeftList = new ArrayList<>();
     private boolean isLookingLeft = false;
     protected float movementSpeed;
-    private int health, strength, frameCounter, exp;
+    private int health;
+    private int strength;
+    private int frameCounter;
+    private int exp;
     private Rectangle hitBox;
     private Level currentLevel;
     private Point position;
@@ -58,7 +65,8 @@ public abstract class Monster extends Animatable {
     }
 
     /**
-     * Creates random movement for character, either going in one of the four directions or standing still for a moment.
+     * Creates random movement for character,
+     * either going in one of the four directions or standing still for a moment.
      *
      * @return new position of character
      */
@@ -149,46 +157,57 @@ public abstract class Monster extends Animatable {
         return animation;
     }
 
+    /** Setter for the movementSpeed variable */
     public void setMovementSpeed(float movementSpeed) {
         this.movementSpeed = movementSpeed;
     }
 
+    /** Checks if the hitbox of the hero overlaps with the hitbox of a monster */
     public boolean collide(MyHero myHero) {
         return myHero.getHitBox().overlaps(this.hitBox);
     }
 
+    /** Getter for the health variable */
     public int getHealth() {
         return health;
     }
 
+    /** Setter for the health variable */
     public void setHealth(int health) {
         this.health = health;
     }
 
+    /** Getter for the exp variable */
     public int getExp() {
         return exp;
     }
 
+    /** Getter for the frameCounter variable */
     public int getFrameCounter() {
         return frameCounter;
     }
 
+    /** adder for the frameCounter variable */
     public void addFrameCounter() {
         frameCounter++;
     }
 
+    /** resets the framecounter */
     public void resetFrameCounter() {
         this.frameCounter = 0;
     }
 
+    /** Getter for the strength variable */
     public int getStrength() {
         return strength;
     }
 
+    /** Checks if a monster is dead */
     public boolean checkMonsterDead(){
         return health<=0;
     }
 
+    /** Sets the character into combat mode */
     public void setInCombat(boolean inCombat) {
         this.inCombat = inCombat;
     }

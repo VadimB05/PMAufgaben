@@ -17,8 +17,10 @@ public class Equipment {
     ChestPlate chestPlate = null;
     Shield shield = null;
     Weapons weapons = null;
-    private int defense, strength ;
+    private int defense;
+    private int strength;
 
+    /** Constructor. Creates loggers for putting out information */
     public Equipment() {
         logger = Logger.getLogger(Equipment.class.getName());
 

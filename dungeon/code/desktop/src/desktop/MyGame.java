@@ -24,24 +24,31 @@ import item.weapon.Staff;
 import item.weapon.Sword;
 import level.generator.LevelLoader.LevelLoader;
 import level.generator.dungeong.graphg.NoSolutionException;
+
 import logging.InventoryFormatter;
 import quest.Quest;
 import quest.QuestLog;
 import quest.QuestType;
+
+
+import magic.Spellbook;
+
 import tools.Point;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import trap.Hole;
 import trap.Spikes;
 import character.monster.Chort;
 import character.monster.Imp;
+import magic.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
 import java.util.Random;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 
 public class MyGame extends MainController {
     private ArrayList<Potion> inventoryItemsArrayList;
@@ -79,6 +86,9 @@ public class MyGame extends MainController {
     private Quest findSroll;
     private Quest killMonster;
     private Quest reachLevel;
+    Spellbook spellbook;
+    private MovementSpell movementSpell;
+    private LifeSpell lifespell;
     Window window;
     Inventory inventory;
     Equipment equipment;
@@ -110,6 +120,10 @@ public class MyGame extends MainController {
 
         inventoryItemsArrayList = new ArrayList<>();
         inventory = new Inventory();
+
+        spellbook = new Spellbook();
+        lifespell = new LifeSpell();
+        movementSpell = new MovementSpell();
 
         levelAPI.setGenerator(new LevelLoader());
         hero = new MyHero(painter,batch);
@@ -211,6 +225,11 @@ public class MyGame extends MainController {
         useItem();
         dropItemFromInventory();
         switchHUDHeart();
+
+        removeHealth();
+
+        useSpell();
+
     }
 
     @Override
@@ -234,6 +253,7 @@ public class MyGame extends MainController {
             canItemBePickedUp();
         }
 
+<<<<<<< HEAD
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && hero.getFrameCounter()>=50) {
             checkMonsterAttackable();
         }
@@ -305,6 +325,12 @@ public class MyGame extends MainController {
     private void attackMonster(Monster monster) {
         hero.attack(monster);
         hero.resetFrameCounter();
+=======
+        getInventoryItems();
+        showSpellbook();
+
+        gameOver();
+>>>>>>> 68781d039de1227115b17e98e989506a869c5d94
     }
 
     /**
@@ -315,6 +341,7 @@ public class MyGame extends MainController {
             this.entityController = new EntityController();
             this.hudController = new HUDController(batch);
             this.setup();
+            this.onLevelLoad();
         }
     }
 
@@ -330,6 +357,13 @@ public class MyGame extends MainController {
             myBatch.end();
             paused = true;
             hero.setPaused(true);
+        }
+    }
+
+    //TODO: delete method, just for testing
+    private void removeHealth(){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.K)){
+            hero.setHealth(hero.getHealth()/2);
         }
     }
 
@@ -532,6 +566,43 @@ public class MyGame extends MainController {
         }
     }
 
+    /** Activates the effect of the spell given as a parameter,
+     * if the hero has enough mana and is deep enough into the dungeon */
+    private void castSpell(Spells spell) {
+        if(stageCounter >= spell.getAvailableAtLevel()) {
+            if(hero.getMana() >= spell.getManaCost()) {
+                spell.activateSpellEffect(hero);
+                hero.removeMana(spell.getManaCost());
+                logger.info("Du hast den " + spell.getName() + " benutzt.");
+            }
+            else {
+                logger.info("Du hast nicht genug Mana fuer den " + spell.getName() +
+                    ". Du brauchst mindestens " + spell.getManaCost() + ".");
+            }
+        }
+        else {
+            logger.info("Du musst Ebene " + spell.getAvailableAtLevel() + " erreicht haben, um den "
+                + spell.getName() + " zu benutzen.");
+        }
+    }
+
+    /** Calls the castSpell() method on button press to use spells */
+    private void useSpell() {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.O)) {
+            castSpell(lifespell);
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            castSpell(movementSpell);
+        }
+    }
+
+    /** Log all Spells in Spellbook*/
+    private void showSpellbook() {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.M)){
+            spellbook.showSpellbook();
+        }
+    }
+
     /** Load the stats as labels in the HUD*/
     private void loadStats(){
         defenseLabel = hudController.drawText(
@@ -561,15 +632,12 @@ public class MyGame extends MainController {
             14,50,50,500,440);
     }
 
-    /** Remove labels for the stats to reload them, so they won't be overwritten again and again*/
+    /** Delete labels for the stats to reload them*/
     private void delStats(){
         defenseLabel.remove();
         damageLabel.remove();
         healthLabel.remove();
         manaLabel.remove();
-        levelLabel.remove();
-        expLabel.remove();
-        stageLabel.remove();
     }
 
     @Override
@@ -583,10 +651,7 @@ public class MyGame extends MainController {
         sword.setLevel(levelAPI.getCurrentLevel());
         staff.setLevel(levelAPI.getCurrentLevel());
         shieldBlack.setLevel(levelAPI.getCurrentLevel());
-        //shieldMetall.setLevel(levelAPI.getCurrentLevel());
         chestPlate.setLevel(levelAPI.getCurrentLevel());
-        //chestPlateBlack.setLevel(levelAPI.getCurrentLevel());
-
         for(Items items : inventoryItemsArrayList){
             entityController.add(items);
             items.setPickedUp(false);
@@ -598,7 +663,7 @@ public class MyGame extends MainController {
         hole.setLevel(levelAPI.getCurrentLevel());
 
         // random number of monsters gets generated based on current level (max 5)
-        levelMonsterCount = monsterCountGenerator.nextInt(3) + stageCounter;
+        levelMonsterCount = monsterCountGenerator.nextInt(3) + levelCounter;
         if(levelMonsterCount > 5) { levelMonsterCount = 5; }
         for(int i = 0; i < levelMonsterCount; i++) {
             monsterList.add(new Chort(painter,
@@ -641,14 +706,9 @@ public class MyGame extends MainController {
         }
     }
 
-    /**
-     * The program entry point to start the dungeon.
-     *
-     * @param args command line arguments, but not needed.
-     */
+    /** Main method. Starts the game */
     public static void main(String[] args) {
         // start the game
         DesktopLauncher.run(new MyGame());
-
     }
 }
