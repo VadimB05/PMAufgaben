@@ -172,7 +172,8 @@ public class MyGame extends MainController {
     protected void beginFrame() {
         isPausedRestart();
 
-        loadStats();
+        //comment out to make the game smooth
+        //loadStats();
 
         useItem();
 
@@ -184,7 +185,8 @@ public class MyGame extends MainController {
     @Override
     protected void endFrame() {
 
-        delStats();
+        //comment out with loadStats()
+        //delStats();
 
         if(levelAPI.getCurrentLevel().isOnEndTile(hero)){
             try {
@@ -502,8 +504,8 @@ public class MyGame extends MainController {
         chestPlate.setLevel(levelAPI.getCurrentLevel());
         chestPlateBlack.setLevel(levelAPI.getCurrentLevel());
 
-        entityController.addAll(inventoryItemsArrayList);
         for(Items items : inventoryItemsArrayList){
+            entityController.add(items);
             items.setPickedUp(false);
         }
 
