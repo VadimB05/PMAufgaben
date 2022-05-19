@@ -4,8 +4,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import controller.EntityController;
 import desktop.MyHero;
 import graphic.Painter;
+import hud.Icon;
 import inventory.Equipment;
 import item.Items;
+import tools.Point;
 
 public class Shield extends Armor {
 
@@ -18,6 +20,9 @@ public class Shield extends Armor {
      */
     public Shield(Painter painter, SpriteBatch batch, String texturePath, String name, int defense) {
         super(painter, batch, texturePath, name, defense);
+        setIcon(new Icon(hudPainter,hudBatch,
+                new Point(565f,335f),
+                getTexturePath()));
     }
     @Override
     public void useItem(MyHero myHero) {

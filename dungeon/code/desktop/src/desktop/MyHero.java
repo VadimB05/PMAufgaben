@@ -11,6 +11,7 @@ import graphic.Painter;
 import level.elements.Level;
 import level.tools.Coordinate;
 import logging.InventoryFormatter;
+import quest.Quest;
 import tools.Point;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class MyHero extends Animatable {
     Random attackChance;
     private int randomIntAttackChance;
     Logger logger;
+    Quest quest;
 
     public MyHero(Painter painter, SpriteBatch batch){
         super(painter, batch);
@@ -233,6 +235,10 @@ public class MyHero extends Animatable {
         return exp;
     }
 
+    public void setQuest(Quest quest) {
+        this.quest = quest;
+    }
+
     /**
      * checks if gotten exp is enough to level up, if so, level up and set exp to the remaining exp,
      * else just add gotten exp to the exp
@@ -271,6 +277,13 @@ public class MyHero extends Animatable {
         strength++;
         addHealth(5);
         addMana(5);
+        checkQuestLevel();
+    }
+
+    private void checkQuestLevel() {
+        if(quest.getLevelRequirements()==level){
+            quest.update();
+        }
     }
 
     /**

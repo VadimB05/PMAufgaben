@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.TimeUtils;
 import desktop.MyHero;
+import graphic.HUDPainter;
 import graphic.Painter;
 import hud.Icon;
 import level.elements.Level;
@@ -14,6 +15,8 @@ import tools.Point;
 
 public abstract class Items extends Entity {
     private final Rectangle hitBox;
+    protected SpriteBatch hudBatch;
+    protected HUDPainter hudPainter;
     protected Icon icon;
     protected String texturePath;
     protected Point position;
@@ -34,7 +37,8 @@ public abstract class Items extends Entity {
         this.texturePath = texturePath;
         this.name = name;
         hitBox = new Rectangle();
-
+        hudPainter = new HUDPainter();
+        hudBatch = new SpriteBatch();
     }
 
     @Override
