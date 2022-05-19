@@ -6,6 +6,7 @@ import java.util.logging.SimpleFormatter;
 public class StandardFormatter extends SimpleFormatter {
     private final String name;
 
+    /** Constructor for the formatter */
     public StandardFormatter(String name) {
         this.name = name;
     }

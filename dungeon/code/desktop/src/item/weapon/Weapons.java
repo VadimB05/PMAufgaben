@@ -23,15 +23,17 @@ public abstract class Weapons extends Items {
         this.damage = damage;
     }
 
+    /** Getter for damage variable */
     public int getDamage() {
         return damage;
     }
 
-
+    /** getter for the painter object */
     public Painter getPainter() {
         return painter;
     }
 
+    /** Creates the weapon texture */
     public void draw() {
         getPainter().drawWithScaling(0.5f,1f, getTexturePath(), getPosition(), getBatch());
     }

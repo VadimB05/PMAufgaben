@@ -7,13 +7,13 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import magic.*;
 
 public class Spellbook {
     Logger logger;
     ConsoleHandler handlerSpellbook;
     ArrayList<Spells> spellbookList;
 
+    /** Constructor. Sets loggers for outputting information and adds spells to the spellbook */
     public Spellbook() {
         logger = Logger.getLogger(this.getClass().getName());
         handlerSpellbook = new ConsoleHandler();
@@ -31,6 +31,7 @@ public class Spellbook {
 
     }
 
+    /** Adds spells to the spellbook on creation */
     public void addSpellsToSpellbook(){
         spellbookList.add(new MovementSpell());
         spellbookList.add(new LifeSpell());
@@ -53,9 +54,5 @@ public class Spellbook {
         } else {
             logger.info("Fehler");
         }
-    }
-
-    public ArrayList<Spells> getSpellbookArrayList(){
-        return spellbookList;
     }
 }

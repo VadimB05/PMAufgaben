@@ -14,52 +14,51 @@ public abstract class Spells {
     ConsoleHandler handlerSpellbook;
     protected float movement;
     protected int life;
-    private long cooldown;
+    protected int manaCost;
+    protected int availableAtLevel;
     private String name;
     private Level currentLevel;
 
-
+    /** Constructor. Configures loggers for outputting information during gameplay */
     public Spells(){
         logger = Logger.getLogger(this.getClass().getName());
         handlerSpellbook = new ConsoleHandler();
-        cooldown = TimeUtils.millis();
-
-
-
         for(Handler handler : logger.getHandlers()){
             logger.removeHandler(handler);
         }
 
     }
+
+    /** Getter for the name variable */
     public String getName() {
         return name;
     }
+
+    /** Setter for currentLevel variable */
     public void setLevel(Level level){
         currentLevel = level;
     }
+
+    /** Getter for movement variable */
     public float getMovement(){
         return movement;
     }
+
+    /** Getter for life variable */
     public int getLife(){
         return life;
     }
-    public abstract void castSpell(MyHero myHero);
 
-//    public void getSpellbook() {
-//        StringBuilder spellbooks = new StringBuilder();
-//        spellbooks.append("Zauberbuch: ");
-//        if(!spellbook.isEmpty()){
-//            for(int i=0;i<spellbook.size();i++){
-//
-//            }
-//        }
-//
-//    }
+    /** Getter for manaCost variable */
+    public int getManaCost() {
+        return manaCost;
+    }
 
-//    public boolean setCooldown(){
-//        if(TimeUtils.millis() - cooldown > 15000){
-//            return true;
-//        }
-//        return false;
-//    }
+    /** Getter for availableAtLevel variable */
+    public int getAvailableAtLevel() {
+        return availableAtLevel;
+    }
+
+    /** Abstract method for activating spell effects */
+    public abstract void activateSpellEffect(MyHero myHero);
 }

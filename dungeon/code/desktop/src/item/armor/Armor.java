@@ -22,11 +22,12 @@ public abstract class Armor extends Items {
         this.defense = defense;
     }
 
+    /** Getter for the defense variable */
     public int getDefense() {
         return defense;
     }
 
-
+    /** Getter for the Painter object */
     public Painter getPainter() {
         return painter;
     }

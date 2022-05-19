@@ -15,16 +15,25 @@ import java.util.List;
 
 public class MyHero extends Animatable {
     private final Rectangle hitBox;
-    private Animation animation, runAnimationRight,runAnimationLeft,idleAnimationRight, idleAnimationLeft;
+    private Animation animation;
+    private Animation runAnimationRight;
+    private Animation runAnimationLeft;
+    private Animation idleAnimationRight;
+    private Animation idleAnimationLeft;
     private Point position;
     private Level currentLevel;
     private boolean isLookingLeft = false;
-    private int mana,health,defense,strength,maxMana,maxHealth;
+    private int mana;
+    private int health;
+    private int defense;
+    private int strength;
+    private int maxMana;
+    private int maxHealth;
 
     private boolean paused = false;
     float movementSpeed = 0.2f;
 
-
+    /** Constructor. Loads animations, sets stats and creates hitbox */
     public MyHero(Painter painter, SpriteBatch batch){
         super(painter, batch);
         List<String> idleAnimationRightList = new ArrayList<>();
@@ -63,8 +72,7 @@ public class MyHero extends Animatable {
         hitBox = new Rectangle();
     }
 
-
-
+    /** Sets Hero into the currently loaded level */
     public void setLevel(Level level){
         currentLevel = level;
         position = level.getStartTile().getCoordinate().toPoint();
@@ -112,11 +120,13 @@ public class MyHero extends Animatable {
         }
     }
 
+    /** Getter for the position variable */
     @Override
     public Point getPosition() {
         return position;
     }
 
+    /** Getter for the currently active animaton */
     @Override
     public Animation getActiveAnimation() {
         return animation;
@@ -132,66 +142,88 @@ public class MyHero extends Animatable {
         }
     }
 
+    /** Setter for the defense variable */
     public void setDefense(int defense) {
         this.defense = defense;
     }
 
+    /** Adds to the current defense variable */
     public void addDefense(int defense){
         this.defense += defense;
     }
 
+    /** Setter for the strength variable */
     public void setStrength(int strength) {
         this.strength = 4;
         this.strength += strength;
     }
 
+    /** Getter for the strength variable */
     public int getStrength() {
         return strength;
     }
 
+    /** Getter for the defense variable */
     public int getDefense() {
         return defense;
     }
 
+    /** Getter for the health variable */
     public int getHealth() {
         return health;
     }
 
+    /** Getter for the mana variable */
     public int getMana() {
         return mana;
     }
 
+    /** Getter for the maxHealth variable */
     public int getMaxHealth() {
         return maxHealth;
     }
 
+    /** Getter for the maxMana variable */
     public int getMaxMana() {
         return maxMana;
     }
+
+    /** Getter for the movementSpeed variable */
     public float getMovement(){
         return movementSpeed;
     }
+
+    /** Adder for the movementSpeed variable */
     public void addMovement(float movementSpeed){
         this.movementSpeed += movementSpeed;
     }
 
+    /** Adder for the health variable */
     public void addHealth(int health) {
         this.health += health;
     }
 
+    /** Setter for the health variable */
     public void setHealth(int health) {
         this.health = health;
     }
 
+    /** Adder for the mana variable */
     public void addMana(int mana) {
         this.mana += mana;
     }
 
+    /** removes value from the mana variable */
+    public void removeMana(int manaToRemove) {
+        this.mana -= manaToRemove;
+    }
 
+    /** Sets the game to pause */
     public void setPaused(boolean paused) {
         this.paused = paused;
     }
 
+    /** Getter for the hitbox*/
     public Rectangle getHitBox() {
         return hitBox;
     }

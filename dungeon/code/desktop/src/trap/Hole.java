@@ -9,6 +9,7 @@ import java.util.List;
 public class Hole extends Trap {
     private  Animation holeAnimation;
 
+    /** Constructor. Loads the animation and sets damage */
     public Hole(Painter painter, SpriteBatch batch) {
         super(painter, batch);
         List<String> holeAnimationList = new ArrayList<>();

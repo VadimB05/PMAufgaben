@@ -26,13 +26,13 @@ import level.generator.LevelLoader.LevelLoader;
 import level.generator.dungeong.graphg.NoSolutionException;
 import logging.StandardFormatter;
 import magic.Spellbook;
-import magic.Spells;
 import tools.Point;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import trap.Hole;
 import trap.Spikes;
 import character.monster.Chort;
 import character.monster.Imp;
+import magic.*;
 
 import java.util.*;
 import java.util.logging.ConsoleHandler;
@@ -66,8 +66,9 @@ public class MyGame extends MainController {
     private Texture gameOverTexture;
     boolean paused;
     private SpriteBatch myBatch;
-    private ArrayList<Spells> spellsArrayList;
     Spellbook spellbook;
+    private MovementSpell movementSpell;
+    private LifeSpell lifespell;
     Window window;
     Inventory inventory;
     Equipment equipment;
@@ -103,6 +104,8 @@ public class MyGame extends MainController {
         inventory = new Inventory();
 
         spellbook = new Spellbook();
+        lifespell = new LifeSpell();
+        movementSpell = new MovementSpell();
 
         levelAPI.setGenerator(new LevelLoader());
         hero = new MyHero(painter,batch);
@@ -136,7 +139,6 @@ public class MyGame extends MainController {
 
         inventoryItemsArrayList.add(healthPotion);
         inventoryItemsArrayList.add(manaPotion);
-
 
         Collections.addAll(itemsList,sword, staff, shieldBlack, shieldMetall, chestPlateBlack, chestPlate);
 
@@ -184,6 +186,8 @@ public class MyGame extends MainController {
         switchHUDHeart();
 
         removeHealth();
+
+        useSpell();
 
     }
 
@@ -427,8 +431,34 @@ public class MyGame extends MainController {
         }
     }
 
-    private void castSpell() {
-        
+    /** Activates the effect of the spell given as a parameter,
+     * if the hero has enough mana and is deep enough into the dungeon */
+    private void castSpell(Spells spell) {
+        if(levelCounter >= spell.getAvailableAtLevel()) {
+            if(hero.getMana() >= spell.getManaCost()) {
+                spell.activateSpellEffect(hero);
+                hero.removeMana(spell.getManaCost());
+                logger.info("Du hast den " + spell.getName() + " benutzt.");
+            }
+            else {
+                logger.info("Du hast nicht genug Mana fuer den " + spell.getName() +
+                    ". Du brauchst mindestens " + spell.getManaCost() + ".");
+            }
+        }
+        else {
+            logger.info("Du musst Ebene " + spell.getAvailableAtLevel() + " erreicht haben, um den "
+                + spell.getName() + " zu benutzen.");
+        }
+    }
+
+    /** Calls the castSpell() method on button press to use spells */
+    private void useSpell() {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.O)) {
+            castSpell(lifespell);
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            castSpell(movementSpell);
+        }
     }
 
     /** Log all Spells in Spellbook*/
@@ -506,6 +536,7 @@ public class MyGame extends MainController {
         }
     }
 
+    /** Main method. Starts the game */
     public static void main(String[] args) {
         // start the game
         DesktopLauncher.run(new MyGame());

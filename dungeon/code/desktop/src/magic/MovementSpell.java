@@ -4,10 +4,13 @@ package magic;
 import desktop.MyHero;
 
 public class MovementSpell extends Spells {
-    private float movementspeed = 0.4f;
+    private float movementspeed = 0.1f;
     private String name = "Movementspell";
 
+    /** Constructor. Sets mana costs and required dungeon level */
     public MovementSpell() {
+        this.manaCost = 10;
+        this.availableAtLevel = 3;
     }
 
     @Override
@@ -16,7 +19,7 @@ public class MovementSpell extends Spells {
     }
 
     @Override
-    public void castSpell(MyHero myHero) {
+    public void activateSpellEffect(MyHero myHero) {
         myHero.addMovement(movementspeed);
     }
 

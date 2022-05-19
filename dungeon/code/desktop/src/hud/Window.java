@@ -28,11 +28,12 @@ public abstract class Window {
         pixmap.dispose();
     }
 
-
+    /** Getter for the window texture */
     public Texture getWindow() {
         return window;
     }
 
+    /** Getter for the background texture */
     public Texture getBackground() {
         return background;
     }
