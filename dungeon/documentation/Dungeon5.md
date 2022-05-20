@@ -42,6 +42,9 @@ Bitte hier die zu lösende Aufgabe kurz in eigenen Worten beschreiben.
 Magie:
 Ein Magiesystem mit verschiedenen (nicht Kampf) Zaubern welche im verlauf des Spiels freigeschaltet werden.
 
+Quests:
+Questsystem mit verschiedenen Quests und mit Observern
+
 # Ansatz und Modellierung
 
 <!--
@@ -58,6 +61,10 @@ Diese Zauber brauchen des weiteren verschiedene Effekte, die sie nützlich für 
 Um im Spielverlauf weitere Zauber freizuschalten, sind sie an die aktuelle Ebene des Dungeons gebunden.
 je tiefer man kommt desto mehr Zauber schaltet man frei.
 
+Quests:
+Wir benutzen am besten das Type Object Pattern um verschiedene Quests anzulegen.
+wir brauchen 2 Klassen, am besten auch noch eine enum Klasse um die verschiedene Quest typen festzulegen.
+Außerdem wird eine Observer Klasse und update methode benötigt.
 
 # Umsetzung
 
@@ -70,11 +77,17 @@ Bitte hier die Umsetzung der Lösung kurz beschreiben:
 -->
 
 Magie:
-(19.05.2022 5 Stunden)
+(19.05.2022, 5 Stunden)
 Es gibt nun zwei Zaubersprüche. Einer zum heilen des Helden und einen weiteren um die Laufgeschwindigkeit zu erhöhen.
 Die Zauber werden mit erreichen bestimmter Ebenen des Dungeons freigeschaltet.
 Sie kosten außerdem Mana beim benutzen.
 
+Quests:
+(19.05.2022 - 20.05.2022, 11 Stunden)
+Wir haben verschiedene Quests mit verschiedenen Belohnungen erstellt.
+Eine Observer Klasse damit die Quests observer sind und bei abschließen der Quest die Quests benachrichtigen
+und eine Belohnung bekommen. Alles hat am Ende gut funktioniert, hat bisschen gedauert weil hier und da kleine Fehler
+waren.
 
 # Postmortem
 
@@ -91,3 +104,12 @@ funktioniert:
 Zauber mit Effekten, Zauber kosten Mana
 nicht funktioniert:
 Zauber mit steigenden Level freischalten -> gelöst durch binden an das Dungeon Level anstelle des Spieler Levels
+
+Quests:
+Observer hat funktioniert, verschiedene Quests anlegen hat auch funktioniert.
+Verschiedene Belohnungen haben auch funktioniert und das annehme und ablehnen von Quests
+hat am Ende auch funktioniert.
+Das die Quests im Spiel an einer bestimmten im Spiel sichtbaren Stelle oder von z.B. einem NPC
+annehmbar sind wurde noch nicht implementiert, da die Klassen Hero und Monster erstmal Refactort werden müssen,
+damit diese von einer abstrakten Klasse erben und die neue Klasse auch von dieser Klasse erben kann.
+
