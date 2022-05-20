@@ -4,6 +4,9 @@ import desktop.MyHero;
 import item.Items;
 
 public final class QuestType {
+    /**
+     * enum class
+     * */
     public enum Quests{
         KILL,
         LEVEL,
@@ -19,6 +22,9 @@ public final class QuestType {
     public final int levelRequirements;
     public final boolean dropItem;
 
+    /**
+     * Type Object constructor working with enums and switch cases
+     * */
     public QuestType(String questName, MyHero hero, Quests questType){
         this.questType = questType;
         this.questName = questName;
@@ -60,6 +66,9 @@ public final class QuestType {
         }
     }
 
+    /**
+     * factory pattern method to call Quest constructor
+     * */
     public Quest newQuest(Items item){
         return new Quest(this, item);
     }

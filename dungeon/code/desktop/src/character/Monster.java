@@ -8,7 +8,6 @@ import graphic.Animation;
 import graphic.Painter;
 import level.elements.Level;
 import tools.Point;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;

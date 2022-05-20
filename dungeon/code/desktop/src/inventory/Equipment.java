@@ -5,7 +5,6 @@ import item.armor.ChestPlate;
 import item.armor.Shield;
 import item.weapon.Weapons;
 import logging.InventoryFormatter;
-
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;

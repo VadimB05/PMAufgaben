@@ -3,8 +3,6 @@ package quest;
 import controller.EntityController;
 import desktop.MyHero;
 import item.Items;
-import level.LevelAPI;
-import level.elements.Level;
 import observer.QuestObserver;
 
 public class Quest implements QuestObserver {
@@ -22,6 +20,7 @@ public class Quest implements QuestObserver {
     private Items item;
     private EntityController entityController;
 
+    /**Constructor Quest, Type Object Pattern*/
     public Quest(QuestType type, Items item){
         this.type = type;
         this.questName = type.questName;
@@ -65,6 +64,9 @@ public class Quest implements QuestObserver {
         questlog.addQuest(this);
     }
 
+    /**
+     * Finishes the quests, distributes the rewards and calls QuestLog methods to log some data
+     * */
     @Override
     public void update() {
         switch (type.questType){
@@ -93,6 +95,9 @@ public class Quest implements QuestObserver {
 
     }
 
+    /**
+     * Drops the reward item in front of the hero
+     * */
     private void dropItem() {
         if(dropItem){
             entityController.add(item);

@@ -1,12 +1,9 @@
 package item.armor;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import controller.EntityController;
 import desktop.MyHero;
 import graphic.Painter;
 import hud.Icon;
-import inventory.Equipment;
-import item.Items;
 import tools.Point;
 
 public class Shield extends Armor {

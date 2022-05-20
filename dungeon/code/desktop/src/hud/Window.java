@@ -4,9 +4,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 
-import java.util.ArrayList;
-
-
 public abstract class Window {
     protected Texture window;
     protected final Texture background;

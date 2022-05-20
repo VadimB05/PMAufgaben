@@ -3,7 +3,6 @@ package quest;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import logging.InventoryFormatter;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
@@ -17,7 +16,6 @@ public class QuestLog {
 
     public QuestLog(){
         handlerMain = new ConsoleHandler();
-
         handlerMain.setLevel(Level.INFO);
         handlerMain.setFormatter(new InventoryFormatter("Main Logger"));
         log.setLevel(Level.INFO);
@@ -25,6 +23,9 @@ public class QuestLog {
         log.setUseParentHandlers(false);
     }
 
+    /**
+     * iterates through the quest list and logs alls quests and their data
+     * */
     public void logQuest(){
         if(Gdx.input.isKeyJustPressed(Input.Keys.Q)){
             if(quests.isEmpty()){
@@ -48,6 +49,9 @@ public class QuestLog {
         quests.remove(quest);
     }
 
+    /**
+     * log a quest finished dialog with the quest name
+     * */
     public void logQuestFinished(Quest quest){
         log.info("Quest '" + quest.getQuestName() + "' erfolgreich abgeschlossen!");
     }

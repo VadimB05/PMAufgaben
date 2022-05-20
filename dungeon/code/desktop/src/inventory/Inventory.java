@@ -3,8 +3,6 @@ package inventory;
 
 import item.Items;
 import logging.InventoryFormatter;
-import logging.StandardFormatter;
-
 import java.util.ArrayList;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;

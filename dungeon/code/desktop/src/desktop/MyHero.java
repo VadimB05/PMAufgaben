@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.Rectangle;
 import graphic.Animation;
 import graphic.Painter;
 import level.elements.Level;
-import level.tools.Coordinate;
 import logging.InventoryFormatter;
 import quest.Quest;
 import tools.Point;

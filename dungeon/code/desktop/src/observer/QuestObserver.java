@@ -1,10 +1,8 @@
 package observer;
 
-import controller.EntityController;
-import desktop.MyHero;
-import item.Items;
-import quest.QuestLog;
-
 public interface QuestObserver {
+    /**
+     * update method for the observer classes
+     * */
     public void update();
 }
