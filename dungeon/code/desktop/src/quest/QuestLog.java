@@ -29,7 +29,7 @@ public class QuestLog {
         if(Gdx.input.isKeyJustPressed(Input.Keys.Q)){
             if(quests.isEmpty()){
                 log.info("Keine Quests vorhanden!");
-                log.info("Druecke P um Quests anzunehmen, ignoriere um abzulehnen!");
+                log.info("Druecke O um Quests anzunehmen, ignoriere um abzulehnen!");
             }else {
                 for (Quest quest : quests)
                     log.info("\n"

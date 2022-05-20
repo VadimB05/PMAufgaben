@@ -51,6 +51,10 @@ public class Quest implements QuestObserver {
         return levelRequirements;
     }
 
+    public boolean isQuestAccepted() {
+        return questAccepted;
+    }
+
     public void setQuestAccepted(QuestLog questlog,
                                  MyHero hero,
                                  EntityController entityController) {

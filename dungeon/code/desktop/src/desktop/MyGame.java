@@ -24,15 +24,11 @@ import item.weapon.Staff;
 import item.weapon.Sword;
 import level.generator.LevelLoader.LevelLoader;
 import level.generator.dungeong.graphg.NoSolutionException;
-
 import logging.InventoryFormatter;
 import quest.Quest;
 import quest.QuestLog;
 import quest.QuestType;
-
-
 import magic.Spellbook;
-
 import tools.Point;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import trap.Hole;
@@ -41,8 +37,8 @@ import character.monster.Chort;
 import character.monster.Imp;
 import magic.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
 import java.util.Random;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
@@ -83,7 +79,7 @@ public class MyGame extends MainController {
     private Texture gameOverTexture;
     boolean paused;
     private SpriteBatch myBatch;
-    private Quest findSroll;
+    private Quest findScroll;
     private Quest killMonster;
     private Quest reachLevel;
     Spellbook spellbook;
@@ -98,7 +94,7 @@ public class MyGame extends MainController {
     @Override
     protected void setup() {
         myBatch = new SpriteBatch();
-        monsterList = new ArrayList<Monster>();
+        monsterList = new ArrayList<>();
         window = new GameOverWindow();
         gameOverTexture = new Texture("hud/gameOver.png");
         equipment = new Equipment();
@@ -111,7 +107,6 @@ public class MyGame extends MainController {
 
         logger.setUseParentHandlers(false);
         handlerMain = new ConsoleHandler();
-
         handlerMain.setLevel(Level.INFO);
         handlerMain.setFormatter(new InventoryFormatter("Main Logger"));
         logger.setLevel(Level.INFO);
@@ -253,7 +248,6 @@ public class MyGame extends MainController {
             canItemBePickedUp();
         }
 
-<<<<<<< HEAD
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && hero.getFrameCounter()>=50) {
             checkMonsterAttackable();
         }
@@ -264,11 +258,12 @@ public class MyGame extends MainController {
         gameOver();
         countWaitBetweenAttacks();
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.P)){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.O)){
             killMonster.setQuestAccepted(questLog,hero,entityController);
-            findSroll.setQuestAccepted(questLog,hero,entityController);
+            findScroll.setQuestAccepted(questLog,hero,entityController);
             reachLevel.setQuestAccepted(questLog,hero,entityController);
             hero.setQuest(reachLevel);
+            hero.setHaveQuest(true);
         }
     }
 
@@ -309,7 +304,9 @@ public class MyGame extends MainController {
                     hero.gainExp(monsterList.get(i).getExp());
                     monsterList.remove(i);
                     i--;
-                    killMonster.update();
+                    if(killMonster.isQuestAccepted()){
+                        killMonster.update();
+                    }
                 }
             }
         }
@@ -325,12 +322,9 @@ public class MyGame extends MainController {
     private void attackMonster(Monster monster) {
         hero.attack(monster);
         hero.resetFrameCounter();
-=======
         getInventoryItems();
         showSpellbook();
-
         gameOver();
->>>>>>> 68781d039de1227115b17e98e989506a869c5d94
     }
 
     /**
@@ -638,6 +632,9 @@ public class MyGame extends MainController {
         damageLabel.remove();
         healthLabel.remove();
         manaLabel.remove();
+        levelLabel.remove();
+        expLabel.remove();
+        stageLabel.remove();
     }
 
     @Override
@@ -652,6 +649,7 @@ public class MyGame extends MainController {
         staff.setLevel(levelAPI.getCurrentLevel());
         shieldBlack.setLevel(levelAPI.getCurrentLevel());
         chestPlate.setLevel(levelAPI.getCurrentLevel());
+
         for(Items items : inventoryItemsArrayList){
             entityController.add(items);
             items.setPickedUp(false);
@@ -663,7 +661,7 @@ public class MyGame extends MainController {
         hole.setLevel(levelAPI.getCurrentLevel());
 
         // random number of monsters gets generated based on current level (max 5)
-        levelMonsterCount = monsterCountGenerator.nextInt(3) + levelCounter;
+        levelMonsterCount = monsterCountGenerator.nextInt(3) + stageCounter;
         if(levelMonsterCount > 5) { levelMonsterCount = 5; }
         for(int i = 0; i < levelMonsterCount; i++) {
             monsterList.add(new Chort(painter,
@@ -696,7 +694,7 @@ public class MyGame extends MainController {
             final QuestType findQuest = new QuestType("Die versteckte Schriftrolle",
                     hero,
                     QuestType.Quests.FIND);
-            findSroll = findQuest.newQuest(shieldMetall);
+            findScroll = findQuest.newQuest(shieldMetall);
         }
         if(stageCounter==1){
             final QuestType levelQuest = new QuestType("Level Quest",
