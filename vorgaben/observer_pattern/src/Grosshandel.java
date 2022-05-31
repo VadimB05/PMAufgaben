@@ -1,15 +1,21 @@
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Logger;
 
-public class Grosshandel {
+public class Grosshandel{
+    private Logger logger = Logger.getLogger(Grosshandel.class.getName());
+    private ConsoleHandler handlerMain = new ConsoleHandler();
     private HashMap<WarenTyp, Integer> lager;
+    private List<Einzelhandel> kleinhandel = new ArrayList<>();
 
     public Grosshandel() {
         lager = new HashMap<>();
         for (WarenTyp typ : WarenTyp.values()) {
             lager.put(typ, 0);
         }
+        handlerMain.setFormatter(new LoggerFormatter("Grosshandel"));
+        logger.addHandler(handlerMain);
+        logger.setUseParentHandlers(false);
     }
 
     /**
@@ -23,7 +29,9 @@ public class Grosshandel {
      */
     public boolean bestellen(Einzelhandel kunde, Auftrag auftrag) {
         if (lager.getOrDefault(auftrag.getWarenTyp(), 0) >= auftrag.getAnzahl()) {
+            logger.info("Ware: "+auftrag.getWarenTyp()+" "+auftrag.getAnzahl()+" verkauft");
             lager.put(auftrag.getWarenTyp(), lager.get(auftrag.getWarenTyp()) - auftrag.getAnzahl());
+            logger.info(lager.get(auftrag.getWarenTyp())+" "+auftrag.getWarenTyp()+" noch vorhanden.");
             kunde.empfangen(auftrag);
             return true;
         }
@@ -38,7 +46,10 @@ public class Grosshandel {
         Random random = new Random();
         Map.Entry<WarenTyp, Integer> kleinsterBestand = findeKleinstenBestand();
         int zusatzMenge = random.nextInt(1, 5);
+        logger.info(zusatzMenge+" "+kleinsterBestand.getKey()+" zum Lager hinzugefügt.");
         kleinsterBestand.setValue(kleinsterBestand.getValue() + zusatzMenge);
+        logger.info(kleinsterBestand.getValue()+" "+kleinsterBestand.getKey()+" vorhanden.");
+        notifyObservers(kleinsterBestand);
     }
 
     private Map.Entry<WarenTyp, Integer> findeKleinstenBestand() {
@@ -49,5 +60,15 @@ public class Grosshandel {
             }
         }
         return kleinsterBestand;
+    }
+
+    public void addKleinhandel(Einzelhandel kleinhaendler) {
+        this.kleinhandel.add(kleinhaendler);
+    }
+
+    private void notifyObservers(Map.Entry<WarenTyp, Integer> warenTyp) {
+        for(Einzelhandel einzelhandel : kleinhandel){
+            einzelhandel.update(warenTyp);
+        }
     }
 }
