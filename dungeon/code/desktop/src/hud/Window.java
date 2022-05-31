@@ -4,9 +4,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 
-import java.util.ArrayList;
-
-
 public abstract class Window {
     protected Texture window;
     protected final Texture background;
@@ -28,11 +25,12 @@ public abstract class Window {
         pixmap.dispose();
     }
 
-
+    /** Getter for the window texture */
     public Texture getWindow() {
         return window;
     }
 
+    /** Getter for the background texture */
     public Texture getBackground() {
         return background;
     }

@@ -2,7 +2,9 @@ package item.weapon;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import graphic.Painter;
+import hud.Icon;
 import item.Items;
+import tools.Point;
 
 
 public abstract class Weapons extends Items {
@@ -21,17 +23,22 @@ public abstract class Weapons extends Items {
         super(painter, batch, texturePath, name);
         this.painter = painter;
         this.damage = damage;
+        setIcon(new Icon(hudPainter,hudBatch,
+                new Point(515f,405f),
+                getTexturePath()));
     }
 
+    /** Getter for damage variable */
     public int getDamage() {
         return damage;
     }
 
-
+    /** getter for the painter object */
     public Painter getPainter() {
         return painter;
     }
 
+    /** Creates the weapon texture */
     public void draw() {
         getPainter().drawWithScaling(0.5f,1f, getTexturePath(), getPosition(), getBatch());
     }

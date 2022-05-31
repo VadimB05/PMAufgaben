@@ -26,6 +26,7 @@ public abstract class Potion extends Items {
         this.mana = mana;
     }
 
+    /** Getter for the painter object */
     public Painter getPainter() {
         return painter;
     }

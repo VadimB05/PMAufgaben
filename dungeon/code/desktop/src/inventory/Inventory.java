@@ -3,8 +3,6 @@ package inventory;
 
 import item.Items;
 import logging.InventoryFormatter;
-import logging.StandardFormatter;
-
 import java.util.ArrayList;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
@@ -16,6 +14,7 @@ public class Inventory {
     ConsoleHandler handlerInventory;
     ArrayList<Items> inventory;
 
+    /** Constructor. Creates loggers for outputting information */
     public Inventory() {
         logger = Logger.getLogger(this.getClass().getName());
         handlerInventory = new ConsoleHandler();

@@ -17,7 +17,7 @@ public abstract class Trap  extends Animatable {
     protected Point position;
     protected int damage;
 
-
+    /** Constructor. Loads animation and creates hitbox */
     public Trap(Painter painter, SpriteBatch batch){
         super(painter, batch);
         laststeptime = TimeUtils.millis();
@@ -25,18 +25,24 @@ public abstract class Trap  extends Animatable {
 
     }
 
+    /** Sets trap into random position of the level */
     public void setLevel(Level level){
         currentLevel = level;
         position = level.getRandomRoom().getRandomFloorTile().getCoordinate().toPoint();
         hitBox.set(position.x,position.y,1f,1f);
     }
 
+    /** Getter for the damage variable */
     public int getDamage(){
         return -damage;
     }
+
+    /** Getter for the hitbox object */
     public Rectangle getHitBox(){
         return hitBox;
     }
+
+    /** Getter for the position object */
     public Point getPosition(){
         return position;
     }

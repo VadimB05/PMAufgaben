@@ -1,11 +1,8 @@
 package item.weapon;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import controller.EntityController;
 import desktop.MyHero;
 import graphic.Painter;
-import inventory.Equipment;
-import item.Items;
 
 public class Staff extends Weapons {
 

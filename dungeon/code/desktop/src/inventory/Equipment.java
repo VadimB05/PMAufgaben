@@ -5,7 +5,6 @@ import item.armor.ChestPlate;
 import item.armor.Shield;
 import item.weapon.Weapons;
 import logging.InventoryFormatter;
-
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -17,8 +16,10 @@ public class Equipment {
     ChestPlate chestPlate = null;
     Shield shield = null;
     Weapons weapons = null;
-    private int defense, strength ;
+    private int defense;
+    private int strength;
 
+    /** Constructor. Creates loggers for putting out information */
     public Equipment() {
         logger = Logger.getLogger(Equipment.class.getName());
 

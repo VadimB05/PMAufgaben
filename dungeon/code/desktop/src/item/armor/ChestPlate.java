@@ -1,11 +1,10 @@
 package item.armor;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import controller.EntityController;
 import desktop.MyHero;
 import graphic.Painter;
-import inventory.Equipment;
-import item.Items;
+import hud.Icon;
+import tools.Point;
 
 public class ChestPlate extends Armor{
 
@@ -19,6 +18,9 @@ public class ChestPlate extends Armor{
      */
     public ChestPlate(Painter painter, SpriteBatch batch, String texturePath, String name, int defense) {
         super(painter, batch, texturePath, name, defense);
+        setIcon(new Icon(hudPainter,hudBatch,
+                new Point(565f,405f),
+                getTexturePath()));
     }
     @Override
     public void useItem(MyHero myHero) {
