@@ -1,6 +1,6 @@
 name: Java CI
 
-on: [ pull_request, workflow_dispatch ]
+on: [ pull_request ]
 
 jobs:
 
@@ -12,9 +12,9 @@ jobs:
         runs-on: ${{ matrix.os }}
         steps:
             -   name: Checkout
-                uses: actions/checkout@v3
+                uses: actions/checkout@v2
             -   name: Set up JDK 17
-                uses: actions/setup-java@v3
+                uses: actions/setup-java@v2
                 with:
                     java-version: '17'
                     distribution: 'temurin'
@@ -33,15 +33,20 @@ jobs:
         runs-on: ${{ matrix.os }}
         steps:
             -   name: Checkout
-                uses: actions/checkout@v3
+                uses: actions/checkout@v2
             -   name: Set up JDK 17
-                uses: actions/setup-java@v3
+                uses: actions/setup-java@v2
                 with:
                     java-version: '17'
                     distribution: 'temurin'
             -   name: JUnit
                 run: ./gradlew test
                 working-directory: code
+            -   name: JUnit Report
+                uses: mikepenz/action-junit-report@v2
+                if: always() # always run even if the previous step fails
+                with:
+                    report_paths: '**/build/test-results/test/TEST-*.xml'
 
     spotbugs:
         needs: build
@@ -49,15 +54,22 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   name: Checkout
-                uses: actions/checkout@v3
+                uses: actions/checkout@v2
             -   name: Set up JDK 17
-                uses: actions/setup-java@v3
+                uses: actions/setup-java@v2
                 with:
                     java-version: '17'
                     distribution: 'temurin'
             -   name: SpotBugs
-                run: ./gradlew spotbugsMain spotbugsTest
+                run: |
+                    ./gradlew spotbugsMain
+                    ./gradlew spotbugsTest
                 working-directory: code
+            -   name: SpotBugs Report
+                uses: jwgmeligmeyling/spotbugs-github-action@master
+                with:
+                    path: '**/spotbugsXml.xml'
+                    name: 'SpotBugs Report'
 
     checkstyle:
         needs: build
@@ -65,15 +77,19 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   name: Checkout
-                uses: actions/checkout@v3
+                uses: actions/checkout@v2
             -   name: Set up JDK 17
-                uses: actions/setup-java@v3
+                uses: actions/setup-java@v2
                 with:
                     java-version: '17'
                     distribution: 'temurin'
             -   name: Checkstyle
-                run: ./gradlew checkstyleMain
+                run: ./gradlew check
                 working-directory: code
+            -   name: Checkstyle Report
+                uses: jwgmeligmeyling/checkstyle-github-action@master
+                with:
+                    path: '**/checkstyle/*.xml'
 
     spotless-java-format:
         needs: build
@@ -81,9 +97,9 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   name: Checkout
-                uses: actions/checkout@v3
+                uses: actions/checkout@v2
             -   name: Set up JDK 17
-                uses: actions/setup-java@v3
+                uses: actions/setup-java@v2
                 with:
                     java-version: '17'
                     distribution: 'temurin'
