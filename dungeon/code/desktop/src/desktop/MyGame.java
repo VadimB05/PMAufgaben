@@ -32,6 +32,7 @@ import item.weapon.Sword;
 import level.generator.LevelLoader.LevelLoader;
 import level.generator.dungeong.graphg.NoSolutionException;
 import logging.InventoryFormatter;
+import projectile.Stone;
 import quest.Quest;
 import quest.QuestLog;
 import quest.QuestType;
@@ -94,6 +95,7 @@ public class MyGame extends MainController {
     private Blackhole blackhole;
     private Healability healability;
     private PowerUpability powerUpability;
+    private Stone stoneProjectile;
     Window window;
     Inventory inventory;
     Equipment equipment;
@@ -239,8 +241,11 @@ public class MyGame extends MainController {
 
         useSpell();
 
+
         useAbility();
 
+
+        rangedAttack();
     }
 
     @Override
@@ -755,6 +760,36 @@ public class MyGame extends MainController {
                     hero,
                     QuestType.Quests.LEVEL);
             reachLevel = levelQuest.newQuest(chestPlateBlack);
+        }
+    }
+
+    public void rangedAttack() {
+        if(!paused) {
+            if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+                stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                //stoneProjectile.setLevel(levelAPI.getCurrentLevel());
+                entityController.add(stoneProjectile);
+                stoneProjectile.setFlyingDirectionUp();
+                //entityController.remove(stoneProjectile);
+            }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+                stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                entityController.add(stoneProjectile);
+                stoneProjectile.setFlyingDirectionDown();
+                //entityController.remove(stoneProjectile);
+            }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+                stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                entityController.add(stoneProjectile);
+                stoneProjectile.setFlyingDirectionLeft();
+                //entityController.remove(stoneProjectile);
+            }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+                stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                entityController.add(stoneProjectile);
+                stoneProjectile.setFlyingDirectionRight();
+                //entityController.remove(stoneProjectile);
+            }
         }
     }
 
