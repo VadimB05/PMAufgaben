@@ -1,5 +1,6 @@
 package desktop;
 
+import ability.*;
 import character.Monster;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -85,6 +86,10 @@ public class MyGame extends MainController {
     Spellbook spellbook;
     private MovementSpell movementSpell;
     private LifeSpell lifespell;
+    AbilityTree abilityTree;
+    private Blackhole blackhole;
+    private Healability healability;
+    private PowerUpability powerUpability;
     Window window;
     Inventory inventory;
     Equipment equipment;
@@ -115,6 +120,11 @@ public class MyGame extends MainController {
 
         inventoryItemsArrayList = new ArrayList<>();
         inventory = new Inventory();
+
+        abilityTree = new AbilityTree();
+        blackhole = new Blackhole();
+        healability = new Healability();
+        powerUpability = new PowerUpability();
 
         spellbook = new Spellbook();
         lifespell = new LifeSpell();
@@ -216,7 +226,7 @@ public class MyGame extends MainController {
         isPausedRestart();
 
         //comment out to make the game smooth
-        //loadStats();
+        loadStats();
         useItem();
         dropItemFromInventory();
         switchHUDHeart();
@@ -225,13 +235,15 @@ public class MyGame extends MainController {
 
         useSpell();
 
+        useAbility();
+
     }
 
     @Override
     protected void endFrame() {
 
         //comment out with loadStats()
-        //delStats();
+        delStats();
 
         if(levelAPI.getCurrentLevel().isOnEndTile(hero)){
             try {
@@ -323,6 +335,7 @@ public class MyGame extends MainController {
         hero.attack(monster);
         hero.resetFrameCounter();
         getInventoryItems();
+        showAbilityTree();
         showSpellbook();
         gameOver();
     }
@@ -595,6 +608,43 @@ public class MyGame extends MainController {
         if(Gdx.input.isKeyJustPressed(Input.Keys.M)){
             spellbook.showSpellbook();
         }
+    }
+    private void castAbility(Abilitys ability){
+        if(hero.getLevel() >= ability.getAvailableAtHeroLevel()){
+            if(hero.getMana() >= ability.getManaCost()){
+                ability.activateAbility(hero);
+                hero.removeMana(ability.getManaCost());
+                logger.info("Du hast den " + ability.getName() + " benutzt.");
+            }
+            else {
+                logger.info("Du hast nicht genug Mana für den " + ability.getName() +
+                    ". Du brauchst mindestens " + ability.getManaCost() + ".");
+            }
+
+        } else {
+            logger.info("Du musst " + ability.getAvailableAtHeroLevel() + " erreicht haben, um den "
+             + ability.getName() + " zu benutzen.");
+        }
+    }
+
+    private void useAbility(){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.H)){
+            castAbility(healability);
+
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.J)){
+            castAbility(powerUpability);
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.G)){
+            castAbility(blackhole);
+        }
+    }
+
+    private void showAbilityTree(){
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R)){
+            abilityTree.showAbilityTree();
+        }
+
     }
 
     /** Load the stats as labels in the HUD*/
