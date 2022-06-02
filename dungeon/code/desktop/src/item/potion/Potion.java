@@ -1,7 +1,6 @@
 package item.potion;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import desktop.MyHero;
 import graphic.Painter;
 import item.Items;
 

@@ -1,7 +1,7 @@
 package magic;
 
 
-import desktop.MyHero;
+import character.hero.MyHero;
 
 public class MovementSpell extends Spells {
     private float movementspeed = 0.1f;

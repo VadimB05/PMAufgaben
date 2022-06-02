@@ -1,6 +1,6 @@
 package quest;
 
-import desktop.MyHero;
+import character.hero.MyHero;
 import item.Items;
 
 public final class QuestType {

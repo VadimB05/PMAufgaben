@@ -1,11 +1,8 @@
 package item.potion;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import controller.EntityController;
-import desktop.MyHero;
+import character.hero.MyHero;
 import graphic.Painter;
-import inventory.Equipment;
-import item.Items;
 
 public class HealthPotion extends Potion {
 

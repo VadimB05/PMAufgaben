@@ -1,7 +1,7 @@
 package quest;
 
 import controller.EntityController;
-import desktop.MyHero;
+import character.hero.MyHero;
 import item.Items;
 import observer.QuestObserver;
 
