@@ -172,8 +172,6 @@ public class MyGame extends MainController {
                 new Point(10f,10f),
             "hud/ui_heart_empty.png");
 
-        stoneProjectile = new Stone(painter, batch);
-
         maxMonsterCount = 5;
         stageCounter = 0;
         inventoryItemsArrayList.add(healthPotion);
@@ -707,16 +705,25 @@ public class MyGame extends MainController {
     public void rangedAttack() {
         if(!paused) {
             if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-                logger.info("Attack UP");
+                stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                entityController.add(stoneProjectile);
+                stoneProjectile.moveUp();
+                entityController.remove(stoneProjectile);
             }
             if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-                logger.info("Attack DOWN");
+                stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                entityController.add(stoneProjectile);
+                stoneProjectile.moveDown();
             }
             if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
-                logger.info("Attack LEFT");
+                stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                entityController.add(stoneProjectile);
+                stoneProjectile.moveLeft();
             }
             if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-                logger.info("Attack RIGHT");
+                stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                entityController.add(stoneProjectile);
+                stoneProjectile.moveRight();
             }
         }
     }
