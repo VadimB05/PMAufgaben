@@ -706,24 +706,28 @@ public class MyGame extends MainController {
         if(!paused) {
             if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
                 stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                //stoneProjectile.setLevel(levelAPI.getCurrentLevel());
                 entityController.add(stoneProjectile);
-                stoneProjectile.moveUp();
-                entityController.remove(stoneProjectile);
+                stoneProjectile.setFlyingDirectionUp();
+                //entityController.remove(stoneProjectile);
             }
             if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
                 stoneProjectile = new Stone(painter, batch, hero.getPosition());
                 entityController.add(stoneProjectile);
-                stoneProjectile.moveDown();
+                stoneProjectile.setFlyingDirectionDown();
+                //entityController.remove(stoneProjectile);
             }
             if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
                 stoneProjectile = new Stone(painter, batch, hero.getPosition());
                 entityController.add(stoneProjectile);
-                stoneProjectile.moveLeft();
+                stoneProjectile.setFlyingDirectionLeft();
+                //entityController.remove(stoneProjectile);
             }
             if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
                 stoneProjectile = new Stone(painter, batch, hero.getPosition());
                 entityController.add(stoneProjectile);
-                stoneProjectile.moveRight();
+                stoneProjectile.setFlyingDirectionRight();
+                //entityController.remove(stoneProjectile);
             }
         }
     }
