@@ -3,6 +3,7 @@ package desktop;
 import character.hero.MyHero;
 import character.monster.Monster;
 import character.monster.Variant;
+import character.npc.QuestNPC;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -58,6 +59,7 @@ public class MyGame extends MainController {
     private Label expLabel;
     private Label stageLabel;
     private MyHero hero;
+    private QuestNPC questNPC;
     private Sword sword;
     private Staff staff;
     private Shield shieldBlack;
@@ -77,11 +79,12 @@ public class MyGame extends MainController {
     private int maxMonsterCount;
     public static int stageCounter;
     private Texture gameOverTexture;
-    boolean paused;
-    private SpriteBatch myBatch;
+    private List<Quest> questList = new ArrayList<>();
     private Quest findScroll;
     private Quest killMonster;
     private Quest reachLevel;
+    boolean paused;
+    private SpriteBatch myBatch;
     Spellbook spellbook;
     private MovementSpell movementSpell;
     private LifeSpell lifespell;
@@ -124,7 +127,6 @@ public class MyGame extends MainController {
         hero = new MyHero(painter,batch);
         spikes = new Spikes(painter,batch);
         hole = new Hole(painter,batch);
-
 
         sword = new Sword(painter,batch,
                 "item/weapon_knight_sword.png",
@@ -208,6 +210,7 @@ public class MyGame extends MainController {
 
         paused = false;
 
+        questNPC = new QuestNPC(painter,batch);
         createQuests();
     }
 
@@ -258,11 +261,22 @@ public class MyGame extends MainController {
         gameOver();
         countWaitBetweenAttacks();
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.O)){
-            killMonster.setQuestAccepted(questLog,hero,entityController);
-            findScroll.setQuestAccepted(questLog,hero,entityController);
-            reachLevel.setQuestAccepted(questLog,hero,entityController);
-            hero.register(reachLevel);
+        if(questNPC.doesCollide(hero) && !questNPC.isLogged()){
+            questNPC.showQuests();
+
+        }else if(!questNPC.doesCollide(hero)){
+            questNPC.setLogged(false);
+        }else if(questNPC.doesCollide(hero)){
+            if(Gdx.input.isKeyJustPressed(Input.Keys.F)){
+                killMonster.setQuestAccepted(questLog,hero,entityController);
+                logger.info("Quest: " + killMonster.getQuestName() + " akzeptiert!");
+                findScroll.setQuestAccepted(questLog,hero,entityController);
+                logger.info("Quest: " + findScroll.getQuestName() + " akzeptiert!");
+                reachLevel.setQuestAccepted(questLog,hero,entityController);
+                logger.info("Quest: " + reachLevel.getQuestName() + " akzeptiert!");
+                hero.register(reachLevel);
+                questNPC.questsAccepted();
+            }
         }
     }
 
@@ -334,7 +348,6 @@ public class MyGame extends MainController {
             this.entityController = new EntityController();
             this.hudController = new HUDController(batch);
             this.setup();
-            this.onLevelLoad();
         }
     }
 
@@ -643,6 +656,11 @@ public class MyGame extends MainController {
             hero.gainExp(20);
         }
 
+        if(stageCounter>1){
+            questNPC.setLevel(levelAPI.getCurrentLevel());
+            entityController.add(questNPC);
+        }
+
         hero.setLevel(levelAPI.getCurrentLevel());
         sword.setLevel(levelAPI.getCurrentLevel());
         staff.setLevel(levelAPI.getCurrentLevel());
@@ -681,21 +699,27 @@ public class MyGame extends MainController {
     private void createQuests() {
         if(stageCounter==1){
             final QuestType killQuest = new QuestType("Erledige Monster",
-                    hero,
-                    QuestType.Quests.KILL);
+                hero,
+                QuestType.Quests.KILL);
             killMonster = killQuest.newQuest(null);
+            questList.add(killMonster);
+            questNPC.addToQuestList(killMonster);
         }
         if(stageCounter==1){
             final QuestType findQuest = new QuestType("Die versteckte Schriftrolle",
-                    hero,
-                    QuestType.Quests.FIND);
+                hero,
+                QuestType.Quests.FIND);
             findScroll = findQuest.newQuest(shieldMetall);
+            questList.add(findScroll);
+            questNPC.addToQuestList(findScroll);
         }
         if(stageCounter==1){
             final QuestType levelQuest = new QuestType("Level Quest",
-                    hero,
-                    QuestType.Quests.LEVEL);
+                hero,
+                QuestType.Quests.LEVEL);
             reachLevel = levelQuest.newQuest(chestPlateBlack);
+            questList.add(reachLevel);
+            questNPC.addToQuestList(reachLevel);
         }
     }
 

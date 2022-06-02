@@ -24,14 +24,14 @@ public class QuestLog {
     }
 
     /**
-     * iterates through the quest list and logs alls quests and their data
+     * iterates through the quest list and logs all quests and their data
      * */
     public void logQuest(){
         if(Gdx.input.isKeyJustPressed(Input.Keys.Q)){
             if(quests.isEmpty()){
                 log.info("Keine Quests vorhanden!");
-                log.info("Druecke O um Quests anzunehmen, ignoriere um abzulehnen!");
             }else {
+                log.info("Meine Quests:");
                 for (Quest quest : quests)
                     log.info("\n"
                             +quest.getQuestName() + ":\n"

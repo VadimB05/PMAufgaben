@@ -252,7 +252,7 @@ public class MyHero extends Character implements QuestObservable {
     @Override
     public void notifyObserver() {
         for(int i = 0; i < questList.size(); i++){
-            if (questList.get(i).getLevelRequirements() == level) {
+            if (questList.get(i).getLevelRequirements() <= level) {
                 questList.get(i).update();
                 unregister(questList.get(i));
                 i--;
