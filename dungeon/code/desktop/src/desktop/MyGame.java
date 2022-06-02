@@ -25,6 +25,7 @@ import item.weapon.Sword;
 import level.generator.LevelLoader.LevelLoader;
 import level.generator.dungeong.graphg.NoSolutionException;
 import logging.InventoryFormatter;
+import projectile.Stone;
 import quest.Quest;
 import quest.QuestLog;
 import quest.QuestType;
@@ -85,6 +86,7 @@ public class MyGame extends MainController {
     Spellbook spellbook;
     private MovementSpell movementSpell;
     private LifeSpell lifespell;
+    private Stone stoneProjectile;
     Window window;
     Inventory inventory;
     Equipment equipment;
@@ -170,6 +172,8 @@ public class MyGame extends MainController {
                 new Point(10f,10f),
             "hud/ui_heart_empty.png");
 
+        stoneProjectile = new Stone(painter, batch);
+
         maxMonsterCount = 5;
         stageCounter = 0;
         inventoryItemsArrayList.add(healthPotion);
@@ -216,7 +220,7 @@ public class MyGame extends MainController {
         isPausedRestart();
 
         //comment out to make the game smooth
-        //loadStats();
+        loadStats();
         useItem();
         dropItemFromInventory();
         switchHUDHeart();
@@ -224,14 +228,14 @@ public class MyGame extends MainController {
         removeHealth();
 
         useSpell();
-
+        rangedAttack();
     }
 
     @Override
     protected void endFrame() {
 
         //comment out with loadStats()
-        //delStats();
+        delStats();
 
         if(levelAPI.getCurrentLevel().isOnEndTile(hero)){
             try {
@@ -701,6 +705,23 @@ public class MyGame extends MainController {
                     hero,
                     QuestType.Quests.LEVEL);
             reachLevel = levelQuest.newQuest(chestPlateBlack);
+        }
+    }
+
+    public void rangedAttack() {
+        if(!paused) {
+            if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+                logger.info("Attack UP");
+            }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+                logger.info("Attack DOWN");
+            }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+                logger.info("Attack LEFT");
+            }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+                logger.info("Attack RIGHT");
+            }
         }
     }
 
