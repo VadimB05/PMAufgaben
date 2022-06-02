@@ -151,6 +151,10 @@ public class MyHero extends Character {
         this.movementSpeed += movementSpeed;
     }
 
+    /** Add for the strength variable */
+    public void addPowerUp(float strength){
+        this.strength += strength;
+    }
     /** Adder for the health variable */
     public void addHealth(int health) {
         if (getMaxHealth() - getHealth() > health) {

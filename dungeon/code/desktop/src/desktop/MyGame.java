@@ -618,7 +618,7 @@ public class MyGame extends MainController {
             if(hero.getMana() >= ability.getManaCost()){
                 ability.activateAbility(hero);
                 hero.removeMana(ability.getManaCost());
-                logger.info("Du hast den " + ability.getName() + " benutzt.");
+                logger.info("Du hast " + ability.getName() + " benutzt.");
             }
             else {
                 logger.info("Du hast nicht genug Mana für den " + ability.getName() +
