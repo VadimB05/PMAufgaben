@@ -1,5 +1,6 @@
 package desktop;
 
+import character.hero.MyHero;
 import controller.MainController;
 import inventory.Inventory;
 import item.potion.HealthPotion;

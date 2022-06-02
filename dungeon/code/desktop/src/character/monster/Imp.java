@@ -1,6 +1,5 @@
 package character.monster;
 
-import character.Monster;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import graphic.Animation;
 import graphic.Painter;
@@ -35,5 +34,6 @@ public class Imp extends Monster {
         runAnimationLeftList.add("character/monster/imp_run_anim_mirrored_f3.png");
         runAnimationLeft = new Animation(runAnimationLeftList, 4);
         setMovementSpeed(0.12f);
+        name = "Imp";
     }
 }

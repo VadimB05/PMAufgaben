@@ -1,7 +1,7 @@
 package item.armor;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import desktop.MyHero;
+import character.hero.MyHero;
 import graphic.Painter;
 import hud.Icon;
 import tools.Point;

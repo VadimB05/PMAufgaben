@@ -1,6 +1,7 @@
 package desktop;
 
-import character.Monster;
+import character.hero.MyHero;
+import character.monster.Monster;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -280,7 +281,7 @@ public class MyGame extends MainController {
         for(Monster monster: monsterList){
             if(monster.collide(hero)){
                 if(monster.getFrameCounter()>= 50){
-                    hero.getAttacked(monster);
+                    monster.attack(hero);
                     monster.resetFrameCounter();
                 }
                 monster.setInCombat(true);
@@ -298,7 +299,7 @@ public class MyGame extends MainController {
         for(int i=0; i<monsterList.size();i++){
             if(monsterList.get(i).collide(hero)){
                 attackMonster(monsterList.get(i));
-                if(monsterList.get(i).checkMonsterDead()){
+                if(monsterList.get(i).checkDead()){
                     logger.info("Monster wurde eliminiert!");
                     entityController.remove(monsterList.get(i));
                     hero.gainExp(monsterList.get(i).getExp());
@@ -343,7 +344,7 @@ public class MyGame extends MainController {
      * checks if our Hero is dead, and if so, open a Game Over screen and let the player restart
      * */
     private void gameOver(){
-        if(hero.getHealth()<= 0){
+        if(hero.checkDead()){
             myBatch.begin();
             myBatch.draw(window.getBackground(),0,0,1000,1000);
             myBatch.draw(window.getWindow(),50,50,540,380);
