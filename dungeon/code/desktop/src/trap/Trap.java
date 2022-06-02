@@ -5,7 +5,7 @@ import basiselements.Animatable;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.TimeUtils;
-import desktop.MyHero;
+import character.hero.MyHero;
 import graphic.Painter;
 import level.elements.Level;
 import tools.Point;
