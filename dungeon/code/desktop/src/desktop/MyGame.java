@@ -1,5 +1,7 @@
 package desktop;
 
+
+import ability.*;
 import character.hero.MyHero;
 import character.monster.Monster;
 import character.monster.Variant;
@@ -28,6 +30,7 @@ import item.weapon.Sword;
 import level.generator.LevelLoader.LevelLoader;
 import level.generator.dungeong.graphg.NoSolutionException;
 import logging.InventoryFormatter;
+import projectile.Stone;
 import quest.Quest;
 import quest.QuestLog;
 import quest.QuestType;
@@ -88,6 +91,11 @@ public class MyGame extends MainController {
     Spellbook spellbook;
     private MovementSpell movementSpell;
     private LifeSpell lifespell;
+    AbilityTree abilityTree;
+    private Blackhole blackhole;
+    private Healability healability;
+    private PowerUpability powerUpability;
+    private Stone stoneProjectile;
     Window window;
     Inventory inventory;
     Equipment equipment;
@@ -118,6 +126,11 @@ public class MyGame extends MainController {
 
         inventoryItemsArrayList = new ArrayList<>();
         inventory = new Inventory();
+
+        abilityTree = new AbilityTree();
+        blackhole = new Blackhole();
+        healability = new Healability();
+        powerUpability = new PowerUpability();
 
         spellbook = new Spellbook();
         lifespell = new LifeSpell();
@@ -228,6 +241,11 @@ public class MyGame extends MainController {
 
         useSpell();
 
+
+        useAbility();
+
+
+        rangedAttack();
     }
 
     @Override
@@ -336,6 +354,7 @@ public class MyGame extends MainController {
         hero.attack(monster);
         hero.resetFrameCounter();
         getInventoryItems();
+        showAbilityTree();
         showSpellbook();
         gameOver();
     }
@@ -609,6 +628,47 @@ public class MyGame extends MainController {
         }
     }
 
+    /** Methode for activating the Abilities with manacost and Hero Level required */
+    private void castAbility(Abilitys ability){
+        if(hero.getLevel() >= ability.getAvailableAtHeroLevel()){
+            if(hero.getMana() >= ability.getManaCost()){
+                ability.activateAbility(hero);
+                hero.removeMana(ability.getManaCost());
+                logger.info("Du hast " + ability.getName() + " benutzt.");
+            }
+            else {
+                logger.info("Du hast nicht genug Mana für den " + ability.getName() +
+                    ". Du brauchst mindestens " + ability.getManaCost() + ".");
+            }
+
+        } else {
+            logger.info("Du musst " + ability.getAvailableAtHeroLevel() + " erreicht haben, um den "
+             + ability.getName() + " zu benutzen.");
+        }
+    }
+
+    /** Using this Methode by pressing the right Button for the Ability */
+    private void useAbility(){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.H)){
+            castAbility(healability);
+
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.J)){
+            castAbility(powerUpability);
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.G)){
+            castAbility(blackhole);
+        }
+    }
+
+    /** Methode is not ready */
+    private void showAbilityTree(){
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R)){
+            abilityTree.showAbilityTree();
+        }
+
+    }
+
     /** Load the stats as labels in the HUD*/
     private void loadStats(){
         defenseLabel = hudController.drawText(
@@ -693,7 +753,7 @@ public class MyGame extends MainController {
         for(int i = 0; i < levelMonsterCount * 2; i++) {
             entityController.add(monsterList.get(i));
             monsterList.get(i).setLevel(levelAPI.getCurrentLevel());
-        }
+	}
     }
 
     private void createQuests() {
@@ -720,6 +780,36 @@ public class MyGame extends MainController {
             reachLevel = levelQuest.newQuest(chestPlateBlack);
             questList.add(reachLevel);
             questNPC.addToQuestList(reachLevel);
+        }
+    }
+
+    public void rangedAttack() {
+        if(!paused) {
+            if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+                stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                //stoneProjectile.setLevel(levelAPI.getCurrentLevel());
+                entityController.add(stoneProjectile);
+                stoneProjectile.setFlyingDirectionUp();
+                //entityController.remove(stoneProjectile);
+            }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+                stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                entityController.add(stoneProjectile);
+                stoneProjectile.setFlyingDirectionDown();
+                //entityController.remove(stoneProjectile);
+            }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+                stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                entityController.add(stoneProjectile);
+                stoneProjectile.setFlyingDirectionLeft();
+                //entityController.remove(stoneProjectile);
+            }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+                stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                entityController.add(stoneProjectile);
+                stoneProjectile.setFlyingDirectionRight();
+                //entityController.remove(stoneProjectile);
+            }
         }
     }
 

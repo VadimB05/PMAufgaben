@@ -155,6 +155,10 @@ public class MyHero extends Character implements QuestObservable {
         this.movementSpeed += movementSpeed;
     }
 
+    /** Add for the strength variable */
+    public void addPowerUp(float strength){
+        this.strength += strength;
+    }
     /** Adder for the health variable */
     public void addHealth(int health) {
         if (getMaxHealth() - getHealth() > health) {
