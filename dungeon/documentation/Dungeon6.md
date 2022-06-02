@@ -45,6 +45,8 @@ Im laufe des Spieles freischaltbar und benutzbar.
 Soll angezeigt werden.
 
 Fernkampf:
+Es soll möglich sein Projektile zu verschießen.
+Diese sollen bei treffern gegen Feinde stoppen und Schaden machen. An Wänden sollen sie auch anhalten.
 
 # Ansatz und Modellierung
 
@@ -63,6 +65,8 @@ Level erreicht werden muss. Zudem kommt noch das Manacosten für 2 Fähigkeiten 
 
 
 Fernkampf:
+Eine Abstrakte Klasse Projectile dient als Schablone für die eigentlichen Projektile die verschossen werden können.
+Für die Steuerung wurden hier die Pfeiltasten ausgewählt für jeweils alle vier Richtungen in die Geschossen werden kann.
 
 # Umsetzung
 
@@ -80,7 +84,8 @@ Fähigkeiten:
 3 Fähigkeiten wurden Implementiert 2 mit Manakosten und eine mit cooldown, wobei diese noch nicht fertig ist.  
 
 Fernkampf:
-
+Die Klassen wurden erstellt und grundsätzliche Funktionalitäten implemetiert.
+Projektile können in alle Richtungen verschossen werden und fliegen nur eine gewisse Distanz.
 
 
 # Postmortem
@@ -99,4 +104,7 @@ Was mir schwierigkeiten gemacht hat ist der Cooldown + Angriff auf ein Monster.
 Das 2te ist noch nicht gelöst.
 
 Fernkampf:
+Projektile stellten sich als größere Herausforderung dar.
+Ich brauchte lange, um dynamisch neue zu erzeugen aber konnte das Problem am Ende lösen.
+Nun müssen sie nur noch zusätzlich an Wänden und Monstern anhalten.
 
