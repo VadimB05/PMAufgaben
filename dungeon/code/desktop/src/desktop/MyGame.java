@@ -262,8 +262,7 @@ public class MyGame extends MainController {
             killMonster.setQuestAccepted(questLog,hero,entityController);
             findScroll.setQuestAccepted(questLog,hero,entityController);
             reachLevel.setQuestAccepted(questLog,hero,entityController);
-            hero.setQuest(reachLevel);
-            hero.setHaveQuest(true);
+            hero.register(reachLevel);
         }
     }
 

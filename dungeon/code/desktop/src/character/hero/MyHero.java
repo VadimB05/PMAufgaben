@@ -7,10 +7,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import graphic.Animation;
 import graphic.Painter;
 import level.elements.Level;
+import observer.QuestObservable;
 import quest.Quest;
 import tools.Point;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MyHero extends Character {
+public class MyHero extends Character implements QuestObservable {
     private int mana;
     private int defense;
     private int maxMana;
@@ -20,6 +23,7 @@ public class MyHero extends Character {
     private int level;
     private boolean paused = false;
     private boolean haveQuest = false;
+    List<Quest> questList = new ArrayList<>();
     Quest quest;
 
 
@@ -187,10 +191,6 @@ public class MyHero extends Character {
         this.haveQuest = haveQuest;
     }
 
-    public void setQuest(Quest quest) {
-        this.quest = quest;
-    }
-
     /**
      * checks if gotten exp is enough to level up, if so, level up and set exp to the remaining exp,
      * else just add gotten exp to the exp
@@ -230,16 +230,33 @@ public class MyHero extends Character {
         strength++;
         addHealth(5);
         addMana(5);
-        checkQuestLevel();
-    }
-
-    private void checkQuestLevel() {
-        if(haveQuest) {
-            if (quest.getLevelRequirements() == level) {
-                quest.update();
-                setHaveQuest(false);
-            }
+        if(haveQuest){
+            notifyObserver();
         }
     }
 
+    @Override
+    public void register(Quest quest) {
+        questList.add(quest);
+        setHaveQuest(true);
+    }
+
+    @Override
+    public void unregister(Quest quest) {
+        questList.remove(quest);
+        if(questList.isEmpty()){
+            setHaveQuest(false);
+        }
+    }
+
+    @Override
+    public void notifyObserver() {
+        for(int i = 0; i < questList.size(); i++){
+            if (questList.get(i).getLevelRequirements() == level) {
+                questList.get(i).update();
+                unregister(questList.get(i));
+                i--;
+            }
+        }
+    }
 }
