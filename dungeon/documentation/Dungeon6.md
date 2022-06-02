@@ -48,6 +48,13 @@ Fernkampf:
 Es soll möglich sein Projektile zu verschießen.
 Diese sollen bei treffern gegen Feinde stoppen und Schaden machen. An Wänden sollen sie auch anhalten.
 
+Quests:
+Observable interface mit den dazugehörigen Methoden implementieren
+Einen NPC im Spiel erscheinen lassen bei dem man die Quests annehmen oder ablehnen kann
+
+Monster:
+Ein Entwurfsmuster für das Implementieren der Monster benutzen
+
 # Ansatz und Modellierung
 
 <!--
@@ -68,6 +75,16 @@ Fernkampf:
 Eine Abstrakte Klasse Projectile dient als Schablone für die eigentlichen Projektile die verschossen werden können.
 Für die Steuerung wurden hier die Pfeiltasten ausgewählt für jeweils alle vier Richtungen in die Geschossen werden kann.
 
+Quests:
+Wie aus den Vorgaben eine Observable Interface Klasse erstellen, diese der Observable klasse implementieren lassen und die Methoden aufrufen.
+Die Klassen MyHero und Monster refactoren. 
+Einen weiteren Character erstellen der von Animatable erbt und zufällig im Dungeon spawnt. Der NPC muss die Quests kennen und diese loggen.
+Nach der annahme der Quests darf er diese Quests nicht mehr anzeigen lassen.
+
+Monster:
+Es müssen die Klassen Monster und MyHero refactored werden, damit beide von einer Abstrakten Klasse erben. Danach kann eine weitere Unterklasse
+NPC erstellt werden
+
 # Umsetzung
 
 <!--
@@ -87,6 +104,15 @@ Fernkampf:
 Die Klassen wurden erstellt und grundsätzliche Funktionalitäten implemetiert.
 Projektile können in alle Richtungen verschossen werden und fliegen nur eine gewisse Distanz.
 
+Quests:
+(02.06.2022-03.06.2022, 4 Stunden)
+Eine Klasse QuestNPC erstellt welche von Character erbt, Quests übergeben bekommt und diese loggt.
+Eine Observable Interface Klasse erstellt die Observable Methoden hat und diese bei den Observables implementiert.
+
+Monster:
+(02.06.2022, 6 Stunden)
+MyHero und Monster Klassen angeschaut, herausgepickt was in deren gemeinsame Oberklasse kann und diese dort eingefügt.
+weitere Methoden und Attribute refactored und anschließend ein Entwurfsmuster angewendet (Type Object Pattern).
 
 # Postmortem
 
@@ -107,4 +133,13 @@ Fernkampf:
 Projektile stellten sich als größere Herausforderung dar.
 Ich brauchte lange, um dynamisch neue zu erzeugen aber konnte das Problem am Ende lösen.
 Nun müssen sie nur noch zusätzlich an Wänden und Monstern anhalten.
+
+Quests:
+Das Refactorn der Klassen MyHero und Monster hat zu lange gedauert. Diese waren nötig damit man den QuestNPC erstellen konnte.
+Eine Woche länger für Quests eingeplant um 1 weiteren Punkt zu bekommen.
+Observable Interface hatte ich vorher vergessen, war schnell implementiert.
+
+Monster:
+Auch für diese Aufgabe mussten MyHero und Monster refactored werden. Die Monster danach mit Enum und dem Type Object Pattern zu erstellen,
+war nicht mehr schwer.
 
