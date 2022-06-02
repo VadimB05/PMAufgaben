@@ -8,7 +8,7 @@ import tools.Point;
 
 import java.util.Random;
 
-public abstract class Monster extends Character {
+public class Monster extends Character {
     private Point newPosition;
     private int upperboundMovement = 5;
     Random moving = new Random();
@@ -22,12 +22,18 @@ public abstract class Monster extends Character {
      * @param painter   Painter that draws this object
      * @param batch     SpriteBatch to draw on
      */
-    public Monster(Painter painter, SpriteBatch batch, int health, int strength, int exp) {
+    public Monster(Painter painter, SpriteBatch batch, Variant type) {
         super(painter, batch);
-        this.health = health;
-        this.strength = strength;
-        this.exp = exp;
+        this.runAnimationLeft=type.runAnimationLeft;
+        this.runAnimationRight=type.runAnimationRight;
+        this.idleAnimationLeft=type.idleAnimationLeft;
+        this.idleAnimationRight=type.idleAnimationRight;
+        this.name = type.name;
+        this.health = type.health;
+        this.strength = type.strength;
+        this.exp = type.exp;
         inCombat = false;
+        setMovementSpeed(type.movementSpeed);
     }
 
     /**

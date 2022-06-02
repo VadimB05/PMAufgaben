@@ -2,6 +2,7 @@ package desktop;
 
 import character.hero.MyHero;
 import character.monster.Monster;
+import character.monster.Variant;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -34,8 +35,6 @@ import tools.Point;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import trap.Hole;
 import trap.Spikes;
-import character.monster.Chort;
-import character.monster.Imp;
 import magic.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,7 +75,7 @@ public class MyGame extends MainController {
     Random monsterCountGenerator = new Random();
     private int levelMonsterCount;
     private int maxMonsterCount;
-    private int stageCounter;
+    public static int stageCounter;
     private Texture gameOverTexture;
     boolean paused;
     private SpriteBatch myBatch;
@@ -665,16 +664,12 @@ public class MyGame extends MainController {
         levelMonsterCount = monsterCountGenerator.nextInt(3) + stageCounter;
         if(levelMonsterCount > 5) { levelMonsterCount = 5; }
         for(int i = 0; i < levelMonsterCount; i++) {
-            monsterList.add(new Chort(painter,
+            monsterList.add(new Monster(painter,
                     batch,
-                    (2* stageCounter)+10,
-                    stageCounter,
-                    (30+ stageCounter * stageCounter -(20+ stageCounter))+20));
-            monsterList.add(new Imp(painter,
+                    new Variant(Variant.Variants.CHORT)));
+            monsterList.add(new Monster(painter,
                     batch,
-                    (2* stageCounter)+10,
-                    stageCounter,
-                    (30+ stageCounter * stageCounter -(20+ stageCounter))+30));
+                    new Variant(Variant.Variants.IMP)));
         }
 
         // added to the entityController and loaded in the level
