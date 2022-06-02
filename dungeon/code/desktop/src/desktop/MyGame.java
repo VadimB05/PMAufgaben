@@ -613,6 +613,8 @@ public class MyGame extends MainController {
             spellbook.showSpellbook();
         }
     }
+
+    /** Methode for activating the Abilities with manacost and Hero Level required */
     private void castAbility(Abilitys ability){
         if(hero.getLevel() >= ability.getAvailableAtHeroLevel()){
             if(hero.getMana() >= ability.getManaCost()){
@@ -631,6 +633,7 @@ public class MyGame extends MainController {
         }
     }
 
+    /** Using this Methode by pressing the right Button for the Ability */
     private void useAbility(){
         if(Gdx.input.isKeyJustPressed(Input.Keys.H)){
             castAbility(healability);
@@ -644,6 +647,7 @@ public class MyGame extends MainController {
         }
     }
 
+    /** Methode is not ready */
     private void showAbilityTree(){
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)){
             abilityTree.showAbilityTree();
