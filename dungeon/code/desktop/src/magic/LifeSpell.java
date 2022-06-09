@@ -1,6 +1,6 @@
 package magic;
 
-import desktop.MyHero;
+import character.hero.MyHero;
 
 public class LifeSpell extends Spells {
     private int life = 40;

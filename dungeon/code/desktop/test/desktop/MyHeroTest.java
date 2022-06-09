@@ -1,5 +1,6 @@
 package desktop;
 
+import character.hero.MyHero;
 import controller.MainController;
 import item.armor.ChestPlate;
 import item.armor.Shield;

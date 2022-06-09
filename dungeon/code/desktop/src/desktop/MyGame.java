@@ -1,6 +1,11 @@
 package desktop;
 
-import character.Monster;
+
+import ability.*;
+import character.hero.MyHero;
+import character.monster.Monster;
+import character.monster.Variant;
+import character.npc.QuestNPC;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -25,6 +30,7 @@ import item.weapon.Sword;
 import level.generator.LevelLoader.LevelLoader;
 import level.generator.dungeong.graphg.NoSolutionException;
 import logging.InventoryFormatter;
+import projectile.Stone;
 import quest.Quest;
 import quest.QuestLog;
 import quest.QuestType;
@@ -33,8 +39,6 @@ import tools.Point;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import trap.Hole;
 import trap.Spikes;
-import character.monster.Chort;
-import character.monster.Imp;
 import magic.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,6 +62,7 @@ public class MyGame extends MainController {
     private Label expLabel;
     private Label stageLabel;
     private MyHero hero;
+    private QuestNPC questNPC;
     private Sword sword;
     private Staff staff;
     private Shield shieldBlack;
@@ -75,16 +80,22 @@ public class MyGame extends MainController {
     Random monsterCountGenerator = new Random();
     private int levelMonsterCount;
     private int maxMonsterCount;
-    private int stageCounter;
+    public static int stageCounter;
     private Texture gameOverTexture;
-    boolean paused;
-    private SpriteBatch myBatch;
+    private List<Quest> questList = new ArrayList<>();
     private Quest findScroll;
     private Quest killMonster;
     private Quest reachLevel;
+    boolean paused;
+    private SpriteBatch myBatch;
     Spellbook spellbook;
     private MovementSpell movementSpell;
     private LifeSpell lifespell;
+    AbilityTree abilityTree;
+    private Blackhole blackhole;
+    private Healability healability;
+    private PowerUpability powerUpability;
+    private Stone stoneProjectile;
     Window window;
     Inventory inventory;
     Equipment equipment;
@@ -116,6 +127,11 @@ public class MyGame extends MainController {
         inventoryItemsArrayList = new ArrayList<>();
         inventory = new Inventory();
 
+        abilityTree = new AbilityTree();
+        blackhole = new Blackhole();
+        healability = new Healability();
+        powerUpability = new PowerUpability();
+
         spellbook = new Spellbook();
         lifespell = new LifeSpell();
         movementSpell = new MovementSpell();
@@ -124,7 +140,6 @@ public class MyGame extends MainController {
         hero = new MyHero(painter,batch);
         spikes = new Spikes(painter,batch);
         hole = new Hole(painter,batch);
-
 
         sword = new Sword(painter,batch,
                 "item/weapon_knight_sword.png",
@@ -208,6 +223,7 @@ public class MyGame extends MainController {
 
         paused = false;
 
+        questNPC = new QuestNPC(painter,batch);
         createQuests();
     }
 
@@ -221,10 +237,13 @@ public class MyGame extends MainController {
         dropItemFromInventory();
         switchHUDHeart();
 
-        removeHealth();
-
         useSpell();
 
+
+        useAbility();
+
+
+        rangedAttack();
     }
 
     @Override
@@ -258,13 +277,27 @@ public class MyGame extends MainController {
         gameOver();
         countWaitBetweenAttacks();
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.O)){
-            killMonster.setQuestAccepted(questLog,hero,entityController);
-            findScroll.setQuestAccepted(questLog,hero,entityController);
-            reachLevel.setQuestAccepted(questLog,hero,entityController);
-            hero.setQuest(reachLevel);
-            hero.setHaveQuest(true);
+        if(questNPC.doesCollide(hero) && !questNPC.isLogged()){
+            questNPC.showQuests();
+
+        }else if(!questNPC.doesCollide(hero)){
+            questNPC.setLogged(false);
+        }else if(questNPC.doesCollide(hero)){
+            if(Gdx.input.isKeyJustPressed(Input.Keys.F)){
+                killMonster.setQuestAccepted(questLog,hero,entityController);
+                logger.info("Quest: " + killMonster.getQuestName() + " akzeptiert!");
+                findScroll.setQuestAccepted(questLog,hero,entityController);
+                logger.info("Quest: " + findScroll.getQuestName() + " akzeptiert!");
+                reachLevel.setQuestAccepted(questLog,hero,entityController);
+                logger.info("Quest: " + reachLevel.getQuestName() + " akzeptiert!");
+                hero.register(reachLevel);
+                questNPC.questsAccepted();
+            }
         }
+
+        healability.countFrames();
+        powerUpability.countFrames();
+        blackhole.countFrames();
     }
 
     private void collideTrap() {
@@ -280,7 +313,7 @@ public class MyGame extends MainController {
         for(Monster monster: monsterList){
             if(monster.collide(hero)){
                 if(monster.getFrameCounter()>= 50){
-                    hero.getAttacked(monster);
+                    monster.attack(hero);
                     monster.resetFrameCounter();
                 }
                 monster.setInCombat(true);
@@ -298,7 +331,7 @@ public class MyGame extends MainController {
         for(int i=0; i<monsterList.size();i++){
             if(monsterList.get(i).collide(hero)){
                 attackMonster(monsterList.get(i));
-                if(monsterList.get(i).checkMonsterDead()){
+                if(monsterList.get(i).checkDead()){
                     logger.info("Monster wurde eliminiert!");
                     entityController.remove(monsterList.get(i));
                     hero.gainExp(monsterList.get(i).getExp());
@@ -323,6 +356,7 @@ public class MyGame extends MainController {
         hero.attack(monster);
         hero.resetFrameCounter();
         getInventoryItems();
+        showAbilityTree();
         showSpellbook();
         gameOver();
     }
@@ -335,7 +369,6 @@ public class MyGame extends MainController {
             this.entityController = new EntityController();
             this.hudController = new HUDController(batch);
             this.setup();
-            this.onLevelLoad();
         }
     }
 
@@ -343,7 +376,7 @@ public class MyGame extends MainController {
      * checks if our Hero is dead, and if so, open a Game Over screen and let the player restart
      * */
     private void gameOver(){
-        if(hero.getHealth()<= 0){
+        if(hero.checkDead()){
             myBatch.begin();
             myBatch.draw(window.getBackground(),0,0,1000,1000);
             myBatch.draw(window.getWindow(),50,50,540,380);
@@ -351,13 +384,6 @@ public class MyGame extends MainController {
             myBatch.end();
             paused = true;
             hero.setPaused(true);
-        }
-    }
-
-    //TODO: delete method, just for testing
-    private void removeHealth(){
-        if(Gdx.input.isKeyJustPressed(Input.Keys.K)){
-            hero.setHealth(hero.getHealth()/2);
         }
     }
 
@@ -597,6 +623,38 @@ public class MyGame extends MainController {
         }
     }
 
+    /** Methode for activating the Abilities*/
+    private void castAbility(Abilitys ability){
+        if(ability.abilityUsable(hero)){
+            ability.abilityUsed();
+            ability.activateAbility(hero);
+            hero.removeMana(ability.getManaCost());
+            logger.info("Du hast " + ability.getName() + " benutzt.");
+        }
+    }
+
+    /** Using this Methode by pressing the right Button for the Ability */
+    private void useAbility(){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.H)){
+            castAbility(healability);
+
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.J)){
+            castAbility(powerUpability);
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.G)){
+            castAbility(blackhole);
+        }
+    }
+
+    /** Methode is not ready */
+    private void showAbilityTree(){
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R)){
+            abilityTree.showAbilityTree();
+        }
+
+    }
+
     /** Load the stats as labels in the HUD*/
     private void loadStats(){
         defenseLabel = hudController.drawText(
@@ -644,6 +702,11 @@ public class MyGame extends MainController {
             hero.gainExp(20);
         }
 
+        if(stageCounter>1){
+            questNPC.setLevel(levelAPI.getCurrentLevel());
+            entityController.add(questNPC);
+        }
+
         hero.setLevel(levelAPI.getCurrentLevel());
         sword.setLevel(levelAPI.getCurrentLevel());
         staff.setLevel(levelAPI.getCurrentLevel());
@@ -664,43 +727,75 @@ public class MyGame extends MainController {
         levelMonsterCount = monsterCountGenerator.nextInt(3) + stageCounter;
         if(levelMonsterCount > 5) { levelMonsterCount = 5; }
         for(int i = 0; i < levelMonsterCount; i++) {
-            monsterList.add(new Chort(painter,
+            monsterList.add(new Monster(painter,
                     batch,
-                    (2* stageCounter)+10,
-                    stageCounter,
-                    (30+ stageCounter * stageCounter -(20+ stageCounter))+20));
-            monsterList.add(new Imp(painter,
+                    new Variant(Variant.Variants.CHORT)));
+            monsterList.add(new Monster(painter,
                     batch,
-                    (2* stageCounter)+10,
-                    stageCounter,
-                    (30+ stageCounter * stageCounter -(20+ stageCounter))+30));
+                    new Variant(Variant.Variants.IMP)));
         }
 
         // added to the entityController and loaded in the level
         for(int i = 0; i < levelMonsterCount * 2; i++) {
             entityController.add(monsterList.get(i));
             monsterList.get(i).setLevel(levelAPI.getCurrentLevel());
-        }
+	}
     }
 
     private void createQuests() {
         if(stageCounter==1){
             final QuestType killQuest = new QuestType("Erledige Monster",
-                    hero,
-                    QuestType.Quests.KILL);
+                hero,
+                QuestType.Quests.KILL);
             killMonster = killQuest.newQuest(null);
+            questList.add(killMonster);
+            questNPC.addToQuestList(killMonster);
         }
         if(stageCounter==1){
             final QuestType findQuest = new QuestType("Die versteckte Schriftrolle",
-                    hero,
-                    QuestType.Quests.FIND);
+                hero,
+                QuestType.Quests.FIND);
             findScroll = findQuest.newQuest(shieldMetall);
+            questList.add(findScroll);
+            questNPC.addToQuestList(findScroll);
         }
         if(stageCounter==1){
             final QuestType levelQuest = new QuestType("Level Quest",
-                    hero,
-                    QuestType.Quests.LEVEL);
+                hero,
+                QuestType.Quests.LEVEL);
             reachLevel = levelQuest.newQuest(chestPlateBlack);
+            questList.add(reachLevel);
+            questNPC.addToQuestList(reachLevel);
+        }
+    }
+
+    public void rangedAttack() {
+        if(!paused) {
+            if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+                stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                //stoneProjectile.setLevel(levelAPI.getCurrentLevel());
+                entityController.add(stoneProjectile);
+                stoneProjectile.setFlyingDirectionUp();
+                //entityController.remove(stoneProjectile);
+            }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+                stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                entityController.add(stoneProjectile);
+                stoneProjectile.setFlyingDirectionDown();
+                //entityController.remove(stoneProjectile);
+            }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+                stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                entityController.add(stoneProjectile);
+                stoneProjectile.setFlyingDirectionLeft();
+                //entityController.remove(stoneProjectile);
+            }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+                stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                entityController.add(stoneProjectile);
+                stoneProjectile.setFlyingDirectionRight();
+                //entityController.remove(stoneProjectile);
+            }
         }
     }
 

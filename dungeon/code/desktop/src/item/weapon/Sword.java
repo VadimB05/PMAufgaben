@@ -1,7 +1,7 @@
 package item.weapon;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import desktop.MyHero;
+import character.hero.MyHero;
 import graphic.Painter;
 
 public class Sword extends Weapons {
