@@ -13,6 +13,7 @@ public class Blackhole extends Abilitys {
     public Blackhole() {
         this.availableAtHeroLevel = 4;
         hitBox = new Rectangle();
+        timeBetweenUsage = 30;
     }
 
     /** getter for the name */

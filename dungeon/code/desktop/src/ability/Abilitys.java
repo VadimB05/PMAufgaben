@@ -11,9 +11,12 @@ public abstract class Abilitys {
     Logger logger;
     ConsoleHandler handlerAbilityTree;
     private String name;
+    private int frameCounter;
+    private int abilityUsed;
     protected int health;
     protected int manaCost;
     protected int availableAtHeroLevel;
+    protected int timeBetweenUsage;
     protected float cooldown;
     private Level currentLevel;
 
@@ -24,6 +27,8 @@ public abstract class Abilitys {
         for(Handler handler : logger.getHandlers()){
             logger.removeHandler(handler);
         }
+        frameCounter = 0;
+        abilityUsed = 0;
 
     }
 
@@ -51,7 +56,6 @@ public abstract class Abilitys {
         return cooldown;
     }
 
-
     /** Getter for availableAtHeroLevel variable */
     public int getAvailableAtHeroLevel(){
         return availableAtHeroLevel;
@@ -59,4 +63,44 @@ public abstract class Abilitys {
 
     /** Abstract method for activating spell effects */
     public abstract void activateAbility(MyHero myHero);
+
+    public void abilityUsed(){
+        abilityUsed = frameCounter;
+    }
+
+    public boolean abilityUsable(MyHero hero){
+        if (hero.getLevel() >= getAvailableAtHeroLevel()){
+            if(timeBetweenAbility()) {
+                if (hero.getMana() >= getManaCost()) {
+                    return true;
+                } else {
+                    logger.info("Du hast nicht genug Mana fuer den " + getName() +
+                        ". Du brauchst mindestens " + getManaCost() + ".");
+                    return false;
+                }
+            }else {
+                return false;
+            }
+        }else {
+            logger.info("Du musst " + getAvailableAtHeroLevel() + " erreicht haben, um den "
+                + getName() + " zu benutzen.");
+            return false;
+        }
+    }
+
+    private boolean timeBetweenAbility(){
+        if(timeBetweenUsage*30 <= frameCounter-abilityUsed || abilityUsed == 0){
+            return true;
+        }else {
+            logger.info(((timeBetweenUsage*30)-(frameCounter-abilityUsed))/30+" Sekunden bis die Faehigkeit aktivierbar ist.");
+            return false;
+        }
+    }
+
+    /**
+     * Counts every frame
+     * */
+    public void countFrames(){
+        frameCounter++;
+    }
 }

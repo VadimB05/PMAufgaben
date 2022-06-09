@@ -11,6 +11,7 @@ public class PowerUpability extends Abilitys{
     public PowerUpability(){
         this.manaCost = 15;
         this.availableAtHeroLevel = 3;
+        timeBetweenUsage = 120;
     }
 
     /** getter for the name */

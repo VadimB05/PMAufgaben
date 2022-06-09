@@ -237,8 +237,6 @@ public class MyGame extends MainController {
         dropItemFromInventory();
         switchHUDHeart();
 
-        removeHealth();
-
         useSpell();
 
 
@@ -296,6 +294,10 @@ public class MyGame extends MainController {
                 questNPC.questsAccepted();
             }
         }
+
+        healability.countFrames();
+        powerUpability.countFrames();
+        blackhole.countFrames();
     }
 
     private void collideTrap() {
@@ -382,13 +384,6 @@ public class MyGame extends MainController {
             myBatch.end();
             paused = true;
             hero.setPaused(true);
-        }
-    }
-
-    //TODO: delete method, just for testing
-    private void removeHealth(){
-        if(Gdx.input.isKeyJustPressed(Input.Keys.K)){
-            hero.setHealth(hero.getHealth()/2);
         }
     }
 
@@ -628,22 +623,13 @@ public class MyGame extends MainController {
         }
     }
 
-    /** Methode for activating the Abilities with manacost and Hero Level required */
+    /** Methode for activating the Abilities*/
     private void castAbility(Abilitys ability){
-        if(hero.getLevel() >= ability.getAvailableAtHeroLevel()){
-            if(hero.getMana() >= ability.getManaCost()){
-                ability.activateAbility(hero);
-                hero.removeMana(ability.getManaCost());
-                logger.info("Du hast " + ability.getName() + " benutzt.");
-            }
-            else {
-                logger.info("Du hast nicht genug Mana für den " + ability.getName() +
-                    ". Du brauchst mindestens " + ability.getManaCost() + ".");
-            }
-
-        } else {
-            logger.info("Du musst " + ability.getAvailableAtHeroLevel() + " erreicht haben, um den "
-             + ability.getName() + " zu benutzen.");
+        if(ability.abilityUsable(hero)){
+            ability.abilityUsed();
+            ability.activateAbility(hero);
+            hero.removeMana(ability.getManaCost());
+            logger.info("Du hast " + ability.getName() + " benutzt.");
         }
     }
 

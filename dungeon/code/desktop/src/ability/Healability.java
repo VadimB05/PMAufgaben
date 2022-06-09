@@ -10,6 +10,7 @@ public class Healability extends Abilitys{
     public Healability() {
         this.manaCost = 10;
         this.availableAtHeroLevel = 2;
+        timeBetweenUsage = 60;
 
     }
 
