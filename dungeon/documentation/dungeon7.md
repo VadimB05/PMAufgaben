@@ -49,6 +49,11 @@ Es sollen NPCs erstellt werden mit denen man agieren kann und die einen nicht an
 Fähigkeiten:
 Cooldown für die Fähigkeiten müssen hinzugefügt werden.
 
+Charakterklassen:
+3 unterschiedliche Charakterklassen mit einem verschiedenem Wert.
+Sollen unterschiedliche Bezeichungen haben
+Mit einem Pattern
+Eine Auswahl für die Charaktere
 
 # Ansatz und Modellierung
 
@@ -69,6 +74,9 @@ Es muss ne neue Klasse erstellt werden, welche von Character erbt.
 
 Fähigkeiten:
 Ein int Wert in endframe der hochgezählt wird und mit dem man abfragen kann wie oft hochgezählt wurde.
+
+Charakterklassen:
+2 Klassen, eine für das Visuelle mit der Auswahl und eine Klasse mit Enum und Type object Pattern für die Klassen.
 
 # Umsetzung
 
@@ -93,6 +101,11 @@ Fähigkeiten:
 (09.06.2022, 3 Stunden)
 Es wurde ein Integer Wert erstellt mit dem ein Counter für die Fähigkeiten implementiert wird.
 
+Charakterklassen:
+(10.06.2022 5 Stunden)
+Eine Klasse mit einem Enum und Type object Pattern.
+Das Spiel wird zu Anfang Pausiert und wird auf Knopf druck freigeschaltet. Auch Monster können sich nicht bewegen.
+
 # Postmortem
 
 <!--
@@ -112,3 +125,6 @@ Alles hat gut funktioniert, die Aufgabe wurde erledigt ohne zu wissen dass es di
 
 Fähigkeiten:
 Es hat direkt funktioniert, es war eine eher leichte Aufgabe.
+
+Charakterklassen:
+Das erstellen der Klassen hat keine Probleme bereitet aber das Visuelle auswählen schon und ist auch noch nicht fertig.
