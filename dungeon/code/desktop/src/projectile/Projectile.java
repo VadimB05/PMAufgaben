@@ -1,7 +1,10 @@
 package projectile;
 
 import basiselements.Animatable;
+import character.Character;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.particles.influencers.DynamicsModifier;
+import com.badlogic.gdx.math.Rectangle;
 import graphic.Animation;
 import graphic.Painter;
 import level.elements.Level;
@@ -23,6 +26,8 @@ public abstract class Projectile extends Animatable {
     protected int flyingDistance;
     protected List<String> flyingAnimationList = new ArrayList<>();
     protected Animation animation;
+    protected Rectangle hitBox;
+    protected int damage;
 
     /**
      * A object that can be controlled by the <code>EntityController
@@ -34,6 +39,7 @@ public abstract class Projectile extends Animatable {
 
     public Projectile(Painter painter, SpriteBatch batch) {
         super(painter, batch);
+        hitBox = new Rectangle();
     }
 
     @Override
@@ -41,8 +47,14 @@ public abstract class Projectile extends Animatable {
         return position;
     }
 
+    /** Getter for the hitbox*/
+    public Rectangle getHitBox() {
+        return hitBox;
+    }
+
     public void setLevel(Level level){
         currentLevel = level;
+        hitBox.set(position.x,position.y,1f,1f);
     }
 
     @Override
@@ -66,17 +78,17 @@ public abstract class Projectile extends Animatable {
         if(flyingCounter <= this.flyingDistance) {
             flyingCounter++;
             newPosition.y += flyingSpeed;
-            this.position = newPosition;
+            if(currentLevel.getTileAt(newPosition.toCoordinate()).isAccessible()) {
+                
+                this.position = newPosition;
+                hitBox.set(newPosition.x,newPosition.y,1f,1f);
+            }
         }
         else {
             isFlyingUp = false;
+            damage=0;
         }
         return position;
-
-        //if(currentLevel.getTileAt(newPosition.toCoordinate()).isAccessible()) {
-        //    return position;
-        //}
-        //return newPosition;
     }
 
     public Point moveDown() {
@@ -84,10 +96,14 @@ public abstract class Projectile extends Animatable {
         if(flyingCounter <= this.flyingDistance) {
             flyingCounter++;
             newPosition.y -= flyingSpeed;
-            this.position = newPosition;
+            if(currentLevel.getTileAt(newPosition.toCoordinate()).isAccessible()) {
+                this.position = newPosition;
+                hitBox.set(newPosition.x,newPosition.y,1f,1f);
+            }
         }
         else {
             isFlyingDown = false;
+            damage=0;
         }
         return position;
     }
@@ -97,10 +113,14 @@ public abstract class Projectile extends Animatable {
         if(flyingCounter <= this.flyingDistance) {
             flyingCounter++;
             newPosition.x -= flyingSpeed;
-            this.position = newPosition;
+            if(currentLevel.getTileAt(newPosition.toCoordinate()).isAccessible()) {
+                this.position = newPosition;
+                hitBox.set(newPosition.x,newPosition.y,1f,1f);
+            }
         }
         else {
             isFlyingLeft = false;
+            damage=0;
         }
         return position;
     }
@@ -110,12 +130,24 @@ public abstract class Projectile extends Animatable {
         if(flyingCounter <= this.flyingDistance) {
             flyingCounter++;
             newPosition.x += flyingSpeed;
-            this.position = newPosition;
+            if(currentLevel.getTileAt(newPosition.toCoordinate()).isAccessible()) {
+                this.position = newPosition;
+                hitBox.set(newPosition.x,newPosition.y,1f,1f);
+            }
         }
         else {
             isFlyingRight = false;
+            damage=0;
         }
         return position;
+    }
+
+    public void setFlyingSpeed(float flyingSpeed) {
+        this.flyingSpeed = flyingSpeed;
+    }
+
+    public int getDamage() {
+        return damage;
     }
 
     public void setFlyingDirectionUp() {
