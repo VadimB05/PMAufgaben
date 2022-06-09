@@ -5,23 +5,23 @@ import graphic.Animation;
 import graphic.Painter;
 import tools.Point;
 
-public class Stone extends Projectile {
+public class SpikedBall extends Projectile {
     /**
      * A object that can be controlled by the <code>EntityController
      * </code>.
      *
-     * @param painter     Painter that draws this object
-     * @param batch       Batch to draw on
+     * @param painter Painter that draws this object
+     * @param batch   Batch to draw on
      */
-    public Stone(Painter painter, SpriteBatch batch, Point heroPosition) {
+    public SpikedBall(Painter painter, SpriteBatch batch, Point heroPosition) {
         super(painter, batch);
-        flyingAnimationList.add("projectile/projectile_stone.png");
-        flyingAnimationList.add("projectile/projectile_stone.png");
+        flyingAnimationList.add("projectile/projectile_spikedBall.png");
+        flyingAnimationList.add("projectile/projectile_spikedBall.png");
         animation = new Animation(flyingAnimationList, 8);
         this.position = heroPosition;
-        this.flyingSpeed = 0.5f;
-        this.flyingDistance = 8;
-        this.damage = 1;
+        this.flyingSpeed = 0.3f;
+        this.flyingDistance = 4;
+        this.damage = 3;
     }
 
     @Override

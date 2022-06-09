@@ -33,6 +33,8 @@ import item.weapon.Sword;
 import level.generator.LevelLoader.LevelLoader;
 import level.generator.dungeong.graphg.NoSolutionException;
 import logging.InventoryFormatter;
+import projectile.Projectile;
+import projectile.SpikedBall;
 import projectile.Stone;
 import quest.Quest;
 import quest.QuestLog;
@@ -55,6 +57,8 @@ import java.util.logging.Logger;
 
 public class MyGame extends MainController {
     private ArrayList<Potion> inventoryItemsArrayList;
+    private ArrayList<Projectile> stoneArrayList;
+    private ArrayList<Projectile> spikedBallList;
     private List<Items> itemsList = new ArrayList<>();
     private QuestLog questLog;
     private Label defenseLabel;
@@ -99,6 +103,7 @@ public class MyGame extends MainController {
     private Healability healability;
     private PowerUpability powerUpability;
     private Stone stoneProjectile;
+    private SpikedBall spikedBallProjectile;
     Window window;
     Window chooseClassWindow;
     private boolean onStart = true;
@@ -111,6 +116,10 @@ public class MyGame extends MainController {
     protected void setup() {
         myBatch = new SpriteBatch();
         monsterList = new ArrayList<>();
+        stoneArrayList = new ArrayList<>();
+        stoneArrayList.clear();
+        spikedBallList = new ArrayList<>();
+        spikedBallList.clear();
         window = new GameOverWindow();
         chooseClassWindow = new ChooseClasses();
         gameOverTexture = new Texture("hud/gameOver.png");
@@ -249,7 +258,7 @@ public class MyGame extends MainController {
         useAbility();
 
 
-        rangedAttack();
+
     }
 
     @Override
@@ -282,6 +291,9 @@ public class MyGame extends MainController {
         gameOver();
         chooseClass();
         countWaitBetweenAttacks();
+        rangedAttack();
+        checkMonsterAttackableByRanged(stoneArrayList);
+        checkMonsterAttackableByRanged(spikedBallList);
 
         if (questNPC.doesCollide(hero) && !questNPC.isLogged()) {
             questNPC.showQuests();
@@ -821,29 +833,59 @@ public class MyGame extends MainController {
     public void rangedAttack() {
         if(!paused) {
             if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-                stoneProjectile = new Stone(painter, batch, hero.getPosition());
-                //stoneProjectile.setLevel(levelAPI.getCurrentLevel());
-                entityController.add(stoneProjectile);
-                stoneProjectile.setFlyingDirectionUp();
-                //entityController.remove(stoneProjectile);
+                spikedBallProjectile = new SpikedBall(painter, batch, hero.getPosition());
+                spikedBallList.add(spikedBallProjectile);
+                entityController.add(spikedBallProjectile);
+                spikedBallProjectile.setLevel(levelAPI.getCurrentLevel());
+                spikedBallProjectile.setFlyingDirectionUp();
             }
             if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-                stoneProjectile = new Stone(painter, batch, hero.getPosition());
-                entityController.add(stoneProjectile);
-                stoneProjectile.setFlyingDirectionDown();
-                //entityController.remove(stoneProjectile);
+                spikedBallProjectile = new SpikedBall(painter, batch, hero.getPosition());
+                spikedBallList.add(spikedBallProjectile);
+                entityController.add(spikedBallProjectile);
+                spikedBallProjectile.setLevel(levelAPI.getCurrentLevel());
+                spikedBallProjectile.setFlyingDirectionDown();
             }
             if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
                 stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                stoneArrayList.add(stoneProjectile);
                 entityController.add(stoneProjectile);
+                stoneProjectile.setLevel(levelAPI.getCurrentLevel());
                 stoneProjectile.setFlyingDirectionLeft();
-                //entityController.remove(stoneProjectile);
             }
             if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
                 stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                stoneArrayList.add(stoneProjectile);
                 entityController.add(stoneProjectile);
+                stoneProjectile.setLevel(levelAPI.getCurrentLevel());
                 stoneProjectile.setFlyingDirectionRight();
-                //entityController.remove(stoneProjectile);
+            }
+        }
+    }
+
+    private void checkMonsterAttackableByRanged(ArrayList<Projectile> projectile) {
+        if(!projectile.isEmpty()) {
+            for(int j = 0; j < projectile.size(); j++) {
+                for (int i = 0; i < monsterList.size(); i++) {
+                    if(projectile.size()>j){
+                        if (monsterList.get(i).collide(projectile.get(j))) {
+                            monsterList.get(i).getAttacked(projectile.get(j));
+                            projectile.get(j).setFlyingSpeed(0f);
+                            if (monsterList.get(i).checkDead()) {
+                                logger.info("Monster wurde eliminiert!");
+                                entityController.remove(monsterList.get(i));
+                                hero.gainExp(monsterList.get(i).getExp());
+                                monsterList.remove(i);
+                                i--;
+                                if (killMonster.isQuestAccepted()) {
+                                    killMonster.update();
+                                }
+                            }
+                            projectile.remove(j);
+                            return;
+                        }
+                    }
+                }
             }
         }
     }
