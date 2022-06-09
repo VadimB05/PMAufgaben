@@ -8,6 +8,7 @@ import graphic.Animation;
 import graphic.Painter;
 import level.elements.Level;
 import logging.InventoryFormatter;
+import projectile.Projectile;
 import tools.Point;
 
 import java.util.ArrayList;
@@ -114,6 +115,12 @@ public abstract class Character extends Animatable {
         return character.getHitBox().overlaps(this.hitBox);
     }
 
+    /** Checks if the hitbox of a projectile overlaps with the hitbox of a monster */
+    public boolean collide(Projectile projectile) {
+        return projectile.getHitBox().overlaps(this.hitBox);
+    }
+
+
     /** Getter for the frameCounter variable */
     public int getFrameCounter() {
         return frameCounter;
@@ -164,12 +171,26 @@ public abstract class Character extends Animatable {
     }
 
     /**
+     * changing the health of the monster we are attacking
+     *
+     * @param projectile, the damage we are doing
+     * */
+    public void getAttacked(Projectile projectile){
+        if(projectile.getDamage()>0) {
+            logger.info(name + " Leben vorher: "+ getHealth());
+            setHealth(getHealth() - projectile.getDamage());
+            throwback(projectile);
+            logger.info(name + " Leben nachher: "+ getHealth());
+        }
+    }
+
+    /**
      * Checks from which direction the monster is attacking and trys to throw the hero in the opposite direction,
      * depending if the tiles are accessible
      *
      * @param character, the monster that is attacking us
      * */
-    private void throwback(Character character){
+    private void throwback(Projectile character){
         Point throwbackPosition = position;
         if (position.x - character.getPosition().x >=0 && !checkDead()){
             throwbackPosition.x += 1;
