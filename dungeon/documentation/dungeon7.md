@@ -43,6 +43,13 @@ Fernkampf:
 Projektile sollen zusätzlich zu ihren aktuellen Funktionen auch Gegnern schaden machen, sie zurückstoßen und an Wänden und Feinden anhalten.
 Darüber hinaus soll es auch mehrere verschiedene Arten von Projektilen geben.
 
+Freundliche NPC:
+Es sollen NPCs erstellt werden mit denen man agieren kann und die einen nicht angreifen.
+
+Fähigkeiten:
+Cooldown für die Fähigkeiten müssen hinzugefügt werden.
+
+
 # Ansatz und Modellierung
 
 <!--
@@ -56,6 +63,12 @@ Bitte hier den Lösungsansatz kurz beschreiben:
 Fernkampf:
 Projektile brauchen, ähnlich zu dem Helden und Feinden, eine eigene Hitbox.
 Der Code um Projektile an Wänden stehen bleiben zu lassen lässt sich hier komfortabel aus den Monsterklassen übernehmen.
+
+Freundliche NPC:
+Es muss ne neue Klasse erstellt werden, welche von Character erbt.
+
+Fähigkeiten:
+Ein int Wert in endframe der hochgezählt wird und mit dem man abfragen kann wie oft hochgezählt wurde.
 
 # Umsetzung
 
@@ -72,6 +85,13 @@ Fernkampf:
 Hitboxen zu Projektilen wurden hinzugefügt, ebenso bekamen sie neue Eigenschaften wie Fluggeschwindigkeit, Reichweite und verursachten Schaden bei Monstern.
 Eine weitere Art von Projektil hinzuzufügen stellte sich als recht simpel heraus, da sie lediglich von der abstrakten Projektil Klasse erben musste.
 
+Freundliche NPC:
+(02.06.2022, 3 Stunden)
+Beim refactoren und für die Quests wurden NPC schon erstellt somit mussten wir nichts extra machen.
+
+Fähigkeiten:
+(09.06.2022, 3 Stunden)
+Es wurde ein Integer Wert erstellt mit dem ein Counter für die Fähigkeiten implementiert wird.
 
 # Postmortem
 
@@ -87,3 +107,8 @@ Fernkampf:
 Die Steine dynamisch während des Spiels zu erzeugen und trotzdem mit der Umwelt zu interagieren bereitete einige Probleme.
 Insbesondere die Steine zu "entschärfen" nachdem sie entweder einen Gegner oder eine Wand getroffen hatten um nicht ungewollt noch mehr Schaden zu verursachen.
 
+Freundliche NPC:
+Alles hat gut funktioniert, die Aufgabe wurde erledigt ohne zu wissen dass es die Aufgabe gibt.
+
+Fähigkeiten:
+Es hat direkt funktioniert, es war eine eher leichte Aufgabe.
