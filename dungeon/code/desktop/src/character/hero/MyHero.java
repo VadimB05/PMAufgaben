@@ -28,8 +28,10 @@ public class MyHero extends Character implements QuestObservable {
 
 
     /** Constructor. Loads animations, sets stats and creates hitbox */
-    public MyHero(Painter painter, SpriteBatch batch){
+    public MyHero(Painter painter, SpriteBatch batch, Class templateClass){
         super(painter, batch);
+        /*
+        // OLD STYLE
         idleAnimationRightList.add("character/knight/knight_m_idle_anim_f0.png");
         idleAnimationRightList.add("character/knight/knight_m_idle_anim_f1.png");
         idleAnimationRightList.add("character/knight/knight_m_idle_anim_f2.png");
@@ -66,6 +68,29 @@ public class MyHero extends Character implements QuestObservable {
         reqExp = 1;
         movementSpeed = 0.2f;
         name = "Held";
+
+        // OLD STYLE END
+         */
+
+        idleAnimationRight = templateClass.idleAnimationRight;
+        idleAnimationLeft = templateClass.idleAnimationLeft;
+        runAnimationRight = templateClass.runAnimationRight;
+        runAnimationLeft = templateClass.runAnimationLeft;
+        animation = idleAnimationRight;
+
+        maxHealth = 70;
+        maxMana = 20;
+        frameCounter=0;
+        health = templateClass.health;
+        mana = templateClass.mana;
+        defense = templateClass.defense;
+        baseStrength = 4;
+        strength = templateClass.strength;
+        exp = 0;
+        level = 1;
+        reqExp = 1;
+        movementSpeed = templateClass.movmentSpeed;
+        name = templateClass.name;
     }
 
     /** Sets Hero into the currently loaded level */
@@ -77,7 +102,7 @@ public class MyHero extends Character implements QuestObservable {
 
     /** Update our heroes position on the display when the position gets changed*/
     @Override
-    public void update() {
+    public void updateNotPaused() {
         Point newPosition = new Point(this.position);
 
         if(!paused){

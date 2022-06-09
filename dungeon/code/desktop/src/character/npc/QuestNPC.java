@@ -89,5 +89,9 @@ public class QuestNPC extends Character {
     public void addToQuestList(Quest quest){
         questList.add(quest);
     }
+
+    public void updateNotPaused() {
+
+    }
 }
 

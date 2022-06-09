@@ -2,6 +2,8 @@ package desktop;
 
 
 import ability.*;
+import character.Character;
+import character.hero.Class;
 import character.hero.MyHero;
 import character.monster.Monster;
 import character.monster.Variant;
@@ -14,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import controller.EntityController;
 import controller.HUDController;
 import controller.MainController;
+import hud.ChooseClasses;
 import hud.GameOverWindow;
 import hud.Icon;
 import hud.Window;
@@ -97,6 +100,8 @@ public class MyGame extends MainController {
     private PowerUpability powerUpability;
     private Stone stoneProjectile;
     Window window;
+    Window chooseClassWindow;
+    private boolean onStart = true;
     Inventory inventory;
     Equipment equipment;
     Logger logger;
@@ -107,6 +112,7 @@ public class MyGame extends MainController {
         myBatch = new SpriteBatch();
         monsterList = new ArrayList<>();
         window = new GameOverWindow();
+        chooseClassWindow = new ChooseClasses();
         gameOverTexture = new Texture("hud/gameOver.png");
         equipment = new Equipment();
         logger = Logger.getLogger(this.getClass().getName());
@@ -137,7 +143,7 @@ public class MyGame extends MainController {
         movementSpell = new MovementSpell();
 
         levelAPI.setGenerator(new LevelLoader());
-        hero = new MyHero(painter,batch);
+        hero = new MyHero(painter,batch, new Class(Class.Classes.RANGER));
         spikes = new Spikes(painter,batch);
         hole = new Hole(painter,batch);
 
@@ -248,11 +254,10 @@ public class MyGame extends MainController {
 
     @Override
     protected void endFrame() {
-
         //comment out with loadStats()
         //delStats();
 
-        if(levelAPI.getCurrentLevel().isOnEndTile(hero)){
+        if (levelAPI.getCurrentLevel().isOnEndTile(hero)) {
             try {
                 levelAPI.loadLevel();
             } catch (NoSolutionException e) {
@@ -262,12 +267,12 @@ public class MyGame extends MainController {
 
         collideTrap();
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.E)){
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             switchEquipment();
             canItemBePickedUp();
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && hero.getFrameCounter()>=50) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && hero.getFrameCounter() >= 50) {
             checkMonsterAttackable();
         }
 
@@ -275,20 +280,21 @@ public class MyGame extends MainController {
         questLog.logQuest();
         getInventoryItems();
         gameOver();
+        chooseClass();
         countWaitBetweenAttacks();
 
-        if(questNPC.doesCollide(hero) && !questNPC.isLogged()){
+        if (questNPC.doesCollide(hero) && !questNPC.isLogged()) {
             questNPC.showQuests();
 
-        }else if(!questNPC.doesCollide(hero)){
+        } else if (!questNPC.doesCollide(hero)) {
             questNPC.setLogged(false);
-        }else if(questNPC.doesCollide(hero)){
-            if(Gdx.input.isKeyJustPressed(Input.Keys.F)){
-                killMonster.setQuestAccepted(questLog,hero,entityController);
+        } else if (questNPC.doesCollide(hero)) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                killMonster.setQuestAccepted(questLog, hero, entityController);
                 logger.info("Quest: " + killMonster.getQuestName() + " akzeptiert!");
-                findScroll.setQuestAccepted(questLog,hero,entityController);
+                findScroll.setQuestAccepted(questLog, hero, entityController);
                 logger.info("Quest: " + findScroll.getQuestName() + " akzeptiert!");
-                reachLevel.setQuestAccepted(questLog,hero,entityController);
+                reachLevel.setQuestAccepted(questLog, hero, entityController);
                 logger.info("Quest: " + reachLevel.getQuestName() + " akzeptiert!");
                 hero.register(reachLevel);
                 questNPC.questsAccepted();
@@ -298,6 +304,12 @@ public class MyGame extends MainController {
         healability.countFrames();
         powerUpability.countFrames();
         blackhole.countFrames();
+
+        if (onStart) {
+            for (Character character : monsterList) {
+                character.setPaused(true);
+            }
+        }
     }
 
     private void collideTrap() {
@@ -384,6 +396,43 @@ public class MyGame extends MainController {
             myBatch.end();
             paused = true;
             hero.setPaused(true);
+        }
+    }
+
+    private void chooseClass(){
+        if(onStart) {
+            paused = true;
+            myBatch.begin();
+            //myBatch.draw(chooseClassWindow.getBackground(), 0, 0, 1000, 1000);
+            //myBatch.draw(chooseClassWindow.getWindow(), 50, 50, 540, 380);
+            // myBatch.draw(gameOverTexture,50,50,540,380);
+            myBatch.end();
+            paused = true;
+            hero.setPaused(true);
+
+            // TODO: after some logic, onStart = false and paused = false
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) {
+                onStart = false;
+                paused = false;
+                hero.setPaused(false);
+                for (Character character : monsterList) {
+                    character.setPaused(false);
+                }
+            } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) {
+                onStart = false;
+                paused = false;
+                hero.setPaused(false);
+                for (Character character : monsterList) {
+                    character.setPaused(false);
+                }
+            } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)) {
+                onStart = false;
+                paused = false;
+                hero.setPaused(false);
+                for (Character character : monsterList) {
+                    character.setPaused(false);
+                }
+            }
         }
     }
 
