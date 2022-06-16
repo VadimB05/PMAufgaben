@@ -343,18 +343,24 @@ public class MyGame extends MainController {
         for(int i=0; i<monsterList.size();i++){
             if(monsterList.get(i).collide(hero)){
                 attackMonster(monsterList.get(i));
-                if(monsterList.get(i).checkDead()){
-                    logger.info("Monster wurde eliminiert!");
-                    entityController.remove(monsterList.get(i));
-                    hero.gainExp(monsterList.get(i).getExp());
-                    monsterList.remove(i);
-                    i--;
-                    if(killMonster.isQuestAccepted()){
-                        killMonster.update();
-                    }
-                }
+                i = monsterKilled(i);
             }
         }
+    }
+
+    /** Checks if the monster was killed*/
+    private int monsterKilled(int i) {
+        if(monsterList.get(i).checkDead()){
+            logger.info("Monster wurde eliminiert!");
+            entityController.remove(monsterList.get(i));
+            hero.gainExp(monsterList.get(i).getExp());
+            monsterList.remove(i);
+            i--;
+            if(killMonster.isQuestAccepted()){
+                killMonster.update();
+            }
+        }
+        return i;
     }
 
     private void countWaitBetweenAttacks() {
@@ -640,6 +646,12 @@ public class MyGame extends MainController {
         if(ability.abilityUsable(hero)){
             ability.abilityUsed();
             ability.activateAbility(hero);
+            for(int i=0; i<monsterList.size();i++){
+                if(monsterList.get(i).collide(hero)){
+                    ability.activateAbility(monsterList.get(i));
+                    i = monsterKilled(i);
+                }
+            }
             hero.removeMana(ability.getManaCost());
             logger.info("Du hast " + ability.getName() + " benutzt.");
         }
@@ -822,16 +834,7 @@ public class MyGame extends MainController {
                         if (monsterList.get(i).collide(projectile.get(j))) {
                             monsterList.get(i).getAttacked(projectile.get(j));
                             projectile.get(j).setFlyingSpeed(0f);
-                            if (monsterList.get(i).checkDead()) {
-                                logger.info("Monster wurde eliminiert!");
-                                entityController.remove(monsterList.get(i));
-                                hero.gainExp(monsterList.get(i).getExp());
-                                monsterList.remove(i);
-                                i--;
-                                if (killMonster.isQuestAccepted()) {
-                                    killMonster.update();
-                                }
-                            }
+                            i = monsterKilled(i);
                             projectile.remove(j);
                             return;
                         }

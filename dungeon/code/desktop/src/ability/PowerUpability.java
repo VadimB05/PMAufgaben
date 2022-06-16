@@ -1,6 +1,7 @@
 package ability;
 
 import character.hero.MyHero;
+import character.monster.Monster;
 
 public class PowerUpability extends Abilitys{
     private float strength = 2.0f;
@@ -24,6 +25,11 @@ public class PowerUpability extends Abilitys{
     @Override
     public void activateAbility(MyHero myHero) {
         myHero.addPowerUp(strength);
+
+    }
+
+    @Override
+    public void activateAbility(Monster monster) {
 
     }
 }

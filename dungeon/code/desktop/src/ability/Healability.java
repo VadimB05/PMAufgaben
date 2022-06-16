@@ -1,6 +1,7 @@
 package ability;
 
 import character.hero.MyHero;
+import character.monster.Monster;
 
 public class Healability extends Abilitys{
     private int health = 80;
@@ -29,5 +30,10 @@ public class Healability extends Abilitys{
         else{
             myHero.addHealth(myHero.getMaxHealth()-myHero.getHealth());
         }
+    }
+
+    @Override
+    public void activateAbility(Monster monster) {
+
     }
 }

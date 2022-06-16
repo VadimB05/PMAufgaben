@@ -185,6 +185,15 @@ public abstract class Character extends Animatable {
     }
 
     /**
+     * changing the health of the monster we are attacking
+     *
+     * @param damage, the damage we are doing
+     * */
+    public void getDamaged(int damage){
+        setHealth(getHealth()-damage);
+    }
+
+    /**
      * Checks from which direction the monster is attacking and trys to throw the hero in the opposite direction,
      * depending if the tiles are accessible
      *
