@@ -28,44 +28,28 @@ public class MyHero extends Character implements QuestObservable {
 
 
     /** Constructor. Loads animations, sets stats and creates hitbox */
-    public MyHero(Painter painter, SpriteBatch batch){
+    public MyHero(Painter painter, SpriteBatch batch, Class templateClass){
         super(painter, batch);
-        idleAnimationRightList.add("character/knight/knight_m_idle_anim_f0.png");
-        idleAnimationRightList.add("character/knight/knight_m_idle_anim_f1.png");
-        idleAnimationRightList.add("character/knight/knight_m_idle_anim_f2.png");
-        idleAnimationRightList.add("character/knight/knight_m_idle_anim_f3.png");
-        idleAnimationRight = new Animation(idleAnimationRightList,8);
-        idleAnimationLeftList.add("character/knight/knight_m_idle_anim_mirrored_f0.png");
-        idleAnimationLeftList.add("character/knight/knight_m_idle_anim_mirrored_f1.png");
-        idleAnimationLeftList.add("character/knight/knight_m_idle_anim_mirrored_f2.png");
-        idleAnimationLeftList.add("character/knight/knight_m_idle_anim_mirrored_f3.png");
-        idleAnimationLeft = new Animation(idleAnimationLeftList,8);
-        runAnimationRightList.add("character/knight/knight_m_run_anim_f0.png");
-        runAnimationRightList.add("character/knight/knight_m_run_anim_f1.png");
-        runAnimationRightList.add("character/knight/knight_m_run_anim_f2.png");
-        runAnimationRightList.add("character/knight/knight_m_run_anim_f3.png");
-        runAnimationRight = new Animation(runAnimationRightList,8);
-        runAnimationLeftList.add("character/knight/knight_m_run_anim_mirrored_f0.png");
-        runAnimationLeftList.add("character/knight/knight_m_run_anim_mirrored_f1.png");
-        runAnimationLeftList.add("character/knight/knight_m_run_anim_mirrored_f2.png");
-        runAnimationLeftList.add("character/knight/knight_m_run_anim_mirrored_f3.png");
-        runAnimationLeft = new Animation(runAnimationLeftList,8);
-        animation = idleAnimationRight;
 
+        idleAnimationRight = templateClass.idleAnimationRight;
+        idleAnimationLeft = templateClass.idleAnimationLeft;
+        runAnimationRight = templateClass.runAnimationRight;
+        runAnimationLeft = templateClass.runAnimationLeft;
+        animation = idleAnimationRight;
 
         maxHealth = 70;
         maxMana = 20;
         frameCounter=0;
-        health = 30;
-        mana = 10;
-        defense = 0;
+        health = templateClass.health;
+        mana = templateClass.mana;
+        defense = templateClass.defense;
         baseStrength = 4;
-        strength = baseStrength;
+        strength = templateClass.strength;
         exp = 0;
         level = 1;
         reqExp = 1;
-        movementSpeed = 0.2f;
-        name = "Held";
+        movementSpeed = templateClass.movmentSpeed;
+        name = templateClass.name;
     }
 
     /** Sets Hero into the currently loaded level */
@@ -77,7 +61,7 @@ public class MyHero extends Character implements QuestObservable {
 
     /** Update our heroes position on the display when the position gets changed*/
     @Override
-    public void update() {
+    public void updateNotPaused() {
         Point newPosition = new Point(this.position);
 
         if(!paused){

@@ -17,6 +17,11 @@ public class ShopNPC extends Character {
         super(painter, batch);
     }
 
+    @Override
+    public void updateNotPaused() {
+
+    }
+
     /**
      * Sets character on random position
      *

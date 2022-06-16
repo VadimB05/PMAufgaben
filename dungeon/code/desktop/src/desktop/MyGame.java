@@ -2,6 +2,8 @@ package desktop;
 
 
 import ability.*;
+import character.Character;
+import character.hero.Class;
 import character.hero.MyHero;
 import character.monster.Monster;
 import character.monster.Variant;
@@ -14,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import controller.EntityController;
 import controller.HUDController;
 import controller.MainController;
+import hud.ChooseClasses;
 import hud.GameOverWindow;
 import hud.Icon;
 import hud.ShopWindow;
@@ -66,6 +69,7 @@ public class MyGame extends MainController {
     private Label expLabel;
     private Label stageLabel;
     private MyHero hero;
+    private int heroNumber = 0;
     private QuestNPC questNPC;
     private Sword sword;
     private Staff staff;
@@ -86,6 +90,7 @@ public class MyGame extends MainController {
     private int maxMonsterCount;
     public static int stageCounter;
     private Texture gameOverTexture;
+    private Texture classTexture;
     private List<Quest> questList = new ArrayList<>();
     private Quest findScroll;
     private Quest killMonster;
@@ -104,6 +109,8 @@ public class MyGame extends MainController {
     private boolean input = false;
     Window shopWindow;
     Window window;
+    Window chooseClassWindow;
+    private boolean onStart = true;
     Inventory inventory;
     Equipment equipment;
     Logger logger;
@@ -119,7 +126,9 @@ public class MyGame extends MainController {
         spikedBallList.clear();
         window = new GameOverWindow();
         shopWindow = new ShopWindow();
+        chooseClassWindow = new ChooseClasses();
         gameOverTexture = new Texture("hud/gameOver.png");
+        classTexture = new Texture("hud/Klassenauswahl.png");
         equipment = new Equipment();
         logger = Logger.getLogger(this.getClass().getName());
         questLog = new QuestLog();
@@ -149,7 +158,7 @@ public class MyGame extends MainController {
         movementSpell = new MovementSpell();
 
         levelAPI.setGenerator(new LevelLoader());
-        hero = new MyHero(painter,batch);
+
         spikes = new Spikes(painter,batch);
         hole = new Hole(painter,batch);
 
@@ -210,6 +219,16 @@ public class MyGame extends MainController {
                 chestPlateBlack,
                 chestPlate);
 
+        hero=null;
+        if(heroNumber==0){
+            hero = new MyHero(painter,batch, new Class(Class.Classes.KNIGHT));
+        }
+        if(heroNumber==8){
+            hero = new MyHero(painter,batch, new Class(Class.Classes.MAGE));
+        }if(heroNumber==9){
+            hero = new MyHero(painter,batch, new Class(Class.Classes.RANGER));
+        }
+
         // load the first level
         try {
             levelAPI.loadLevel();
@@ -236,15 +255,24 @@ public class MyGame extends MainController {
         paused = false;
 
         questNPC = new QuestNPC(painter,batch);
+
         createQuests();
     }
 
     @Override
     protected void beginFrame() {
+
         isPausedRestart();
 
         //comment out to make the game smooth
         //loadStats();
+        useItem();
+        dropItemFromInventory();
+
+        switchHUDHeart();
+
+
+        useSpell();
 
         switchHUDHeart();
 
@@ -255,16 +283,17 @@ public class MyGame extends MainController {
             useAbility();
         }
 
+        useAbility();
 
     }
 
     @Override
     protected void endFrame() {
-
         //comment out with loadStats()
         //delStats();
+        chooseClass();
 
-        if(levelAPI.getCurrentLevel().isOnEndTile(hero)){
+        if (levelAPI.getCurrentLevel().isOnEndTile(hero)) {
             try {
                 levelAPI.loadLevel();
             } catch (NoSolutionException e) {
@@ -286,13 +315,19 @@ public class MyGame extends MainController {
             questLog.logQuest();
         }
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ALT_LEFT)){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ALT_LEFT)) {
             hero.setPaused(!hero.isPaused());
             input = !input;
         }
-        if(input){
-
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            switchEquipment();
+            canItemBePickedUp();
+        }
+        if(input) {
             drawShop();
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && hero.getFrameCounter() >= 50) {
+            checkMonsterAttackable();
         }
 
         monsterAttackPlayer();
@@ -304,18 +339,19 @@ public class MyGame extends MainController {
         checkMonsterAttackableByRanged(stoneArrayList);
         checkMonsterAttackableByRanged(spikedBallList);
 
-        if(questNPC.doesCollide(hero) && !questNPC.isLogged()){
+        if (questNPC.doesCollide(hero) && !questNPC.isLogged()) {
             questNPC.showQuests();
 
-        }else if(!questNPC.doesCollide(hero)){
+        } else if (!questNPC.doesCollide(hero)) {
             questNPC.setLogged(false);
         }else if(questNPC.doesCollide(hero)){
             if(Gdx.input.isKeyJustPressed(Input.Keys.F)  && !input){
                 killMonster.setQuestAccepted(questLog,hero,entityController);
+
                 logger.info("Quest: " + killMonster.getQuestName() + " akzeptiert!");
-                findScroll.setQuestAccepted(questLog,hero,entityController);
+                findScroll.setQuestAccepted(questLog, hero, entityController);
                 logger.info("Quest: " + findScroll.getQuestName() + " akzeptiert!");
-                reachLevel.setQuestAccepted(questLog,hero,entityController);
+                reachLevel.setQuestAccepted(questLog, hero, entityController);
                 logger.info("Quest: " + reachLevel.getQuestName() + " akzeptiert!");
                 hero.register(reachLevel);
                 questNPC.questsAccepted();
@@ -325,6 +361,12 @@ public class MyGame extends MainController {
         healability.countFrames();
         powerUpability.countFrames();
         blackhole.countFrames();
+
+        if (onStart) {
+            for (Character character : monsterList) {
+                character.setPaused(true);
+            }
+        }
     }
 
     private void collideTrap() {
@@ -420,13 +462,61 @@ public class MyGame extends MainController {
         }
     }
 
-    private void drawShop(){
+    private void drawShop() {
         myBatch.begin();
         BitmapFont font = new BitmapFont();
-        myBatch.draw(shopWindow.getWindow(),350,250,280,200);
-        font.setColor(0f,0f,0f,1);
-        font.draw(myBatch,"Shop",355,445);
+        myBatch.draw(shopWindow.getWindow(), 350, 250, 280, 200);
+        font.setColor(0f, 0f, 0f, 1);
+        font.draw(myBatch, "Shop", 355, 445);
         myBatch.end();
+    }
+
+    private void chooseClass(){
+        if(onStart) {
+            paused = true;
+            myBatch.begin();
+            myBatch.draw(chooseClassWindow.getBackground(), 0, 0, 1000, 1000);
+            myBatch.draw(chooseClassWindow.getWindow(), 50, 50, 540, 380);
+            myBatch.draw(classTexture,50,50,540,390);
+            myBatch.end();
+            paused = true;
+            hero.setPaused(true);
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) {
+                heroNumber=0;
+                onStart = false;
+                paused = false;
+                hero.setPaused(false);
+                for (Character character : monsterList) {
+                    character.setPaused(false);
+                }
+                this.entityController = new EntityController();
+                this.hudController = new HUDController(batch);
+                this.setup();
+            } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) {
+                heroNumber=8;
+                onStart = false;
+                paused = false;
+                hero.setPaused(false);
+                for (Character character : monsterList) {
+                    character.setPaused(false);
+                }
+                this.entityController = new EntityController();
+                this.hudController = new HUDController(batch);
+                this.setup();
+            } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)) {
+                heroNumber=9;
+                onStart = false;
+                paused = false;
+                hero.setPaused(false);
+                for (Character character : monsterList) {
+                    character.setPaused(false);
+                }
+                this.entityController = new EntityController();
+                this.hudController = new HUDController(batch);
+                this.setup();
+            }
+        }
     }
 
     /** Switches the Heart Icons in the HUD depending on the heroes health*/

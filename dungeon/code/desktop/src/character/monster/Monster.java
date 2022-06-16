@@ -99,7 +99,7 @@ public class Monster extends Character {
      * Executes every frame to update monster movement
      */
     @Override
-    public void update() {
+    public void updateNotPaused() {
         animation = getActiveAnimation();
         if(!inCombat){
             newPosition = randomMovement();

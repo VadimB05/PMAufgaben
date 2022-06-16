@@ -41,6 +41,7 @@ public abstract class Character extends Animatable {
     protected Rectangle hitBox;
     Random attackChance;
     protected Logger logger;
+    private boolean paused;
 
     /**
      * Must be implemented for all objects that should be controlled by the <code>EntityController
@@ -66,13 +67,21 @@ public abstract class Character extends Animatable {
         logger.setUseParentHandlers(false);
     }
 
-    /** Getter for the position variable */
+    /**
+     * Getter for the position variable
+     */
     @Override
     public Point getPosition() {
         return position;
     }
 
-    /** Getter for the currently active animaton */
+    public void setPosition(Point position) {
+        this.position = position;
+    }
+
+    /**
+     * Getter for the currently active animaton
+     */
     @Override
     public Animation getActiveAnimation() {
         return animation;
@@ -81,39 +90,49 @@ public abstract class Character extends Animatable {
     /**
      * Checks the direction the monster is facing for proper animation
      */
-    public void isRunningLeft(){
-        if(isLookingLeft){
+    public void isRunningLeft() {
+        if (isLookingLeft) {
             animation = runAnimationLeft;
-        }
-        else{
+        } else {
             animation = runAnimationRight;
         }
     }
 
-    /** Getter for the health variable */
+    /**
+     * Getter for the health variable
+     */
     public int getHealth() {
         return health;
     }
 
-    /** Setter for the health variable */
+    /**
+     * Setter for the health variable
+     */
     public void setHealth(int health) {
         this.health = health;
     }
 
-    /** Getter for the exp variable */
+    /**
+     * Getter for the exp variable
+     */
     public int getExp() {
         return exp;
     }
 
-    /** Getter for the hitbox*/
+    /**
+     * Getter for the hitbox
+     */
     public Rectangle getHitBox() {
         return hitBox;
     }
 
-    /** Checks if the hitbox of the hero overlaps with the hitbox of a monster */
+    /**
+     * Checks if the hitbox of the hero overlaps with the hitbox of a monster
+     */
     public boolean collide(Character character) {
         return character.getHitBox().overlaps(this.hitBox);
     }
+
 
     /** Checks if the hitbox of a projectile overlaps with the hitbox of a monster */
     public boolean collide(Projectile projectile) {
@@ -126,29 +145,39 @@ public abstract class Character extends Animatable {
         return frameCounter;
     }
 
-    /** Getter for the strength variable */
+    /**
+     * Getter for the strength variable
+     */
     public int getStrength() {
         return strength;
     }
 
-    /** adder for the frameCounter variable */
+    /**
+     * adder for the frameCounter variable
+     */
     public void addFrameCounter() {
         frameCounter++;
     }
 
-    /** resets the framecounter */
+    /**
+     * resets the framecounter
+     */
     public void resetFrameCounter() {
         this.frameCounter = 0;
     }
 
-    /** Checks if a character is dead */
-    public boolean checkDead(){
-        return health<=0;
+    /**
+     * Checks if a character is dead
+     */
+    public boolean checkDead() {
+        return health <= 0;
     }
 
-    /** removing doubled handler*/
-    private void fixHandler(){
-        for(Handler handler : logger.getHandlers()){
+    /**
+     * removing doubled handler
+     */
+    private void fixHandler() {
+        for (Handler handler : logger.getHandlers()) {
             logger.removeHandler(handler);
         }
     }
@@ -157,15 +186,15 @@ public abstract class Character extends Animatable {
      * changing the health of the monster we are attacking
      *
      * @param character, the monster we are attacking
-     * */
-    public void attack(Character character){
+     */
+    public void attack(Character character) {
         randomIntAttackChance = attackChance.nextInt(10);
-        if(randomIntAttackChance>=1) {
-            logger.info(character.name + " Leben vorher: "+ character.getHealth());
+        if (randomIntAttackChance >= 1) {
+            logger.info(character.name + " Leben vorher: " + character.getHealth());
             character.setHealth(character.getHealth() - getStrength());
             //character.throwback(this);
-            logger.info(character.name + " Leben nachher: "+ character.getHealth());
-        }else{
+            logger.info(character.name + " Leben nachher: " + character.getHealth());
+        } else {
             logger.info(character.name + " Angriff fehlgeschlagen");
         }
     }
@@ -198,24 +227,24 @@ public abstract class Character extends Animatable {
      * depending if the tiles are accessible
      *
      * @param character, the monster that is attacking us
-     * */
+     */
     private void throwback(Projectile character){
         Point throwbackPosition = position;
-        if (position.x - character.getPosition().x >=0 && !checkDead()){
+        if (position.x - character.getPosition().x >= 0 && !checkDead()) {
             throwbackPosition.x += 1;
-            for(int i=0;i<10;i++){
+            for (int i = 0; i < 10; i++) {
                 if (currentLevel.getTileAt(throwbackPosition.toCoordinate()).isAccessible()) {
                     this.position = throwbackPosition;
-                }else {
+                } else {
                     throwbackPosition.x -= 0.1;
                 }
             }
-        }else{
+        } else {
             throwbackPosition.x -= 1;
-            for(int i = 0; i < 10; i++){
+            for (int i = 0; i < 10; i++) {
                 if (currentLevel.getTileAt(throwbackPosition.toCoordinate()).isAccessible()) {
                     this.position = throwbackPosition;
-                }else {
+                } else {
                     throwbackPosition.x += 0.1;
                 }
             }
@@ -240,4 +269,18 @@ public abstract class Character extends Animatable {
             }
         }
     }
+
+    public void setPaused(boolean status) {
+        this.paused = status;
+    }
+
+    @Override
+    public final void update() {
+        if (!paused) {
+            updateNotPaused();
+        }
+    }
+
+    public abstract void updateNotPaused();
+
 }

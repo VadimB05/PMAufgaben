@@ -39,21 +39,21 @@ einbetten (etwa UML-Diagramme), denken Sie daran, diese auch abzugeben!
 Bitte hier die zu lösende Aufgabe kurz in eigenen Worten beschreiben.
 -->
 
-Fernkampf:
-Projektile sollen zusätzlich zu ihren aktuellen Funktionen auch Gegnern schaden machen, sie zurückstoßen und an Wänden und Feinden anhalten.
-Darüber hinaus soll es auch mehrere verschiedene Arten von Projektilen geben.
-
-Freundliche NPC:
-Es sollen NPCs erstellt werden mit denen man agieren kann und die einen nicht angreifen.
-
-Fähigkeiten:
-Cooldown für die Fähigkeiten müssen hinzugefügt werden.
-
 Charakterklassen:
 3 unterschiedliche Charakterklassen mit einem verschiedenem Wert.
 Sollen unterschiedliche Bezeichungen haben
 Mit einem Pattern
 Eine Auswahl für die Charaktere
+
+Fähigkeiten:
+Cooldown für die Fähigkeiten und Schaden müssen hinzugefügt werden.
+
+
+Dialogsystem:
+
+
+Schlaue Monster:
+
 
 # Ansatz und Modellierung
 
@@ -65,18 +65,18 @@ Bitte hier den Lösungsansatz kurz beschreiben:
 -   Worauf müssen Sie konkret achten?
 -->
 
-Fernkampf:
-Projektile brauchen, ähnlich zu dem Helden und Feinden, eine eigene Hitbox.
-Der Code um Projektile an Wänden stehen bleiben zu lassen lässt sich hier komfortabel aus den Monsterklassen übernehmen.
-
-Freundliche NPC:
-Es muss ne neue Klasse erstellt werden, welche von Character erbt.
+Charakterklassen:
+2 Klassen, eine für das Visuelle mit der Auswahl und eine Klasse mit Enum und Type object Pattern für die Klassen.
 
 Fähigkeiten:
 Ein int Wert in endframe der hochgezählt wird und mit dem man abfragen kann wie oft hochgezählt wurde.
+Den Schaden als int Wert in Blackhole gesetzt für den Kampf gegen Monster.
 
-Charakterklassen:
-2 Klassen, eine für das Visuelle mit der Auswahl und eine Klasse mit Enum und Type object Pattern für die Klassen.
+Dialogsystem:
+
+
+Schlaue Monster:
+
 
 # Umsetzung
 
@@ -88,23 +88,19 @@ Bitte hier die Umsetzung der Lösung kurz beschreiben:
 -   was war das Ergebnis?
 -->
 
-Fernkampf:
-(10.06.2022, 6 Stunden)
-Hitboxen zu Projektilen wurden hinzugefügt, ebenso bekamen sie neue Eigenschaften wie Fluggeschwindigkeit, Reichweite und verursachten Schaden bei Monstern.
-Eine weitere Art von Projektil hinzuzufügen stellte sich als recht simpel heraus, da sie lediglich von der abstrakten Projektil Klasse erben musste.
-
-Freundliche NPC:
-(02.06.2022, 3 Stunden)
-Beim refactoren und für die Quests wurden NPC schon erstellt somit mussten wir nichts extra machen.
+Charakterklassen:
+(16.06.2022 4 Stunden)
+Durch das Drücken der Tasten 7,8,9 kann man die zugeordnete Klasse wählen.
 
 Fähigkeiten:
-(09.06.2022, 3 Stunden)
-Es wurde ein Integer Wert erstellt mit dem ein Counter für die Fähigkeiten implementiert wird.
+(16.06.2022 2 Stunden)
+Schaden und Cooldown wurden der fehlenden Fähigkeit Blackhole hinzugefügt.
 
-Charakterklassen:
-(10.06.2022 5 Stunden)
-Eine Klasse mit einem Enum und Type object Pattern.
-Das Spiel wird zu Anfang Pausiert und wird auf Knopf druck freigeschaltet. Auch Monster können sich nicht bewegen.
+Dialogsystem:
+
+
+Schlaue Monster:
+
 
 # Postmortem
 
@@ -116,15 +112,13 @@ kritisch zurück:
 -   Wie haben Sie die Probleme letztlich gelöst?
 -->
 
-Fernkampf:
-Die Steine dynamisch während des Spiels zu erzeugen und trotzdem mit der Umwelt zu interagieren bereitete einige Probleme.
-Insbesondere die Steine zu "entschärfen" nachdem sie entweder einen Gegner oder eine Wand getroffen hatten um nicht ungewollt noch mehr Schaden zu verursachen.
-
-Freundliche NPC:
-Alles hat gut funktioniert, die Aufgabe wurde erledigt ohne zu wissen dass es die Aufgabe gibt.
+Charakterklassen:
+Ergänzung für die Auswahl jetzt auch im Spiel möglich, ohne den Code zu verändern und ein Bild für die Grafische Darstellung hinzugefügt.
 
 Fähigkeiten:
-Es hat direkt funktioniert, es war eine eher leichte Aufgabe.
+Hat funktioniert ohne große Probleme.
 
-Charakterklassen:
-Das erstellen der Klassen hat keine Probleme bereitet aber das Visuelle auswählen schon und ist auch noch nicht fertig.
+Dialogsystem:
+
+
+Schlaue Monster:
