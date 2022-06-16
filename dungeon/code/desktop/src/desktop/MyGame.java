@@ -8,6 +8,7 @@ import character.hero.MyHero;
 import character.monster.Monster;
 import character.monster.Variant;
 import character.npc.QuestNPC;
+import character.npc.ShopNPC;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -71,6 +72,7 @@ public class MyGame extends MainController {
     private MyHero hero;
     private int heroNumber = 0;
     private QuestNPC questNPC;
+    private ShopNPC shopNPC;
     private Sword sword;
     private Staff staff;
     private Shield shieldBlack;
@@ -107,7 +109,6 @@ public class MyGame extends MainController {
     private Stone stoneProjectile;
     private SpikedBall spikedBallProjectile;
     private boolean input = false;
-    Window shopWindow;
     Window window;
     Window chooseClassWindow;
     private boolean onStart = true;
@@ -125,13 +126,14 @@ public class MyGame extends MainController {
         spikedBallList = new ArrayList<>();
         spikedBallList.clear();
         window = new GameOverWindow();
-        shopWindow = new ShopWindow();
+
         chooseClassWindow = new ChooseClasses();
         gameOverTexture = new Texture("hud/gameOver.png");
         classTexture = new Texture("hud/Klassenauswahl.png");
         equipment = new Equipment();
         logger = Logger.getLogger(this.getClass().getName());
         questLog = new QuestLog();
+        shopNPC = new ShopNPC(painter,batch);
 
         for(Handler handler : logger.getHandlers()){
             logger.removeHandler(handler);
@@ -324,7 +326,7 @@ public class MyGame extends MainController {
             canItemBePickedUp();
         }
         if(input) {
-            drawShop();
+
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && hero.getFrameCounter() >= 50) {
             checkMonsterAttackable();
@@ -338,6 +340,8 @@ public class MyGame extends MainController {
         rangedAttack();
         checkMonsterAttackableByRanged(stoneArrayList);
         checkMonsterAttackableByRanged(spikedBallList);
+
+        shopNPC.checkNearShop(hero);
 
         if (questNPC.doesCollide(hero) && !questNPC.isLogged()) {
             questNPC.showQuests();
@@ -460,15 +464,6 @@ public class MyGame extends MainController {
             paused = true;
             hero.setPaused(true);
         }
-    }
-
-    private void drawShop() {
-        myBatch.begin();
-        BitmapFont font = new BitmapFont();
-        myBatch.draw(shopWindow.getWindow(), 350, 250, 280, 200);
-        font.setColor(0f, 0f, 0f, 1);
-        font.draw(myBatch, "Shop", 355, 445);
-        myBatch.end();
     }
 
     private void chooseClass(){
@@ -844,6 +839,9 @@ public class MyGame extends MainController {
             questNPC.setLevel(levelAPI.getCurrentLevel());
             entityController.add(questNPC);
         }
+
+        shopNPC.setLevel(levelAPI.getCurrentLevel());
+        entityController.add(shopNPC);
 
         hero.setLevel(levelAPI.getCurrentLevel());
         sword.setLevel(levelAPI.getCurrentLevel());
