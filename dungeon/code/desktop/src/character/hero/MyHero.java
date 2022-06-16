@@ -30,47 +30,6 @@ public class MyHero extends Character implements QuestObservable {
     /** Constructor. Loads animations, sets stats and creates hitbox */
     public MyHero(Painter painter, SpriteBatch batch, Class templateClass){
         super(painter, batch);
-        /*
-        // OLD STYLE
-        idleAnimationRightList.add("character/knight/knight_m_idle_anim_f0.png");
-        idleAnimationRightList.add("character/knight/knight_m_idle_anim_f1.png");
-        idleAnimationRightList.add("character/knight/knight_m_idle_anim_f2.png");
-        idleAnimationRightList.add("character/knight/knight_m_idle_anim_f3.png");
-        idleAnimationRight = new Animation(idleAnimationRightList,8);
-        idleAnimationLeftList.add("character/knight/knight_m_idle_anim_mirrored_f0.png");
-        idleAnimationLeftList.add("character/knight/knight_m_idle_anim_mirrored_f1.png");
-        idleAnimationLeftList.add("character/knight/knight_m_idle_anim_mirrored_f2.png");
-        idleAnimationLeftList.add("character/knight/knight_m_idle_anim_mirrored_f3.png");
-        idleAnimationLeft = new Animation(idleAnimationLeftList,8);
-        runAnimationRightList.add("character/knight/knight_m_run_anim_f0.png");
-        runAnimationRightList.add("character/knight/knight_m_run_anim_f1.png");
-        runAnimationRightList.add("character/knight/knight_m_run_anim_f2.png");
-        runAnimationRightList.add("character/knight/knight_m_run_anim_f3.png");
-        runAnimationRight = new Animation(runAnimationRightList,8);
-        runAnimationLeftList.add("character/knight/knight_m_run_anim_mirrored_f0.png");
-        runAnimationLeftList.add("character/knight/knight_m_run_anim_mirrored_f1.png");
-        runAnimationLeftList.add("character/knight/knight_m_run_anim_mirrored_f2.png");
-        runAnimationLeftList.add("character/knight/knight_m_run_anim_mirrored_f3.png");
-        runAnimationLeft = new Animation(runAnimationLeftList,8);
-        animation = idleAnimationRight;
-
-
-        maxHealth = 70;
-        maxMana = 20;
-        frameCounter=0;
-        health = 30;
-        mana = 10;
-        defense = 0;
-        baseStrength = 4;
-        strength = baseStrength;
-        exp = 0;
-        level = 1;
-        reqExp = 1;
-        movementSpeed = 0.2f;
-        name = "Held";
-
-        // OLD STYLE END
-         */
 
         idleAnimationRight = templateClass.idleAnimationRight;
         idleAnimationLeft = templateClass.idleAnimationLeft;

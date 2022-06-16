@@ -75,6 +75,10 @@ public abstract class Character extends Animatable {
         return position;
     }
 
+    public void setPosition(Point position) {
+        this.position = position;
+    }
+
     /**
      * Getter for the currently active animaton
      */

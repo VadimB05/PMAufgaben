@@ -69,6 +69,7 @@ public class MyGame extends MainController {
     private Label expLabel;
     private Label stageLabel;
     private MyHero hero;
+    private int heroNumber = 0;
     private QuestNPC questNPC;
     private Sword sword;
     private Staff staff;
@@ -89,6 +90,7 @@ public class MyGame extends MainController {
     private int maxMonsterCount;
     public static int stageCounter;
     private Texture gameOverTexture;
+    private Texture classTexture;
     private List<Quest> questList = new ArrayList<>();
     private Quest findScroll;
     private Quest killMonster;
@@ -123,6 +125,7 @@ public class MyGame extends MainController {
         window = new GameOverWindow();
         chooseClassWindow = new ChooseClasses();
         gameOverTexture = new Texture("hud/gameOver.png");
+        classTexture = new Texture("hud/Klassenauswahl.png");
         equipment = new Equipment();
         logger = Logger.getLogger(this.getClass().getName());
         questLog = new QuestLog();
@@ -152,7 +155,7 @@ public class MyGame extends MainController {
         movementSpell = new MovementSpell();
 
         levelAPI.setGenerator(new LevelLoader());
-        hero = new MyHero(painter,batch, new Class(Class.Classes.RANGER));
+
         spikes = new Spikes(painter,batch);
         hole = new Hole(painter,batch);
 
@@ -213,6 +216,16 @@ public class MyGame extends MainController {
                 chestPlateBlack,
                 chestPlate);
 
+        hero=null;
+        if(heroNumber==0){
+            hero = new MyHero(painter,batch, new Class(Class.Classes.KNIGHT));
+        }
+        if(heroNumber==8){
+            hero = new MyHero(painter,batch, new Class(Class.Classes.MAGE));
+        }if(heroNumber==9){
+            hero = new MyHero(painter,batch, new Class(Class.Classes.RANGER));
+        }
+
         // load the first level
         try {
             levelAPI.loadLevel();
@@ -239,25 +252,27 @@ public class MyGame extends MainController {
         paused = false;
 
         questNPC = new QuestNPC(painter,batch);
+
         createQuests();
     }
 
     @Override
     protected void beginFrame() {
+
         isPausedRestart();
 
         //comment out to make the game smooth
         //loadStats();
         useItem();
         dropItemFromInventory();
+
         switchHUDHeart();
+
 
         useSpell();
 
 
         useAbility();
-
-
 
     }
 
@@ -265,6 +280,7 @@ public class MyGame extends MainController {
     protected void endFrame() {
         //comment out with loadStats()
         //delStats();
+        chooseClass();
 
         if (levelAPI.getCurrentLevel().isOnEndTile(hero)) {
             try {
@@ -289,7 +305,6 @@ public class MyGame extends MainController {
         questLog.logQuest();
         getInventoryItems();
         gameOver();
-        chooseClass();
         countWaitBetweenAttacks();
         rangedAttack();
         checkMonsterAttackableByRanged(stoneArrayList);
@@ -415,35 +430,47 @@ public class MyGame extends MainController {
         if(onStart) {
             paused = true;
             myBatch.begin();
-            //myBatch.draw(chooseClassWindow.getBackground(), 0, 0, 1000, 1000);
-            //myBatch.draw(chooseClassWindow.getWindow(), 50, 50, 540, 380);
-            // myBatch.draw(gameOverTexture,50,50,540,380);
+            myBatch.draw(chooseClassWindow.getBackground(), 0, 0, 1000, 1000);
+            myBatch.draw(chooseClassWindow.getWindow(), 50, 50, 540, 380);
+            myBatch.draw(classTexture,50,50,540,390);
             myBatch.end();
             paused = true;
             hero.setPaused(true);
 
             // TODO: after some logic, onStart = false and paused = false
             if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) {
+                heroNumber=0;
                 onStart = false;
                 paused = false;
                 hero.setPaused(false);
                 for (Character character : monsterList) {
                     character.setPaused(false);
                 }
+                this.entityController = new EntityController();
+                this.hudController = new HUDController(batch);
+                this.setup();
             } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) {
+                heroNumber=8;
                 onStart = false;
                 paused = false;
                 hero.setPaused(false);
                 for (Character character : monsterList) {
                     character.setPaused(false);
                 }
+                this.entityController = new EntityController();
+                this.hudController = new HUDController(batch);
+                this.setup();
             } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)) {
+                heroNumber=9;
                 onStart = false;
                 paused = false;
                 hero.setPaused(false);
                 for (Character character : monsterList) {
                     character.setPaused(false);
                 }
+                this.entityController = new EntityController();
+                this.hudController = new HUDController(batch);
+                this.setup();
             }
         }
     }
