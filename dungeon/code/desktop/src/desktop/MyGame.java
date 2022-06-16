@@ -6,16 +6,17 @@ import character.hero.MyHero;
 import character.monster.Monster;
 import character.monster.Variant;
 import character.npc.QuestNPC;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import controller.EntityController;
 import controller.HUDController;
 import controller.MainController;
 import hud.GameOverWindow;
 import hud.Icon;
+import hud.ShopWindow;
 import hud.Window;
 import inventory.Equipment;
 import inventory.Inventory;
@@ -50,7 +51,6 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 public class MyGame extends MainController {
     private ArrayList<Potion> inventoryItemsArrayList;
@@ -101,6 +101,8 @@ public class MyGame extends MainController {
     private PowerUpability powerUpability;
     private Stone stoneProjectile;
     private SpikedBall spikedBallProjectile;
+    private boolean input = false;
+    Window shopWindow;
     Window window;
     Inventory inventory;
     Equipment equipment;
@@ -116,6 +118,7 @@ public class MyGame extends MainController {
         spikedBallList = new ArrayList<>();
         spikedBallList.clear();
         window = new GameOverWindow();
+        shopWindow = new ShopWindow();
         gameOverTexture = new Texture("hud/gameOver.png");
         equipment = new Equipment();
         logger = Logger.getLogger(this.getClass().getName());
@@ -242,15 +245,15 @@ public class MyGame extends MainController {
 
         //comment out to make the game smooth
         //loadStats();
-        useItem();
-        dropItemFromInventory();
+
         switchHUDHeart();
 
-        useSpell();
-
-
-        useAbility();
-
+        if(!input){
+            useItem();
+            dropItemFromInventory();
+            useSpell();
+            useAbility();
+        }
 
 
     }
@@ -270,18 +273,30 @@ public class MyGame extends MainController {
         }
 
         collideTrap();
+        if(!input){
+            if(Gdx.input.isKeyJustPressed(Input.Keys.E)){
+                switchEquipment();
+                canItemBePickedUp();
+            }
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.E)){
-            switchEquipment();
-            canItemBePickedUp();
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && hero.getFrameCounter()>=50) {
+                checkMonsterAttackable();
+            }
+
+            questLog.logQuest();
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && hero.getFrameCounter()>=50) {
-            checkMonsterAttackable();
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ALT_LEFT)){
+            hero.setPaused(!hero.isPaused());
+            input = !input;
+        }
+        if(input){
+
+            drawShop();
         }
 
         monsterAttackPlayer();
-        questLog.logQuest();
+
         getInventoryItems();
         gameOver();
         countWaitBetweenAttacks();
@@ -295,7 +310,7 @@ public class MyGame extends MainController {
         }else if(!questNPC.doesCollide(hero)){
             questNPC.setLogged(false);
         }else if(questNPC.doesCollide(hero)){
-            if(Gdx.input.isKeyJustPressed(Input.Keys.F)){
+            if(Gdx.input.isKeyJustPressed(Input.Keys.F)  && !input){
                 killMonster.setQuestAccepted(questLog,hero,entityController);
                 logger.info("Quest: " + killMonster.getQuestName() + " akzeptiert!");
                 findScroll.setQuestAccepted(questLog,hero,entityController);
@@ -405,6 +420,15 @@ public class MyGame extends MainController {
         }
     }
 
+    private void drawShop(){
+        myBatch.begin();
+        BitmapFont font = new BitmapFont();
+        myBatch.draw(shopWindow.getWindow(),350,250,280,200);
+        font.setColor(0f,0f,0f,1);
+        font.draw(myBatch,"Shop",355,445);
+        myBatch.end();
+    }
+
     /** Switches the Heart Icons in the HUD depending on the heroes health*/
     private void switchHUDHeart(){
         if((float) hero.getHealth()/hero.getMaxHealth()>=0.5f){
@@ -466,7 +490,7 @@ public class MyGame extends MainController {
 
     /** Log all items in inventory*/
     private void getInventoryItems() {
-        if(Gdx.input.isKeyJustPressed(Input.Keys.I)){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.I)  && !input){
             inventory.getInventoryItems();
         }
     }

@@ -187,6 +187,10 @@ public class MyHero extends Character implements QuestObservable {
         this.paused = paused;
     }
 
+    public boolean isPaused() {
+        return paused;
+    }
+
     public int getLevel() {
         return level;
     }
