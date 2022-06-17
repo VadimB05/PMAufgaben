@@ -100,9 +100,9 @@ public class Quest implements QuestObserver {
      * */
     private void dropItem() {
         if(dropItem){
+            item.setPickedUp(false);
             entityController.add(item);
             item.setPosition(hero.getPosition());
-            item.setPickedUp(false);
         }
     }
 }

@@ -6,6 +6,7 @@ import logging.InventoryFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,8 +20,13 @@ public class QuestLog {
         handlerMain.setLevel(Level.INFO);
         handlerMain.setFormatter(new InventoryFormatter("Main Logger"));
         log.setLevel(Level.INFO);
+        for(Handler handler : log.getHandlers()){
+            log.removeHandler(handler);
+        }
         log.addHandler(handlerMain);
         log.setUseParentHandlers(false);
+
+
     }
 
     /**

@@ -108,7 +108,6 @@ public class MyGame extends MainController {
     private PowerUpability powerUpability;
     private Stone stoneProjectile;
     private SpikedBall spikedBallProjectile;
-    private boolean input = false;
     Window window;
     Window chooseClassWindow;
     private boolean onStart = true;
@@ -134,6 +133,7 @@ public class MyGame extends MainController {
         logger = Logger.getLogger(this.getClass().getName());
         questLog = new QuestLog();
         shopNPC = new ShopNPC(painter,batch);
+        questNPC = new QuestNPC(painter,batch);
 
         for(Handler handler : logger.getHandlers()){
             logger.removeHandler(handler);
@@ -213,6 +213,7 @@ public class MyGame extends MainController {
         inventoryItemsArrayList.add(healthPotion);
         inventoryItemsArrayList.add(manaPotion);
 
+        itemsList.clear();
         Collections.addAll(itemsList,
                 sword,
                 staff,
@@ -256,8 +257,6 @@ public class MyGame extends MainController {
 
         paused = false;
 
-        questNPC = new QuestNPC(painter,batch);
-
         createQuests();
     }
 
@@ -270,23 +269,9 @@ public class MyGame extends MainController {
         //loadStats();
         useItem();
         dropItemFromInventory();
-
         switchHUDHeart();
-
-
         useSpell();
-
-        switchHUDHeart();
-
-        if(!input){
-            useItem();
-            dropItemFromInventory();
-            useSpell();
-            useAbility();
-        }
-
         useAbility();
-
     }
 
     @Override
@@ -304,29 +289,16 @@ public class MyGame extends MainController {
         }
 
         collideTrap();
-        if(!input){
-            if(Gdx.input.isKeyJustPressed(Input.Keys.E)){
-                switchEquipment();
-                canItemBePickedUp();
-            }
 
-            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && hero.getFrameCounter()>=50) {
-                checkMonsterAttackable();
-            }
+        questLog.logQuest();
 
-            questLog.logQuest();
-        }
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.ALT_LEFT)) {
             hero.setPaused(!hero.isPaused());
-            input = !input;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             switchEquipment();
             canItemBePickedUp();
-        }
-        if(input) {
-
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && hero.getFrameCounter() >= 50) {
             checkMonsterAttackable();
@@ -341,7 +313,7 @@ public class MyGame extends MainController {
         checkMonsterAttackableByRanged(stoneArrayList);
         checkMonsterAttackableByRanged(spikedBallList);
 
-        shopNPC.checkNearShop(hero);
+        shopNPC.checkNearShop(hero,entityController,itemsList);
 
         if (questNPC.doesCollide(hero) && !questNPC.isLogged()) {
             questNPC.showQuests();
@@ -349,7 +321,7 @@ public class MyGame extends MainController {
         } else if (!questNPC.doesCollide(hero)) {
             questNPC.setLogged(false);
         }else if(questNPC.doesCollide(hero)){
-            if(Gdx.input.isKeyJustPressed(Input.Keys.F)  && !input){
+            if(Gdx.input.isKeyJustPressed(Input.Keys.F)){
                 killMonster.setQuestAccepted(questLog,hero,entityController);
 
                 logger.info("Quest: " + killMonster.getQuestName() + " akzeptiert!");
@@ -415,6 +387,7 @@ public class MyGame extends MainController {
             logger.info("Monster wurde eliminiert!");
             entityController.remove(monsterList.get(i));
             hero.gainExp(monsterList.get(i).getExp());
+            hero.gainBones();
             monsterList.remove(i);
             i--;
             if(killMonster.isQuestAccepted()){
@@ -542,13 +515,13 @@ public class MyGame extends MainController {
      *
      * */
     private void switchEquipment() {
-        for(Items items: itemsList){
-            if(items.collide(hero) && !items.isPickedUp()){
-                Items dropItem = equipment.equipmentChange(items);
-                entityController.remove(items);
-                items.useItem(hero);
+        for(Items item: itemsList){
+            if(item.collide(hero) && !item.isPickedUp()){
+                Items dropItem = equipment.equipmentChange(item);
+                entityController.remove(item);
+                item.useItem(hero);
                 hero.setDefense(equipment.getDefense());
-                hudController.add(items.getIcon());
+                hudController.add(item.getIcon());
                 changeItem(dropItem);
                 return;
             }
@@ -575,7 +548,7 @@ public class MyGame extends MainController {
 
     /** Log all items in inventory*/
     private void getInventoryItems() {
-        if(Gdx.input.isKeyJustPressed(Input.Keys.I)  && !input){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.I)){
             inventory.getInventoryItems();
         }
     }
@@ -585,13 +558,13 @@ public class MyGame extends MainController {
      * Method to not pick up weapons, shields and chestplates into inventory
      *
      * */
-    private void changeItem(Items items){
-        if(items!=null) {
-            items.setLevel(levelAPI.getCurrentLevel());
-            entityController.add(items);
-            items.setPickedUp(false);
-            items.setPosition(hero.getPosition());
-            hudController.remove(items.getIcon());
+    private void changeItem(Items item){
+        if(item!=null) {
+            item.setLevel(levelAPI.getCurrentLevel());
+            entityController.add(item);
+            item.setPickedUp(false);
+            item.setPosition(hero.getPosition());
+            hudController.remove(item.getIcon());
         }
     }
 
@@ -770,7 +743,6 @@ public class MyGame extends MainController {
     private void useAbility(){
         if(Gdx.input.isKeyJustPressed(Input.Keys.H)){
             castAbility(healability);
-
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.J)){
             castAbility(powerUpability);
@@ -835,10 +807,9 @@ public class MyGame extends MainController {
             hero.gainExp(20);
         }
 
-        if(stageCounter>1){
-            questNPC.setLevel(levelAPI.getCurrentLevel());
-            entityController.add(questNPC);
-        }
+        questNPC.setLevel(levelAPI.getCurrentLevel());
+        entityController.add(questNPC);
+
 
         shopNPC.setLevel(levelAPI.getCurrentLevel());
         entityController.add(shopNPC);

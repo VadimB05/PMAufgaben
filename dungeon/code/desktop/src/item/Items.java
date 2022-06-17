@@ -1,6 +1,7 @@
 package item;
 
 import basiselements.Entity;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import character.hero.MyHero;
@@ -20,7 +21,10 @@ public abstract class Items extends Entity {
     protected String texturePath;
     protected Point position;
     protected String name;
-    protected boolean pickedUp = false;
+    protected boolean pickedUp;
+    private Texture texture;
+    private int cost;
+    private boolean bought;
 
 
     /**
@@ -35,9 +39,12 @@ public abstract class Items extends Entity {
         super(painter, batch);
         this.texturePath = texturePath;
         this.name = name;
+        texture = new Texture(texturePath);
         hitBox = new Rectangle();
         hudPainter = new HUDPainter();
         hudBatch = new SpriteBatch();
+        pickedUp = false;
+        bought = false;
     }
 
     @Override
@@ -48,6 +55,26 @@ public abstract class Items extends Entity {
     @Override
     public String getTexturePath() {
         return texturePath;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public boolean isBought() {
+        return bought;
+    }
+
+    public void setBought(boolean bought) {
+        this.bought = bought;
     }
 
     public void setLevel(Level level){

@@ -21,6 +21,7 @@ public class MyHero extends Character implements QuestObservable {
     private int baseStrength;
     private int reqExp;
     private int level;
+    private int bones;
     private boolean paused = false;
     private boolean haveQuest = false;
     List<Quest> questList = new ArrayList<>();
@@ -46,6 +47,7 @@ public class MyHero extends Character implements QuestObservable {
         baseStrength = 4;
         strength = templateClass.strength;
         exp = 0;
+        bones = 5;
         level = 1;
         reqExp = 1;
         movementSpeed = templateClass.movmentSpeed;
@@ -102,6 +104,18 @@ public class MyHero extends Character implements QuestObservable {
     /** Setter for the defense variable */
     public void setDefense(int defense) {
         this.defense = defense;
+    }
+
+    public int getBones() {
+        return bones;
+    }
+
+    public void gainBones() {
+        bones++;
+    }
+
+    public void substractBones(int cost){
+        this.bones -= cost;
     }
 
     /** Adds to the current defense variable */
