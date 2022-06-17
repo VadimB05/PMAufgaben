@@ -52,7 +52,7 @@ public class MyHero extends Character implements QuestObservable {
         baseStrength = 4;
         strength = templateClass.strength;
         exp = 0;
-        bones = 5;
+        bones = 10;
         level = 1;
         reqExp = 1;
         movementSpeed = templateClass.movmentSpeed;

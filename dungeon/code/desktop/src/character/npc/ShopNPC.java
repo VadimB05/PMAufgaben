@@ -16,6 +16,7 @@ import item.Items;
 import item.armor.ChestPlate;
 import item.armor.Shield;
 import item.potion.HealthPotion;
+import item.potion.Potion;
 import item.weapon.Sword;
 import level.elements.Level;
 import com.badlogic.gdx.math.Rectangle;
@@ -39,6 +40,7 @@ public class ShopNPC extends Character {
     private Texture currencyTexture;
     EntityController entityController;
     private List<Items> itemsList = new ArrayList<>();
+    private ArrayList<Potion> inventoryItemsArrayList = new ArrayList<>();
     Window shopWindow;
     /**
      * Must be implemented for all objects that should be controlled by the <code>EntityController
@@ -49,6 +51,7 @@ public class ShopNPC extends Character {
      */
     public ShopNPC(Painter painter, SpriteBatch batch) {
         super(painter, batch);
+
         idleAnimationRightList.add("character/npc/shop_idle.png");
         animation = new Animation(idleAnimationRightList,8);
 
@@ -97,43 +100,61 @@ public class ShopNPC extends Character {
 
     }
 
-    public Items checkNearShop(MyHero hero, EntityController entityController, List<Items> itemsList){
+    /**
+     * checks if the shop npc and our hero are on the same spot
+     *
+     * @param hero, entitController, itemsList
+     * */
+    public Items checkNearShop(MyHero hero,
+                               EntityController entityController,
+                               ArrayList<Potion> inventoryItemsArrayList,
+                               List<Items> itemsList){
         this.entityController = entityController;
+        this.inventoryItemsArrayList = inventoryItemsArrayList;
         if(doesCollide(hero)){
             drawShop();
-            checkBought(hero,itemsList);
+            tryToBuyItem(hero,itemsList);
         }
         return null;
     }
 
-    private void checkBought(MyHero hero, List<Items> itemsList) {
+    /**
+     * Checks if an item is buyable and then buys it
+     * */
+    private void tryToBuyItem(MyHero hero, List<Items> itemsList) {
         if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
             if(collides(shopItemSword) && hero.getBones()>=sword.getCost()){
-                dropItem(sword,hero);
+                dropItem(sword);
                 hero.substractBones(sword.getCost());
                 sword.setBought(true);
                 itemsList.add(sword);
             } else if(collides(shopItemShield) && hero.getBones()>= shield.getCost()){
-                dropItem(shield,hero);
+                dropItem(shield);
                 hero.substractBones(shield.getCost());
                 shield.setBought(true);
                 itemsList.add(shield);
             } else if(collides(shopItemChestplate) && hero.getBones()>= chestPlate.getCost()){
-                dropItem(chestPlate,hero);
+                dropItem(chestPlate);
                 hero.substractBones(chestPlate.getCost());
                 chestPlate.setBought(true);
                 itemsList.add(chestPlate);
             } else if(collides(shopItemHealthPotion) && hero.getBones()>=healthPotion.getCost()){
-                dropItem(healthPotion,hero);
-                hero.substractBones(healthPotion.getCost());
-                healthPotion.setBought(true);
+                if(healthPotionAmount>0){
+                    dropItem(healthPotion);
+                    inventoryItemsArrayList.add(healthPotion);
+                    hero.substractBones(healthPotion.getCost());
+                    healthPotionAmount--;
+                }
             }
         }
     }
 
-    private void dropItem(Items item, MyHero hero) {
+    /**
+     * The shop drops the bought item on the shops position
+     * */
+    private void dropItem(Items item) {
         entityController.add(item);
-        item.setPosition(hero.getPosition());
+        item.setPosition(getPosition());
         item.setPickedUp(false);
     }
 
@@ -196,7 +217,7 @@ public class ShopNPC extends Character {
             myBatch.draw(currencyTexture,565,287,15,15);
         }
 
-        if(!healthPotion.isBought()) {
+        if(healthPotionAmount>0) {
             font.draw(myBatch, amount = String.valueOf(healthPotionAmount) + "x", 480, 400);
             myBatch.draw(healthPotion.getTexture(),
                 shopItemHealthPotion.x,

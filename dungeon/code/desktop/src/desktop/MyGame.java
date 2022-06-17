@@ -314,7 +314,7 @@ public class MyGame extends MainController {
         checkMonsterAttackableByRanged(stoneArrayList);
         checkMonsterAttackableByRanged(spikedBallList);
 
-        shopNPC.checkNearShop(hero,entityController,itemsList);
+        shopNPC.checkNearShop(hero, entityController, inventoryItemsArrayList, itemsList);
 
         if (questNPC.doesCollide(hero) && !questNPC.isLogged()) {
             questNPC.showQuests();
