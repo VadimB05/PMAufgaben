@@ -49,10 +49,11 @@ Fähigkeiten:
 Cooldown für die Fähigkeiten und Schaden müssen hinzugefügt werden.
 
 
-Dialogsystem:
-
-
-Schlaue Monster:
+Shop:
+Shop aus dem man was kaufen kann
+bei dem man items verkaufen kann
+bei dem man mit einer Währung bezahlen kann
+bei dem Shop soll es über regexp laufen
 
 
 # Ansatz und Modellierung
@@ -72,10 +73,12 @@ Fähigkeiten:
 Ein int Wert in endframe der hochgezählt wird und mit dem man abfragen kann wie oft hochgezählt wurde.
 Den Schaden als int Wert in Blackhole gesetzt für den Kampf gegen Monster.
 
-Dialogsystem:
-
-
-Schlaue Monster:
+Shop:
+Eine Charakterklasse sollte erstellt werden, die als NPC dient
+Der NPC soll Items besitzen
+eine Grafik muss gezeichnet werden
+die Items dürfen nur begrenzt vorhanden sein
+Die Items müssen anziehbar sein
 
 
 # Umsetzung
@@ -96,10 +99,12 @@ Fähigkeiten:
 (16.06.2022 2 Stunden)
 Schaden und Cooldown wurden der fehlenden Fähigkeit Blackhole hinzugefügt.
 
-Dialogsystem:
-
-
-Schlaue Monster:
+Shop:
+(16-17.06.2022, 12 Stunden)
+Ein NPC wurde erstellt, der eine Grafik anzeigen lässt
+Beim Shop NPC kann man begrenzte Sachen mit Knochen kaufen
+Die Items werden vom Shop nach dem Kauf fallengelassen
+Die Items kann man anziehen/verwenden
 
 
 # Postmortem
@@ -118,7 +123,11 @@ Ergänzung für die Auswahl jetzt auch im Spiel möglich, ohne den Code zu verä
 Fähigkeiten:
 Hat funktioniert ohne große Probleme.
 
-Dialogsystem:
-
-
-Schlaue Monster:
+Shop:
+Regexp hat garnicht funktioniert, keine Eingabe wollte außer die Abfrage
+für die einzelnen Tasten, jedoch kann ich nicht 80 if Abfragen erstellen.
+Der Scanner hat nicht funktioniert, der TextInputListener hat genauso
+wenig funktioniert.
+Es gab einen Fehler nach dem mergen, was ich zu spät bemerkt hatte, der mir zu
+viel Zeit kostete, aber nach dem ich den bemerkte ging es auch schon wieder
+gut voran.
