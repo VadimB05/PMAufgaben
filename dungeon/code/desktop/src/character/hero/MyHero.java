@@ -117,16 +117,27 @@ public class MyHero extends Character implements QuestObservable {
         return bones;
     }
 
+    /**
+     * gains one Bone which is the currency in the game
+     * */
     public void gainBones() {
         bones++;
         updateBones();
     }
 
+    /**
+     * substracts cost from the bones amount the hero has
+     *
+     * @param cost
+     * */
     public void substractBones(int cost){
         this.bones -= cost;
         updateBones();
     }
 
+    /**
+     * draws the bone currency and the amount the hero has every frames
+     * */
     public void updateBones(){
         myBatch.begin();
         BitmapFont font = new BitmapFont();

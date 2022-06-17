@@ -440,6 +440,9 @@ public class MyGame extends MainController {
         }
     }
 
+    /**
+     * draws a window to show which heroes are pickable and after picking the hero, the game creates the right hero
+     * */
     private void chooseClass(){
         if(onStart) {
             paused = true;
