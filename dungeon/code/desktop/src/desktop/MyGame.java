@@ -303,6 +303,8 @@ public class MyGame extends MainController {
             checkMonsterAttackable();
         }
 
+        hero.updateBones();
+
         monsterAttackPlayer();
 
         getInventoryItems();

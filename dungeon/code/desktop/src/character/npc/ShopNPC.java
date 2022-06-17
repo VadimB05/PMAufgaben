@@ -36,6 +36,7 @@ public class ShopNPC extends Character {
     private Rectangle shopItemShield;
     private Rectangle shopItemChestplate;
     private Rectangle shopItemHealthPotion;
+    private Texture currencyTexture;
     EntityController entityController;
     private List<Items> itemsList = new ArrayList<>();
     Window shopWindow;
@@ -50,6 +51,8 @@ public class ShopNPC extends Character {
         super(painter, batch);
         idleAnimationRightList.add("character/npc/shop_idle.png");
         animation = new Animation(idleAnimationRightList,8);
+
+        currencyTexture = new Texture("item/currency.png");
 
         sword = new Sword(painter,batch,
             "item/weapon_knight_swordBronze.png",
@@ -135,7 +138,7 @@ public class ShopNPC extends Character {
     }
 
     private boolean collides(Rectangle rectangle){
-        return rectangle.overlaps(new Rectangle().set((float)Gdx.input.getX(),(float)480-Gdx.input.getY(),0,0));
+        return rectangle.overlaps(new Rectangle().set((float)Gdx.input.getX(),(float)Gdx.graphics.getHeight()-Gdx.input.getY(),0,0));
     }
 
     /**
@@ -162,7 +165,7 @@ public class ShopNPC extends Character {
         font.setColor(0f, 0f, 0f, 1);
         myBatch.draw(shopWindow.getWindow(), 350, 250, 280, 200);
         font.draw(myBatch, "Shop", 355, 445);
-
+        font.setColor(0.5f, 1f, 0f, 1);
         if(!sword.isBought()) {
             myBatch.draw(sword.getTexture(),
                 shopItemSword.x,
@@ -170,6 +173,7 @@ public class ShopNPC extends Character {
                 shopItemSword.width,
                 shopItemSword.height);
             font.draw(myBatch, costAmount = String.valueOf(sword.getCost()), 400, 300);
+            myBatch.draw(currencyTexture,415,287,15,15);
         }
 
         if(!shield.isBought()) {
@@ -179,6 +183,7 @@ public class ShopNPC extends Character {
                 shopItemShield.width,
                 shopItemShield.height);
             font.draw(myBatch, costAmount = String.valueOf(shield.getCost()), 400, 400);
+            myBatch.draw(currencyTexture,415,387,15,15);
         }
 
         if(!chestPlate.isBought()) {
@@ -188,6 +193,7 @@ public class ShopNPC extends Character {
                 shopItemChestplate.width,
                 shopItemChestplate.height);
             font.draw(myBatch, costAmount = String.valueOf(chestPlate.getCost()), 550, 300);
+            myBatch.draw(currencyTexture,565,287,15,15);
         }
 
         if(!healthPotion.isBought()) {
@@ -198,6 +204,7 @@ public class ShopNPC extends Character {
                 shopItemHealthPotion.width,
                 shopItemHealthPotion.height);
             font.draw(myBatch, costAmount = String.valueOf(healthPotion.getCost()), 550, 400);
+            myBatch.draw(currencyTexture,565,387,15,15);
         }
 
         myBatch.end();

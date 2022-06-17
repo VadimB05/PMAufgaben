@@ -3,8 +3,9 @@ package character.hero;
 import character.Character;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import graphic.Animation;
 import graphic.Painter;
 import level.elements.Level;
 import observer.QuestObservable;
@@ -24,6 +25,9 @@ public class MyHero extends Character implements QuestObservable {
     private int bones;
     private boolean paused = false;
     private boolean haveQuest = false;
+    private SpriteBatch myBatch;
+    private String amount;
+    private Texture currencyTexture;
     List<Quest> questList = new ArrayList<>();
     Quest quest;
 
@@ -37,6 +41,7 @@ public class MyHero extends Character implements QuestObservable {
         runAnimationRight = templateClass.runAnimationRight;
         runAnimationLeft = templateClass.runAnimationLeft;
         animation = idleAnimationRight;
+        currencyTexture = new Texture("item/currency.png");
 
         maxHealth = 70;
         maxMana = 20;
@@ -52,6 +57,8 @@ public class MyHero extends Character implements QuestObservable {
         reqExp = 1;
         movementSpeed = templateClass.movmentSpeed;
         name = templateClass.name;
+        myBatch = new SpriteBatch();
+        updateBones();
     }
 
     /** Sets Hero into the currently loaded level */
@@ -112,10 +119,21 @@ public class MyHero extends Character implements QuestObservable {
 
     public void gainBones() {
         bones++;
+        updateBones();
     }
 
     public void substractBones(int cost){
         this.bones -= cost;
+        updateBones();
+    }
+
+    public void updateBones(){
+        myBatch.begin();
+        BitmapFont font = new BitmapFont();
+        font.setColor(0.5f, 1f, 0f, 1);
+        font.draw(myBatch, amount = String.valueOf(bones), 20, 430);
+        myBatch.draw(currencyTexture,35,417,15,15);
+        myBatch.end();
     }
 
     /** Adds to the current defense variable */
