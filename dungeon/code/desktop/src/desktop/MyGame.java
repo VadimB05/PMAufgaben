@@ -292,7 +292,6 @@ public class MyGame extends MainController {
 
         questLog.logQuest();
 
-
         if(Gdx.input.isKeyJustPressed(Input.Keys.ALT_LEFT)) {
             hero.setPaused(!hero.isPaused());
         }
