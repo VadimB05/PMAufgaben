@@ -1,6 +1,7 @@
 package ability;
 
 import character.hero.MyHero;
+import character.monster.Monster;
 
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
@@ -63,6 +64,9 @@ public abstract class Abilitys {
 
     /** Abstract method for activating spell effects */
     public abstract void activateAbility(MyHero myHero);
+
+    /** Abstract method for activating damage spells */
+    public abstract void activateAbility(Monster monster);
 
     public void abilityUsed(){
         abilityUsed = frameCounter;

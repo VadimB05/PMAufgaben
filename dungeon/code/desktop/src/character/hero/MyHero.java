@@ -3,8 +3,9 @@ package character.hero;
 import character.Character;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import graphic.Animation;
 import graphic.Painter;
 import level.elements.Level;
 import observer.QuestObservable;
@@ -21,51 +22,43 @@ public class MyHero extends Character implements QuestObservable {
     private int baseStrength;
     private int reqExp;
     private int level;
+    private int bones;
     private boolean paused = false;
     private boolean haveQuest = false;
+    private SpriteBatch myBatch;
+    private String amount;
+    private Texture currencyTexture;
     List<Quest> questList = new ArrayList<>();
     Quest quest;
 
 
     /** Constructor. Loads animations, sets stats and creates hitbox */
-    public MyHero(Painter painter, SpriteBatch batch){
+    public MyHero(Painter painter, SpriteBatch batch, Class templateClass){
         super(painter, batch);
-        idleAnimationRightList.add("character/knight/knight_m_idle_anim_f0.png");
-        idleAnimationRightList.add("character/knight/knight_m_idle_anim_f1.png");
-        idleAnimationRightList.add("character/knight/knight_m_idle_anim_f2.png");
-        idleAnimationRightList.add("character/knight/knight_m_idle_anim_f3.png");
-        idleAnimationRight = new Animation(idleAnimationRightList,8);
-        idleAnimationLeftList.add("character/knight/knight_m_idle_anim_mirrored_f0.png");
-        idleAnimationLeftList.add("character/knight/knight_m_idle_anim_mirrored_f1.png");
-        idleAnimationLeftList.add("character/knight/knight_m_idle_anim_mirrored_f2.png");
-        idleAnimationLeftList.add("character/knight/knight_m_idle_anim_mirrored_f3.png");
-        idleAnimationLeft = new Animation(idleAnimationLeftList,8);
-        runAnimationRightList.add("character/knight/knight_m_run_anim_f0.png");
-        runAnimationRightList.add("character/knight/knight_m_run_anim_f1.png");
-        runAnimationRightList.add("character/knight/knight_m_run_anim_f2.png");
-        runAnimationRightList.add("character/knight/knight_m_run_anim_f3.png");
-        runAnimationRight = new Animation(runAnimationRightList,8);
-        runAnimationLeftList.add("character/knight/knight_m_run_anim_mirrored_f0.png");
-        runAnimationLeftList.add("character/knight/knight_m_run_anim_mirrored_f1.png");
-        runAnimationLeftList.add("character/knight/knight_m_run_anim_mirrored_f2.png");
-        runAnimationLeftList.add("character/knight/knight_m_run_anim_mirrored_f3.png");
-        runAnimationLeft = new Animation(runAnimationLeftList,8);
-        animation = idleAnimationRight;
 
+        idleAnimationRight = templateClass.idleAnimationRight;
+        idleAnimationLeft = templateClass.idleAnimationLeft;
+        runAnimationRight = templateClass.runAnimationRight;
+        runAnimationLeft = templateClass.runAnimationLeft;
+        animation = idleAnimationRight;
+        currencyTexture = new Texture("item/currency.png");
 
         maxHealth = 70;
         maxMana = 20;
         frameCounter=0;
-        health = 30;
-        mana = 10;
-        defense = 0;
+        health = templateClass.health;
+        mana = templateClass.mana;
+        defense = templateClass.defense;
         baseStrength = 4;
-        strength = baseStrength;
+        strength = templateClass.strength;
         exp = 0;
+        bones = 10;
         level = 1;
         reqExp = 1;
-        movementSpeed = 0.2f;
-        name = "Held";
+        movementSpeed = templateClass.movmentSpeed;
+        name = templateClass.name;
+        myBatch = new SpriteBatch();
+        updateBones();
     }
 
     /** Sets Hero into the currently loaded level */
@@ -77,7 +70,7 @@ public class MyHero extends Character implements QuestObservable {
 
     /** Update our heroes position on the display when the position gets changed*/
     @Override
-    public void update() {
+    public void updateNotPaused() {
         Point newPosition = new Point(this.position);
 
         if(!paused){
@@ -118,6 +111,40 @@ public class MyHero extends Character implements QuestObservable {
     /** Setter for the defense variable */
     public void setDefense(int defense) {
         this.defense = defense;
+    }
+
+    public int getBones() {
+        return bones;
+    }
+
+    /**
+     * gains one Bone which is the currency in the game
+     * */
+    public void gainBones() {
+        bones++;
+        updateBones();
+    }
+
+    /**
+     * substracts cost from the bones amount the hero has
+     *
+     * @param cost
+     * */
+    public void substractBones(int cost){
+        this.bones -= cost;
+        updateBones();
+    }
+
+    /**
+     * draws the bone currency and the amount the hero has every frames
+     * */
+    public void updateBones(){
+        myBatch.begin();
+        BitmapFont font = new BitmapFont();
+        font.setColor(0.5f, 1f, 0f, 1);
+        font.draw(myBatch, amount = String.valueOf(bones), 20, 430);
+        myBatch.draw(currencyTexture,35,417,15,15);
+        myBatch.end();
     }
 
     /** Adds to the current defense variable */
@@ -185,6 +212,10 @@ public class MyHero extends Character implements QuestObservable {
     /** Sets the game to pause */
     public void setPaused(boolean paused) {
         this.paused = paused;
+    }
+
+    public boolean isPaused() {
+        return paused;
     }
 
     public int getLevel() {
