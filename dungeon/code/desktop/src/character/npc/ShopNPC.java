@@ -12,6 +12,7 @@ import graphic.Animation;
 import graphic.Painter;
 import hud.ShopWindow;
 import hud.Window;
+import inventory.Equipment;
 import item.Items;
 import item.armor.ChestPlate;
 import item.armor.Shield;
@@ -41,6 +42,8 @@ public class ShopNPC extends Character {
     EntityController entityController;
     private List<Items> itemsList = new ArrayList<>();
     private ArrayList<Potion> inventoryItemsArrayList = new ArrayList<>();
+    private MyHero hero;
+    private Equipment equipment;
     Window shopWindow;
     /**
      * Must be implemented for all objects that should be controlled by the <code>EntityController
@@ -92,7 +95,7 @@ public class ShopNPC extends Character {
 
         myBatch = new SpriteBatch();
         shopWindow = new ShopWindow();
-        healthPotionAmount = 5;
+        healthPotionAmount = 2;
     }
 
     @Override
@@ -109,6 +112,7 @@ public class ShopNPC extends Character {
                                EntityController entityController,
                                ArrayList<Potion> inventoryItemsArrayList,
                                List<Items> itemsList){
+        this.hero = hero;
         this.entityController = entityController;
         this.inventoryItemsArrayList = inventoryItemsArrayList;
         if(doesCollide(hero)){
@@ -116,6 +120,34 @@ public class ShopNPC extends Character {
             tryToBuyItem(hero,itemsList);
         }
         return null;
+    }
+
+    public void checkNearShopSell(Equipment equipment){
+        this.equipment = equipment;
+        if(doesCollide(hero)){
+            tryToSellItem();
+        }
+    }
+
+    public void tryToSellItem(){
+        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
+            if(equipment.weaponEquipped()){
+                if(collides(equipment.getWeapon().getHudEquipment())){
+                    System.out.println("true");
+                }
+            }
+            if(equipment.shieldEquipped()){
+                if(collides(equipment.getShield().getHudEquipment())){
+                    System.out.println("true");
+                }
+            }
+            if(equipment.chestPlateEquipped()){
+                if(collides(equipment.getChestPlate().getHudEquipment())){
+                    System.out.println("true");
+                }
+            }
+
+        }
     }
 
     /**
@@ -159,7 +191,8 @@ public class ShopNPC extends Character {
     }
 
     private boolean collides(Rectangle rectangle){
-        return rectangle.overlaps(new Rectangle().set((float)Gdx.input.getX(),(float)Gdx.graphics.getHeight()-Gdx.input.getY(),0,0));
+        float f = Gdx.graphics.getHeight()-Gdx.input.getY();
+        return rectangle.overlaps(new Rectangle().set((float)Gdx.input.getX(),(float)Gdx.graphics.getHeight()-Gdx.input.getY(),1,1));
     }
 
     /**

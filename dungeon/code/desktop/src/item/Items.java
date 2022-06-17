@@ -15,6 +15,8 @@ import tools.Point;
 
 public abstract class Items extends Entity {
     private final Rectangle hitBox;
+    protected Rectangle hudEquipment;
+    protected Rectangle shopItem;
     protected SpriteBatch hudBatch;
     protected HUDPainter hudPainter;
     protected Icon icon;
@@ -23,7 +25,7 @@ public abstract class Items extends Entity {
     protected String name;
     protected boolean pickedUp;
     private Texture texture;
-    private int cost;
+    private int cost=0;
     private boolean bought;
 
 
@@ -67,6 +69,14 @@ public abstract class Items extends Entity {
 
     public int getCost() {
         return cost;
+    }
+
+    public Rectangle getHudEquipment() {
+        return hudEquipment;
+    }
+
+    public Rectangle getShopItem() {
+        return shopItem;
     }
 
     public boolean isBought() {

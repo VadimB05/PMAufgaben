@@ -1,7 +1,9 @@
 package item.armor;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import character.hero.MyHero;
+import com.badlogic.gdx.math.Rectangle;
 import graphic.Painter;
 import hud.Icon;
 import tools.Point;
@@ -21,6 +23,10 @@ public class ChestPlate extends Armor{
         setIcon(new Icon(hudPainter,hudBatch,
                 new Point(565f,405f),
                 getTexturePath()));
+        shopItem = new Rectangle();
+        shopItem.set( 500, 280, 40, 40);
+        hudEquipment = new Rectangle();
+        hudEquipment.set(545f, Gdx.graphics.getHeight()-465f,60,60);
     }
     @Override
     public void useItem(MyHero myHero) {

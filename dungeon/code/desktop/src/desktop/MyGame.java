@@ -315,6 +315,7 @@ public class MyGame extends MainController {
         checkMonsterAttackableByRanged(spikedBallList);
 
         shopNPC.checkNearShop(hero, entityController, inventoryItemsArrayList, itemsList);
+        shopNPC.checkNearShopSell(equipment);
 
         if (questNPC.doesCollide(hero) && !questNPC.isLogged()) {
             questNPC.showQuests();
@@ -521,7 +522,7 @@ public class MyGame extends MainController {
     private void switchEquipment() {
         for(Items item: itemsList){
             if(item.collide(hero) && !item.isPickedUp()){
-                Items dropItem = equipment.equipmentChange(item);
+                Items dropItem = equipment.equipmentChange(item,hudController);
                 entityController.remove(item);
                 item.useItem(hero);
                 hero.setDefense(equipment.getDefense());

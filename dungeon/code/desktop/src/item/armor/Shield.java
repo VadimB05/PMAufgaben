@@ -1,7 +1,9 @@
 package item.armor;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import character.hero.MyHero;
+import com.badlogic.gdx.math.Rectangle;
 import graphic.Painter;
 import hud.Icon;
 import tools.Point;
@@ -20,6 +22,10 @@ public class Shield extends Armor {
         setIcon(new Icon(hudPainter,hudBatch,
                 new Point(565f,335f),
                 getTexturePath()));
+        shopItem = new Rectangle();
+        shopItem.set( 350, 380, 40, 40);
+        hudEquipment = new Rectangle();
+        hudEquipment.set(545f, Gdx.graphics.getHeight()-395f,60,60);
     }
     @Override
     public void useItem(MyHero myHero) {
