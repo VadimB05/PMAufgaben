@@ -133,16 +133,22 @@ public class ShopNPC extends Character {
         if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
             if(equipment.weaponEquipped()){
                 if(collides(equipment.getWeapon().getHudEquipment())){
+                    hero.addBones(equipment.getWeapon().getCost()/2);
+                    equipment.dropWeapon();
                     System.out.println("true");
                 }
             }
             if(equipment.shieldEquipped()){
                 if(collides(equipment.getShield().getHudEquipment())){
+                    hero.addBones(equipment.getShield().getCost()/2);
+                    equipment.dropShield();
                     System.out.println("true");
                 }
             }
             if(equipment.chestPlateEquipped()){
                 if(collides(equipment.getChestPlate().getHudEquipment())){
+                    hero.addBones(equipment.getChestPlate().getCost()/2);
+                    equipment.dropChestPlate();
                     System.out.println("true");
                 }
             }

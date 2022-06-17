@@ -125,6 +125,10 @@ public class MyHero extends Character implements QuestObservable {
         updateBones();
     }
 
+    public void addBones(int sellAmount){
+        bones += sellAmount;
+    }
+
     /**
      * substracts cost from the bones amount the hero has
      *

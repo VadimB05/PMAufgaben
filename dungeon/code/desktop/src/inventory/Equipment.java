@@ -1,5 +1,6 @@
 package inventory;
 
+import desktop.MyGame;
 import item.Items;
 import item.armor.ChestPlate;
 import item.armor.Shield;
@@ -20,7 +21,6 @@ public class Equipment {
     private int defense;
     private int strength;
     private HUDController hudController;
-
 
     /** Constructor. Creates loggers for putting out information */
     public Equipment() {
@@ -165,7 +165,17 @@ public class Equipment {
     }
 
     public void dropWeapon(){
-        hudController.remove(weapons);
+        hudController.remove(weapons.getIcon());
         weapons = null;
+    }
+
+    public void dropShield(){
+        hudController.remove(shield.getIcon());
+        shield = null;
+    }
+
+    public void dropChestPlate(){
+        hudController.remove(chestPlate.getIcon());
+        chestPlate = null;
     }
 }
