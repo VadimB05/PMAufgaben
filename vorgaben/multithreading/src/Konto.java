@@ -1,5 +1,7 @@
+import java.util.logging.Logger;
 
 public class Konto {
+    Logger logger = Logger.getLogger(this.getClass().getName());
     private double kontostand = 1000;
 
     /**
@@ -12,7 +14,9 @@ public class Konto {
         while (betrag > kontostand) {
             return false;
         }
+        logger.info("Thread: " + Thread.currentThread() +" Kontostand vorher: "+ kontostand);
         kontostand -= betrag;
+        logger.info("Thread: " + Thread.currentThread() +" Kontostand nachher: "+ kontostand);
         return true;
     }
 
@@ -22,6 +26,8 @@ public class Konto {
      * @param betrag Betrag der diesem Konto gutgeschrieben werden soll
      */
     public void empfangeGeld(double betrag) {
+        logger.info("Thread: " + Thread.currentThread() +" Kontostand vorher: "+ kontostand);
         kontostand += betrag;
+        logger.info("Thread: " + Thread.currentThread() +" Kontostand nachher: "+ kontostand);
     }
 }
