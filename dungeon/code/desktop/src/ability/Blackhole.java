@@ -1,6 +1,7 @@
 package ability;
 
 import character.hero.MyHero;
+import character.monster.Monster;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.TimeUtils;
 
@@ -11,7 +12,7 @@ public class Blackhole extends Abilitys {
 
     /** Constructor.  required hero level */
     public Blackhole() {
-        this.availableAtHeroLevel = 4;
+        this.availableAtHeroLevel = 1;
         hitBox = new Rectangle();
         timeBetweenUsage = 30;
     }
@@ -22,10 +23,13 @@ public class Blackhole extends Abilitys {
         return "Schwarzesloch";
     }
 
-    /** Methode for activating Ability not finished  */
     @Override
     public void activateAbility(MyHero myHero) {
+    }
 
-
+    /** Methode for activating Ability */
+    @Override
+    public void activateAbility(Monster monster) {
+    monster.getDamaged(damage);
     }
 }

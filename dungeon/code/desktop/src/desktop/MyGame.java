@@ -2,20 +2,25 @@ package desktop;
 
 
 import ability.*;
+import character.Character;
+import character.hero.Class;
 import character.hero.MyHero;
 import character.monster.Monster;
 import character.monster.Variant;
 import character.npc.QuestNPC;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
+import character.npc.ShopNPC;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import controller.EntityController;
 import controller.HUDController;
 import controller.MainController;
+import hud.ChooseClasses;
 import hud.GameOverWindow;
 import hud.Icon;
+import hud.ShopWindow;
 import hud.Window;
 import inventory.Equipment;
 import inventory.Inventory;
@@ -30,6 +35,8 @@ import item.weapon.Sword;
 import level.generator.LevelLoader.LevelLoader;
 import level.generator.dungeong.graphg.NoSolutionException;
 import logging.InventoryFormatter;
+import projectile.Projectile;
+import projectile.SpikedBall;
 import projectile.Stone;
 import quest.Quest;
 import quest.QuestLog;
@@ -49,9 +56,10 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 public class MyGame extends MainController {
     private ArrayList<Potion> inventoryItemsArrayList;
+    private ArrayList<Projectile> stoneArrayList;
+    private ArrayList<Projectile> spikedBallList;
     private List<Items> itemsList = new ArrayList<>();
     private QuestLog questLog;
     private Label defenseLabel;
@@ -62,7 +70,9 @@ public class MyGame extends MainController {
     private Label expLabel;
     private Label stageLabel;
     private MyHero hero;
+    private int heroNumber = 0;
     private QuestNPC questNPC;
+    private ShopNPC shopNPC;
     private Sword sword;
     private Staff staff;
     private Shield shieldBlack;
@@ -82,6 +92,7 @@ public class MyGame extends MainController {
     private int maxMonsterCount;
     public static int stageCounter;
     private Texture gameOverTexture;
+    private Texture classTexture;
     private List<Quest> questList = new ArrayList<>();
     private Quest findScroll;
     private Quest killMonster;
@@ -96,7 +107,10 @@ public class MyGame extends MainController {
     private Healability healability;
     private PowerUpability powerUpability;
     private Stone stoneProjectile;
+    private SpikedBall spikedBallProjectile;
     Window window;
+    Window chooseClassWindow;
+    private boolean onStart = true;
     Inventory inventory;
     Equipment equipment;
     Logger logger;
@@ -106,11 +120,20 @@ public class MyGame extends MainController {
     protected void setup() {
         myBatch = new SpriteBatch();
         monsterList = new ArrayList<>();
+        stoneArrayList = new ArrayList<>();
+        stoneArrayList.clear();
+        spikedBallList = new ArrayList<>();
+        spikedBallList.clear();
         window = new GameOverWindow();
+
+        chooseClassWindow = new ChooseClasses();
         gameOverTexture = new Texture("hud/gameOver.png");
+        classTexture = new Texture("hud/Klassenauswahl.png");
         equipment = new Equipment();
         logger = Logger.getLogger(this.getClass().getName());
         questLog = new QuestLog();
+        shopNPC = new ShopNPC(painter,batch);
+        questNPC = new QuestNPC(painter,batch);
 
         for(Handler handler : logger.getHandlers()){
             logger.removeHandler(handler);
@@ -137,7 +160,7 @@ public class MyGame extends MainController {
         movementSpell = new MovementSpell();
 
         levelAPI.setGenerator(new LevelLoader());
-        hero = new MyHero(painter,batch);
+
         spikes = new Spikes(painter,batch);
         hole = new Hole(painter,batch);
 
@@ -190,6 +213,7 @@ public class MyGame extends MainController {
         inventoryItemsArrayList.add(healthPotion);
         inventoryItemsArrayList.add(manaPotion);
 
+        itemsList.clear();
         Collections.addAll(itemsList,
                 sword,
                 staff,
@@ -197,6 +221,16 @@ public class MyGame extends MainController {
                 shieldMetall,
                 chestPlateBlack,
                 chestPlate);
+
+        hero=null;
+        if(heroNumber==0){
+            hero = new MyHero(painter,batch, new Class(Class.Classes.KNIGHT));
+        }
+        if(heroNumber==8){
+            hero = new MyHero(painter,batch, new Class(Class.Classes.MAGE));
+        }if(heroNumber==9){
+            hero = new MyHero(painter,batch, new Class(Class.Classes.RANGER));
+        }
 
         // load the first level
         try {
@@ -223,12 +257,12 @@ public class MyGame extends MainController {
 
         paused = false;
 
-        questNPC = new QuestNPC(painter,batch);
         createQuests();
     }
 
     @Override
     protected void beginFrame() {
+
         isPausedRestart();
 
         //comment out to make the game smooth
@@ -236,23 +270,17 @@ public class MyGame extends MainController {
         useItem();
         dropItemFromInventory();
         switchHUDHeart();
-
         useSpell();
-
-
         useAbility();
-
-
-        rangedAttack();
     }
 
     @Override
     protected void endFrame() {
-
         //comment out with loadStats()
         //delStats();
+        chooseClass();
 
-        if(levelAPI.getCurrentLevel().isOnEndTile(hero)){
+        if (levelAPI.getCurrentLevel().isOnEndTile(hero)) {
             try {
                 levelAPI.loadLevel();
             } catch (NoSolutionException e) {
@@ -262,33 +290,46 @@ public class MyGame extends MainController {
 
         collideTrap();
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.E)){
+        questLog.logQuest();
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ALT_LEFT)) {
+            hero.setPaused(!hero.isPaused());
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             switchEquipment();
             canItemBePickedUp();
         }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && hero.getFrameCounter()>=50) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && hero.getFrameCounter() >= 50) {
             checkMonsterAttackable();
         }
 
+        hero.updateBones();
+
         monsterAttackPlayer();
-        questLog.logQuest();
+
         getInventoryItems();
         gameOver();
         countWaitBetweenAttacks();
+        rangedAttack();
+        checkMonsterAttackableByRanged(stoneArrayList);
+        checkMonsterAttackableByRanged(spikedBallList);
 
-        if(questNPC.doesCollide(hero) && !questNPC.isLogged()){
+        shopNPC.checkNearShop(hero, entityController, inventoryItemsArrayList, itemsList);
+        shopNPC.checkNearShopSell(equipment);
+
+        if (questNPC.doesCollide(hero) && !questNPC.isLogged()) {
             questNPC.showQuests();
 
-        }else if(!questNPC.doesCollide(hero)){
+        } else if (!questNPC.doesCollide(hero)) {
             questNPC.setLogged(false);
         }else if(questNPC.doesCollide(hero)){
             if(Gdx.input.isKeyJustPressed(Input.Keys.F)){
                 killMonster.setQuestAccepted(questLog,hero,entityController);
+
                 logger.info("Quest: " + killMonster.getQuestName() + " akzeptiert!");
-                findScroll.setQuestAccepted(questLog,hero,entityController);
+                findScroll.setQuestAccepted(questLog, hero, entityController);
                 logger.info("Quest: " + findScroll.getQuestName() + " akzeptiert!");
-                reachLevel.setQuestAccepted(questLog,hero,entityController);
+                reachLevel.setQuestAccepted(questLog, hero, entityController);
                 logger.info("Quest: " + reachLevel.getQuestName() + " akzeptiert!");
                 hero.register(reachLevel);
                 questNPC.questsAccepted();
@@ -298,6 +339,12 @@ public class MyGame extends MainController {
         healability.countFrames();
         powerUpability.countFrames();
         blackhole.countFrames();
+
+        if (onStart) {
+            for (Character character : monsterList) {
+                character.setPaused(true);
+            }
+        }
     }
 
     private void collideTrap() {
@@ -331,18 +378,25 @@ public class MyGame extends MainController {
         for(int i=0; i<monsterList.size();i++){
             if(monsterList.get(i).collide(hero)){
                 attackMonster(monsterList.get(i));
-                if(monsterList.get(i).checkDead()){
-                    logger.info("Monster wurde eliminiert!");
-                    entityController.remove(monsterList.get(i));
-                    hero.gainExp(monsterList.get(i).getExp());
-                    monsterList.remove(i);
-                    i--;
-                    if(killMonster.isQuestAccepted()){
-                        killMonster.update();
-                    }
-                }
+                i = monsterKilled(i);
             }
         }
+    }
+
+    /** Checks if the monster was killed*/
+    private int monsterKilled(int i) {
+        if(monsterList.get(i).checkDead()){
+            logger.info("Monster wurde eliminiert!");
+            entityController.remove(monsterList.get(i));
+            hero.gainExp(monsterList.get(i).getExp());
+            hero.gainBones();
+            monsterList.remove(i);
+            i--;
+            if(killMonster.isQuestAccepted()){
+                killMonster.update();
+            }
+        }
+        return i;
     }
 
     private void countWaitBetweenAttacks() {
@@ -387,6 +441,57 @@ public class MyGame extends MainController {
         }
     }
 
+    /**
+     * draws a window to show which heroes are pickable and after picking the hero, the game creates the right hero
+     * */
+    private void chooseClass(){
+        if(onStart) {
+            paused = true;
+            myBatch.begin();
+            myBatch.draw(chooseClassWindow.getBackground(), 0, 0, 1000, 1000);
+            myBatch.draw(chooseClassWindow.getWindow(), 50, 50, 540, 380);
+            myBatch.draw(classTexture,50,50,540,390);
+            myBatch.end();
+            paused = true;
+            hero.setPaused(true);
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) {
+                heroNumber=0;
+                onStart = false;
+                paused = false;
+                hero.setPaused(false);
+                for (Character character : monsterList) {
+                    character.setPaused(false);
+                }
+                this.entityController = new EntityController();
+                this.hudController = new HUDController(batch);
+                this.setup();
+            } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) {
+                heroNumber=8;
+                onStart = false;
+                paused = false;
+                hero.setPaused(false);
+                for (Character character : monsterList) {
+                    character.setPaused(false);
+                }
+                this.entityController = new EntityController();
+                this.hudController = new HUDController(batch);
+                this.setup();
+            } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)) {
+                heroNumber=9;
+                onStart = false;
+                paused = false;
+                hero.setPaused(false);
+                for (Character character : monsterList) {
+                    character.setPaused(false);
+                }
+                this.entityController = new EntityController();
+                this.hudController = new HUDController(batch);
+                this.setup();
+            }
+        }
+    }
+
     /** Switches the Heart Icons in the HUD depending on the heroes health*/
     private void switchHUDHeart(){
         if((float) hero.getHealth()/hero.getMaxHealth()>=0.5f){
@@ -415,13 +520,13 @@ public class MyGame extends MainController {
      *
      * */
     private void switchEquipment() {
-        for(Items items: itemsList){
-            if(items.collide(hero) && !items.isPickedUp()){
-                Items dropItem = equipment.equipmentChange(items);
-                entityController.remove(items);
-                items.useItem(hero);
+        for(Items item: itemsList){
+            if(item.collide(hero) && !item.isPickedUp()){
+                Items dropItem = equipment.equipmentChange(item,hudController);
+                entityController.remove(item);
+                item.useItem(hero);
                 hero.setDefense(equipment.getDefense());
-                hudController.add(items.getIcon());
+                hudController.add(item.getIcon());
                 changeItem(dropItem);
                 return;
             }
@@ -458,13 +563,13 @@ public class MyGame extends MainController {
      * Method to not pick up weapons, shields and chestplates into inventory
      *
      * */
-    private void changeItem(Items items){
-        if(items!=null) {
-            items.setLevel(levelAPI.getCurrentLevel());
-            entityController.add(items);
-            items.setPickedUp(false);
-            items.setPosition(hero.getPosition());
-            hudController.remove(items.getIcon());
+    private void changeItem(Items item){
+        if(item!=null) {
+            item.setLevel(levelAPI.getCurrentLevel());
+            entityController.add(item);
+            item.setPickedUp(false);
+            item.setPosition(hero.getPosition());
+            hudController.remove(item.getIcon());
         }
     }
 
@@ -628,6 +733,12 @@ public class MyGame extends MainController {
         if(ability.abilityUsable(hero)){
             ability.abilityUsed();
             ability.activateAbility(hero);
+            for(int i=0; i<monsterList.size();i++){
+                if(monsterList.get(i).collide(hero)){
+                    ability.activateAbility(monsterList.get(i));
+                    i = monsterKilled(i);
+                }
+            }
             hero.removeMana(ability.getManaCost());
             logger.info("Du hast " + ability.getName() + " benutzt.");
         }
@@ -637,7 +748,6 @@ public class MyGame extends MainController {
     private void useAbility(){
         if(Gdx.input.isKeyJustPressed(Input.Keys.H)){
             castAbility(healability);
-
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.J)){
             castAbility(powerUpability);
@@ -702,10 +812,12 @@ public class MyGame extends MainController {
             hero.gainExp(20);
         }
 
-        if(stageCounter>1){
-            questNPC.setLevel(levelAPI.getCurrentLevel());
-            entityController.add(questNPC);
-        }
+        questNPC.setLevel(levelAPI.getCurrentLevel());
+        entityController.add(questNPC);
+
+
+        shopNPC.setLevel(levelAPI.getCurrentLevel());
+        entityController.add(shopNPC);
 
         hero.setLevel(levelAPI.getCurrentLevel());
         sword.setLevel(levelAPI.getCurrentLevel());
@@ -772,29 +884,50 @@ public class MyGame extends MainController {
     public void rangedAttack() {
         if(!paused) {
             if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-                stoneProjectile = new Stone(painter, batch, hero.getPosition());
-                //stoneProjectile.setLevel(levelAPI.getCurrentLevel());
-                entityController.add(stoneProjectile);
-                stoneProjectile.setFlyingDirectionUp();
-                //entityController.remove(stoneProjectile);
+                spikedBallProjectile = new SpikedBall(painter, batch, hero.getPosition());
+                spikedBallList.add(spikedBallProjectile);
+                entityController.add(spikedBallProjectile);
+                spikedBallProjectile.setLevel(levelAPI.getCurrentLevel());
+                spikedBallProjectile.setFlyingDirectionUp();
             }
             if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-                stoneProjectile = new Stone(painter, batch, hero.getPosition());
-                entityController.add(stoneProjectile);
-                stoneProjectile.setFlyingDirectionDown();
-                //entityController.remove(stoneProjectile);
+                spikedBallProjectile = new SpikedBall(painter, batch, hero.getPosition());
+                spikedBallList.add(spikedBallProjectile);
+                entityController.add(spikedBallProjectile);
+                spikedBallProjectile.setLevel(levelAPI.getCurrentLevel());
+                spikedBallProjectile.setFlyingDirectionDown();
             }
             if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
                 stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                stoneArrayList.add(stoneProjectile);
                 entityController.add(stoneProjectile);
+                stoneProjectile.setLevel(levelAPI.getCurrentLevel());
                 stoneProjectile.setFlyingDirectionLeft();
-                //entityController.remove(stoneProjectile);
             }
             if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
                 stoneProjectile = new Stone(painter, batch, hero.getPosition());
+                stoneArrayList.add(stoneProjectile);
                 entityController.add(stoneProjectile);
+                stoneProjectile.setLevel(levelAPI.getCurrentLevel());
                 stoneProjectile.setFlyingDirectionRight();
-                //entityController.remove(stoneProjectile);
+            }
+        }
+    }
+
+    private void checkMonsterAttackableByRanged(ArrayList<Projectile> projectile) {
+        if(!projectile.isEmpty()) {
+            for(int j = 0; j < projectile.size(); j++) {
+                for (int i = 0; i < monsterList.size(); i++) {
+                    if(projectile.size()>j){
+                        if (monsterList.get(i).collide(projectile.get(j))) {
+                            monsterList.get(i).getAttacked(projectile.get(j));
+                            projectile.get(j).setFlyingSpeed(0f);
+                            i = monsterKilled(i);
+                            projectile.remove(j);
+                            return;
+                        }
+                    }
+                }
             }
         }
     }

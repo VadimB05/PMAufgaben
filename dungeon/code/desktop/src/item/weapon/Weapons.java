@@ -1,6 +1,8 @@
 package item.weapon;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import graphic.Painter;
 import hud.Icon;
 import item.Items;
@@ -26,6 +28,10 @@ public abstract class Weapons extends Items {
         setIcon(new Icon(hudPainter,hudBatch,
                 new Point(515f,405f),
                 getTexturePath()));
+        shopItem = new Rectangle();
+        shopItem.set( 350, 280, 40, 40);
+        hudEquipment = new Rectangle();
+        hudEquipment.set(495f, Gdx.graphics.getHeight()-465f,60,60);
     }
 
     /** Getter for damage variable */

@@ -14,7 +14,6 @@ public class Sword extends Weapons {
      * @param batch       SpriteBatch to draw on
      * @param texturePath
      */
-
     public Sword(Painter painter, SpriteBatch batch, String texturePath, String name, int damage) {
         super(painter, batch, texturePath, name, damage);
     }

@@ -1,10 +1,12 @@
 package inventory;
 
+import desktop.MyGame;
 import item.Items;
 import item.armor.ChestPlate;
 import item.armor.Shield;
 import item.weapon.Weapons;
 import logging.InventoryFormatter;
+import controller.HUDController;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -18,6 +20,7 @@ public class Equipment {
     Weapons weapons = null;
     private int defense;
     private int strength;
+    private HUDController hudController;
 
     /** Constructor. Creates loggers for putting out information */
     public Equipment() {
@@ -41,7 +44,8 @@ public class Equipment {
      * @param items , which we are putting in our equipment slot
      * @return tmpitems/null , the equipment we had equipped
      * */
-    public Items equipmentChange(Items items){
+    public Items equipmentChange(Items items, HUDController hudController){
+        this.hudController = hudController;
         logger.info(items.getName()+" ausgeruestet.");
         items.setPickedUp(true);
         if(items.getClass().equals(ChestPlate.class)){
@@ -136,4 +140,42 @@ public class Equipment {
         strength += weapons.getDamage();
     }
 
+    public ChestPlate getChestPlate() {
+        return chestPlate;
+    }
+
+    public boolean chestPlateEquipped(){
+        return chestPlate != null;
+    }
+
+    public Weapons getWeapon() {
+        return weapons;
+    }
+
+    public boolean weaponEquipped(){
+        return weapons != null;
+    }
+
+    public Shield getShield() {
+        return shield;
+    }
+
+    public boolean shieldEquipped(){
+        return shield != null;
+    }
+
+    public void dropWeapon(){
+        hudController.remove(weapons.getIcon());
+        weapons = null;
+    }
+
+    public void dropShield(){
+        hudController.remove(shield.getIcon());
+        shield = null;
+    }
+
+    public void dropChestPlate(){
+        hudController.remove(chestPlate.getIcon());
+        chestPlate = null;
+    }
 }

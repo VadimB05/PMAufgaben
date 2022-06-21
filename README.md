@@ -32,31 +32,31 @@ In der unten stehenden Tabelle können Sie Ihren aktuellen Stand festhalten.
 
 | Aufgabe                         | Punkte | Tutoren Notiz |
 |:-------------------------------:|:------:|:-------------:|
-| Gruppe A: Start                 |        |               |
-| Gruppe A: Inventar (text based) |        |               |
+| Gruppe A: Start                 |   10   |               |
+| Gruppe A: Inventar (text based) |   3    |               |
 | Gruppe A: Charakterklassen      |        |               |
-| Gruppe A: Skills                |        |               |
+| Gruppe A: Skills                |   2    | 1 Punkt fehlt |
 | Gruppe A: Speichern und Laden   |        |               |
-| Gruppe A: Fallen                |        |               |
+| Gruppe A: Fallen                |   1    |               |
 | Gruppe A: Crafting              |        |               |
 | Gruppe A: Freie Aufgabe 1       |        |               |
-| Gruppe B: Game-Over             |        |               |
-| Gruppe B: Monster               |        |               |
-| Gruppe B: Nahkampf              |        |               |
-| Gruppe B: Fernkampf             |        |               |
-| Gruppe B: Magie                 |        |               |
-| Gruppe B: XP                    |        |               |
+| Gruppe B: Game-Over             |   1    |               |
+| Gruppe B: Monster               |   3    |               |
+| Gruppe B: Nahkampf              |   2    |               |
+| Gruppe B: Fernkampf             |   1    | 1 Punkt fehlt |
+| Gruppe B: Magie                 |   2    |               |
+| Gruppe B: XP                    |   2    |               |
 | Gruppe B: Freie Aufgabe 2       |        |               |
 | Gruppe B: Schlaue Monster       |        |               |
 | Gruppe B: Boss Monster          |        |               |
-| Gruppe C: Item                  |        |               |
+| Gruppe C: Item                  |   2    |               |
 | Gruppe C: Taschen               |        |               |
 | Gruppe C: Schatzkisten          |        |               |
-| Gruppe C: HUD                   |        |               |
-| Gruppe C: Inventar UI           |        |               |
+| Gruppe C: HUD                   |   2    |               |
+| Gruppe C: Inventar UI           |   1    | 1 Punkt fehlt |
 | Gruppe C: NPC                   |        |               |
 | Gruppe C: Dialogsystem          |        |               |
-| Gruppe C: Quests                |        |               |
+| Gruppe C: Quests                |   5    |               |
 | Gruppe C: Shop                  |        |               |
 | Gruppe C: Freie Aufgabe 3       |        |               |
 

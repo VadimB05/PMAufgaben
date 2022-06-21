@@ -19,8 +19,9 @@ public class Stone extends Projectile {
         flyingAnimationList.add("projectile/projectile_stone.png");
         animation = new Animation(flyingAnimationList, 8);
         this.position = heroPosition;
-        this.flyingSpeed = 0.4f;
-        this.flyingDistance = 7;
+        this.flyingSpeed = 0.5f;
+        this.flyingDistance = 8;
+        this.damage = 1;
     }
 
     @Override
